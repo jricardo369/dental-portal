@@ -1,0 +1,216 @@
+<app-workspace-nav>
+    <app-viajes-nav></app-viajes-nav>
+</app-workspace-nav>
+<div class='workspace'>
+    <div class='main'>
+
+        <div class='menu'>
+            <label class='home'>Reporte totalizado de gastos de viaje</label>
+
+            <!--
+			<button class='iigwo' (click)='crear()'>
+                <mat-icon svgIcon="add-box"></mat-icon>
+				<label>Crear Usuario</label>
+			</button>
+            -->
+
+        </div>
+
+        <div class='content'>
+
+            <div class="iigwo-input">
+                <label i18n="@@Sociedad">Sociedad</label>
+                <select [(ngModel)]="sociedad">
+                    <option style="color:rgba(0,0,0,0.666)" value="">cualquiera</option>
+					<option *ngFor="let s of sociedades" [ngValue]="s.sociedad">{{s.sociedad}}</option>
+				</select>
+            </div>
+
+            <div class="iigwo-input">
+                <label>Area</label>
+                <select [(ngModel)]="area" (ngModelChange)="onAreaChange()">
+                    <option style="color:rgba(0,0,0,0.666)" value="">cualquiera</option>
+					<option *ngFor="let a of areas" [ngValue]="a.idarea">{{a.descripcion}}</option>
+				</select>
+            </div>
+
+            <div class="iigwo-input" *ngIf="area != ''">
+                <label>Tipo de clase de gasto</label>
+                <select [(ngModel)]="tipoDeClaseDeGasto" (ngModelChange)="onTipoClaseGastoChange()">
+                    <option style="color:rgba(0,0,0,0.666)" value="">cualquiera</option>
+					<option *ngFor="let t of tiposDeClaseDeGasto" [ngValue]="t.id">{{t.descripcion}}</option>
+				</select>
+            </div>
+
+            <div class="iigwo-input" *ngIf="tipoDeClaseDeGasto != ''">
+                <label>Clase de gasto</label>
+                <select [(ngModel)]="claseDeGasto">
+                    <option style="color:rgba(0,0,0,0.666)" value="">cualquiera</option>
+					<option *ngFor="let c of clasesDeGasto" [ngValue]="c.id">{{c.descripcion}}</option>
+				</select>
+            </div>
+
+            <div class="iigwo-input">
+                <label>Cuenta contable</label>
+                <input [(ngModel)]="cuentaContable" maxlength="28" placeholder="cualquiera">
+            </div>
+
+            <div class="iigwo-input">
+                <label>Número de trayecto</label>
+                <input [(ngModel)]="numeroDeTrayecto" type="number" placeholder="cualquiera">
+            </div>
+
+            <div class="iigwo-input">
+                <label>Destino</label>
+                <input [(ngModel)]="destino" placeholder="cualquiera">
+            </div>
+
+            <div class="iigwo-input">
+                <label>Centro de costo</label>
+                <input [(ngModel)]="centroDeCosto" maxlength="10" placeholder="cualquiera">
+            </div>
+
+            <div class="iigwo-input">
+                <label>Fecha de contabilización inicial</label>
+                <input [(ngModel)]="fechaInicio" type="date" placeholder="AAAA-MM-DD">
+            </div>
+
+            <div class="iigwo-input">
+                <label>Fecha de contabilización final</label>
+                <input [(ngModel)]="fechaFin" type="date" placeholder="AAAA-MM-DD">
+            </div>
+
+            <h4 style='margin-bottom:12px;'>Usuarios</h4>
+
+            <div class='iigwo-item' *ngFor="let s of usuarios; let i = index">
+                <label>{{s}}</label>
+                <div class='iigwo-item-buttons'>
+                    <button class='iigwo small'><mat-icon svgIcon="delete" (click)="removerUsuario(s)"></mat-icon></button>
+                </div>
+            </div>
+            <div class="iigwo-input" style="margin-top: 16px;">
+                <label>Viajero</label>
+                <input [(ngModel)]="usrstr" type="text" placeholder="agregar viajero">
+            </div>
+            <button #activeComponent class="iigwo" (click)="agregarUsuario()" style="margin-top: 12px;">
+				<label>Agregar {{usrstr}} al filtro de usuarios</label>
+			</button>
+
+            <hr>
+
+            <button class='iigwo accent' (click)='generarReporteXLS()'><label>Descargar reporte XLS</label></button>
+
+            <button class='iigwo' (click)='generarVistaPrevia()'><label>Generar vista previa</label></button>
+
+            <!--<hr style="margin-bottom:0;">-->
+
+            <!-- TABLA CON REGISTROS -->
+            <table class='big' *ngIf="!(reporte.length == 0)">
+                <tr>
+                    <th class='' style="min-width:64px">Número de nomina</th>
+                    <th class='' style="min-width:64px">Sociedad</th>
+                    <th class='' style="min-width:128px">Área</th>
+                    <th class='' style="min-width:128px">Tipo de gasto</th>
+                    <th class='' style="min-width:128px">Clase de gasto</th>
+                    <th class='' style="min-width:64px">Monto total</th>
+                    <th class='' style="min-width:64px">Subtotal</th>
+                    <th class='' style="min-width:64px">Monto IVA</th>
+                    <th class='' style="min-width:64px">Monto ISH</th>
+                    <th class='' style="min-width:64px">Monto TUA</th>
+                    <th class='' style="min-width:64px">Monto IEPS</th>
+                    <th class='' style="min-width:64px">Otros gastos</th>
+                    <th class='' style="min-width:64px">Moneda</th>
+                    <th class='' style="min-width:64px">Indicador</th>
+                    <th class='' style="min-width:64px">Cuenta contable</th>
+                    <th class='' style="min-width:64px">Comprobante fiscal</th>
+                    <th class='' style="min-width:64px">RFC</th>
+                    <th class='' style="min-width:192px">UUID</th>
+                    <th class='' style="min-width:64px">Fecha de comprobante</th>
+                    <th class='' style="min-width:64px">Fecha de contabilización</th>
+                    <th class='' style="min-width:64px">Número de viaje</th>
+                    <th class='' style="min-width:64px">Centro de costos</th>
+                    <th class='' style="min-width:64px">Esquema de viaje</th>
+                    <th class='' style="min-width:64px">Fecha inicio</th>
+                    <th class='' style="min-width:64px">Fecha fin</th>
+                    <th class='' style="min-width:64px">Destino</th>
+                    <th class='' style="min-width:64px">Salida</th>
+                    <th class='' style="min-width:64px">Motivo</th>
+                    <th class='' style="min-width:64px">Centro de costos de segregación</th>
+                    <th class='' style="min-width:64px">Importe segregado</th>
+                </tr>
+                <tr *ngFor='let r of reporte'>
+                    <td>{{r.NUMEMP}}</td>
+                    <td>{{r.SOCIEDAD}}</td>
+                    <td>{{r.AREA}}</td>
+                    <td>{{r.TIPGAS}}</td>
+                    <td>{{r.CLAGAS}}</td>
+                    <td>{{r.TOTAL}}</td>
+                    <td>{{r.SUBTOTAL}}</td>
+                    <td>{{r.IVA}}</td>
+                    <td>{{r.ISH}}</td>
+                    <td>{{r.TUA}}</td>
+                    <td>{{r.IEPS}}</td>
+                    <td>{{r.ISR}}</td>
+                    <td>{{r.MONEDA}}</td>
+                    <td>{{r.INDIVA}}</td>
+                    <td>{{r.CTACON}}</td>
+                    <td>{{r.DEDUCI}}</td>
+                    <td>{{r.RFCEMI}}</td>
+                    <td style="white-space:nowrap">{{r.UUID}}</td>
+                    <td>{{r.FECOMP}}</td>
+                    <td>{{r.FECONT}}</td>
+                    <td>{{r.NUMTRA}}</td>
+                    <td>{{r.CENCOS}}</td>
+                    <td>{{r.ESQVJE}}</td>
+                    <td>{{r.FECINI}}</td>
+                    <td>{{r.FECFIN}}</td>
+                    <td>{{r.DEST}}</td>
+                    <td>{{r.SALIDA}}</td>
+                    <td>{{r.MOTIVO}}</td>
+                    <td>{{r.SEGREGACION}}</td>
+                    <td>{{r.SEGR_CENCOS}}</td>
+                </tr>
+            </table>
+
+            <!-- MENSAJE DE NO HAY REGISTROS - ->
+			<div *ngIf="usuarios.length == 0 && mostrandoResultadosFiltrados">
+				<h3 style="margin:12px 0 6px 0">Sin resultados</h3>
+				<p style="max-width:396px;">No hay usuarios dentro del criterio de búsqueda. Asegurate de que los nombres son los correctos y que están buscando
+					en el campo apropiado</p>
+			</div>
+            <!-- -->
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;">
+                <span i18n="@@siNecesitaAyudaPuedeLeerEl">Si necesita ayuda puede leer el
+                </span>
+                <a target="_blank" [href]='utilService.rutaDeManual("ManualAdministracionViajes")' i18n="@@manualAdministracionViajes">manual de Administración de Viajes</a>
+            </p>
+        </div>
+
+        <!-- CARGANDO -->
+        <div class='iigwo-loading' *ngIf="cargando">
+            <mat-spinner></mat-spinner>
+        </div>
+
+        <!-- MENSAJE DE CONFIRMACIÓN - ->
+		<div *ngIf="mostrarMensajeDeEliminar" class='iigwo-dialog-background'>
+			<div class='iigwo-dialog'>
+				<h3>Eliminar {{seleccion.length}} usuarios</h3>
+				<p>Estás a punto de borrar {{seleccion.length}} usuarios, esta operación es irreversible ¿estás seguro de que deseas eliminarlos
+					a todos?</p>
+				<button class='iigwo accent' (click)='confirmarEliminar()'><label>Eliminar {{seleccion.length}} usuarios</label></button>
+				<button class='iigwo' (click)='mostrarMensajeDeEliminar = false'><label i18n="@@Cancelar">Cancelar</label></button>
+			</div>
+		</div>
+
+		<!-- MENSAJE DE NOTIFICACIÓN - ->
+		<div *ngIf="mostrarMensaje" class='iigwo-dialog-background'>
+			<div class='iigwo-dialog'>
+				<h3>Usuarios no eliminados</h3>
+				<p>Por lo menos uno de los usuarios no pudo ser eliminado mediante la eliminación masiva, eliminelo desde su pantalla individual</p>
+				<button class='iigwo accent' (click)='mostrarMensaje=false;'><label>Aceptar</label></button>
+			</div>
+		</div>
+        <!-- -->
+
+    </div>
+</div>

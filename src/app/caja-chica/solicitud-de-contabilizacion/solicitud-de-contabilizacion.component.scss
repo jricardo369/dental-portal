@@ -1,0 +1,28 @@
+@import '../../../theme.scss';
+
+tr td {
+    cursor: pointer;
+}
+
+tr.seleccionable:hover td {
+    background:rgba(0,0,0,0.06125);
+}
+
+tr.selectedRow td,
+tr.selectedRow:hover td {
+    background: mat-color($app-accent);
+    color:white;
+}
+
+tr.selectedRow td a {
+    color:white;
+}
+
+.cabecera {
+    
+    display: flex;
+    flex-flow: column;
+
+    .iigwo-input {
+    }
+}

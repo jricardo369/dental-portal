@@ -1,0 +1,8 @@
+<app-login-form (onLogin)='cerrar()' (onRecuperarEnviado)='cerrar()' [recuperarPasswordOnly]="recuperarPasswordOnly">
+</app-login-form>
+<p *ngIf="!recuperarPasswordOnly" style="
+    margin: 24px 0 0 0;
+    max-width: 240px;
+    padding-top: 12px;
+    border-top: solid 1px rgba(0,0,0,0.1);
+" i18n="@@contelec.PareceQueTuSesionCaduco">Parece que tu sesión caducó, ingresa nuevamente tus credenciales y presiona Ingresar para continuar usando el sistema</p>

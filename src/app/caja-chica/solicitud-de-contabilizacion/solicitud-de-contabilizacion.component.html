@@ -1,0 +1,468 @@
+<app-workspace-nav>
+    <app-caja-chica-nav></app-caja-chica-nav>
+</app-workspace-nav>
+<div class='workspace'>
+    <div class='main'>
+
+        <!-- MENU DE SOLICITUD -->
+        <!-- Son las opciones que aparece en el menú de arriba, ElIMINAR, ACTUALIZAR, ETC 
+            <div class='menu' *ngIf='!comprobantesSeleccionados.length'>
+        -->
+        <app-experimental-menu [titulo]="titulo" backButtonEnabled="true" *ngIf='!comprobantesSeleccionados.length'
+            style="z-index: 2; background: white;">
+
+            <button class='primary' (click)='agregarGasto()' *ngIf="mostrarBotonAgregarGasto">
+                <mat-icon svgIcon="add-box"></mat-icon>
+                <label i18n="@@Agregar gasto">Agregar gasto</label>
+            </button>
+
+            <button (click)='solicitarAprobacion()' *ngIf="mostrarBotonSolicitarAprobacion"
+                [disabled]='!gastos || gastos.length == 0'>
+                <mat-icon svgIcon="done"></mat-icon>
+                <label i18n="@@Solicitar aprobación">Solicitar aprobación</label>
+            </button>
+
+            <button (click)='terminarAprobacion()' *ngIf='mostrarBotonTerminarAprobacion'>
+                <mat-icon svgIcon="done"></mat-icon>
+                <label i18n="@@Terminar aprobación">Terminar aprobación</label>
+            </button>
+
+            <button (click)='seleccionarTodos()' *ngIf='gastos && gastos.length && permitirSeleccionar'>
+                <mat-icon svgIcon="check-box"></mat-icon>
+                <label i18n="@@Seleccionar todos">Seleccionar todos</label>
+            </button>
+
+            <button (click)='refresh()' *ngIf='mostrarBotonRefresh'>
+                <mat-icon svgIcon="refresh"></mat-icon>
+                <label i18n="@@Refrescar">Refrescar</label>
+            </button>
+
+            <button (click)='imprimir()' *ngIf='mostrarBotonImprimir'>
+                <mat-icon svgIcon="print"></mat-icon>
+                <label i18n="@@Imprimir">Imprimir</label>
+            </button>
+
+            <button (click)='eliminar()' *ngIf="mostrarBotonEliminar" [disabled]="(gastos && gastos.length)">
+                <mat-icon svgIcon="delete"></mat-icon>
+                <label i18n="@@Eliminar">Eliminar</label>
+            </button>
+
+            <button (click)='mostrarCabecera()' mobileIcon>
+                <mat-icon svgIcon="fedora-hat"></mat-icon>
+                <label i18n="@@Mostrar cabecera">Mostrar cabecera</label>
+            </button>
+
+        </app-experimental-menu>
+
+        <!-- MENU DE GASTOS SELECCIONADOS -->
+        <!-- Son las opciones que aparece en el menú de arriba, cuando seleccionas gastos -->
+        <div class='alternative menu' *ngIf='comprobantesSeleccionados.length'>
+
+            <button class='iigwo' (click)='limpiarSeleccionDeComprobantes()'
+                style="background: none;margin-right: 24px;margin-left: -12px;">
+                <mat-icon svgIcon="close"></mat-icon>
+            </button>
+
+            <label class='home'>{{comprobantesSeleccionados.length == 1 ? 'Gasto ' +
+                comprobantesSeleccionados[0].id : comprobantesSeleccionados.length + ' gastos'}}</label>
+
+            <button class='iigwo' (click)='aprobarComprobantesSeleccionados()'
+                *ngIf='mostrarBotonesAprobarRechazarGastosSeleccionados'>
+                <mat-icon svgIcon="done" *ngIf='comprobantesSeleccionados.length == 1'></mat-icon>
+                <mat-icon svgIcon="done-all" *ngIf='comprobantesSeleccionados.length > 1'></mat-icon>
+                <label>{{comprobantesSeleccionados.length == 1 ? 'Aprobar comprobante' : 'Aprobar comprobantes'}}</label>
+            </button>
+
+            <button class='iigwo' (click)='rechazarComprobantesSeleccionados()'
+                *ngIf="mostrarBotonesAprobarRechazarGastosSeleccionados">
+                <mat-icon svgIcon="close"></mat-icon>
+                <label>{{comprobantesSeleccionados.length == 1 ? 'Rechazar comprobante' : 'Rechazar comprobantes'}}</label>
+            </button>
+
+            <button class='iigwo' (click)='eliminarComprobantesSeleccionados()'
+                *ngIf="mostrarBotonEliminarGastosSeleccionados">
+                <mat-icon svgIcon="delete"></mat-icon>
+                <label>{{comprobantesSeleccionados.length == 1 ? 'Eliminar gasto' : 'Eliminar gastos'}}</label>
+            </button>
+
+        </div>
+
+        <!-- SIDE SHEET CONTENT WRAPPER -->
+        <div class="side-sheet-content-wrap">
+
+            <!-- SIDE SHEET -->
+            <div class="header-panel" [ngClass]='{hidden:!isCabeceraVisible}'>
+
+                <div class="cabecera">
+
+                    <!-- CAMPOS DE SOLICITUD -->
+                    <!-- Campos particulares de la cabecera de la solicitud de contabilización de caja chica -->
+
+                    <h4 style="margin: 0 0px 24px 0;" i18n="@@Cabecera de solicitud">
+                        Cabecera de solicitud
+                    </h4>
+
+                    <div class="iigwo-input" *ngIf='!nuevaSolicitud && solicitud.sociedad'>
+                        <label i18n="@@Id">Id</label>
+                        <input [(ngModel)]="solicitud.id" readOnly>
+                    </div>
+
+                    <div class="iigwo-input" *ngIf='!nuevaSolicitud'>
+                        <label i18n="@@Estatus">Estatus</label>
+                        <input [(ngModel)]="solicitud.estatus" readOnly>
+                    </div>
+
+                    <div class="iigwo-input" *ngIf='!nuevaSolicitud && solicitud.cajaChica'>
+                        <label i18n="@@Caja chica">Caja chica</label>
+                        <input [(ngModel)]="solicitud.cajaChica.descripcion" readOnly>
+                    </div>
+
+                    <div class="iigwo-input" *ngIf='!nuevaSolicitud && solicitud.sociedad'>
+                        <label i18n="@@Sociedad">Sociedad</label>
+                        <input [(ngModel)]="solicitud.sociedad.soc" readOnly>
+                    </div>
+
+                    <div class="iigwo-input">
+                        <label i18n="@@Referencia">Referencia</label>
+                        <input [(ngModel)]="solicitud.referencia"
+                            [readOnly]='!ediandoCamposDeCabecera && !nuevaSolicitud' placeholder="Texto de referencia"
+                            i18n-placeholder="@@Texto de referencia">
+                    </div>
+
+                    <!-- selección de caja chica durante creación de nueva solictud -->
+                    <div class="iigwo-input" *ngIf='nuevaSolicitud'>
+                        <label i18n="@@Caja chica">Caja chica</label>
+                        <select [(ngModel)]='solicitud.cajaChica' (ngModelChange)='actualizarSociedades()'>
+                            <option *ngFor="let e of cajasChicasDeUsuario" [ngValue]="e">{{e.descripcion}}</option>
+                        </select>
+                    </div>
+
+                    <!-- selección de sociiedad durante creación de nueva solictud -->
+                    <div class="iigwo-input" *ngIf='nuevaSolicitud'>
+                        <label i18n="@@Sociedad">Sociedad</label>
+                        <select [(ngModel)]='solicitud.sociedad'>
+                            <option *ngFor="let e of sapSociedades" [ngValue]="e">{{e.sociedad}}</option>
+                        </select>
+                    </div>
+
+                    <div class="iigwo-input">
+                        <label i18n="@@Fecha documento">Fecha documento</label>
+                        <input [ngModel]="solicitud.fechaDocumento | date:'yyyy-MM-dd':'':'en'"
+                            (ngModelChange)='solicitud.fechaDocumento=safeYYYYMMDD($event)' type="date"
+                            [readOnly]='!(nuevaSolicitud || ediandoCamposDeCabecera)'>
+                    </div>
+
+                    <div class="iigwo-input">
+                        <label i18n="@@Fecha contabilización">Fecha contabilización</label>
+                        <input [ngModel]="solicitud.fechaContabilizacion | date:'yyyy-MM-dd':'':'en'"
+                            (ngModelChange)='solicitud.fechaContabilizacion=safeYYYYMMDD($event)' type="date"
+                            [readOnly]='!(nuevaSolicitud || ediandoCamposDeCabecera)'>
+                    </div>
+
+                    <!--
+                                <hr style="margin: 12px 12px 12px 0;"
+                                *ngIf="nuevaSolicitud || editando && (viaje.estatus == 'Abierto' || viaje.estatus == 'Rechazado')">
+                            -->
+
+                    <!-- BOTONES CABECERA DE NUEVO VIAJE -->
+                    <div *ngIf="nuevaSolicitud">
+                        <button class='iigwo' (click)='cancelar()'>
+                            <label i18n="@@Cancelar">Cancelar</label>
+                        </button>
+                        <button class='accent iigwo' (click)='crear()'
+                            [disabled]='solicitud.cajaChica == null || solicitud.sociedad == null'>
+                            <label i18n="@@Crear nueva solicitud">Crear nueva solicitud</label>
+                        </button>
+                    </div>
+
+                    <!-- BOTONES CABECERA DE VIAJE EXISTENTE -->
+                    <!--
+                            -->
+                    <div *ngIf="editando && (solicitud.estatus == 'Abierto' || solicitud.estatus == 'Rechazado')">
+                        <button class='iigwo' *ngIf='!ediandoCamposDeCabecera' (click)='ediandoCamposDeCabecera=true'>
+                            <label i18n="@@Editar cabecera">Editar cabecera</label>
+                        </button>
+                        <button class='iigwo' *ngIf='ediandoCamposDeCabecera'
+                            (click)='ediandoCamposDeCabecera=false;this.refresh()'>
+                            <label i18n="@@Cancelar">Cancelar</label>
+                        </button>
+                        <button class='accent iigwo' *ngIf='ediandoCamposDeCabecera' (click)='guardarCabecera()'>
+                            <label i18n="@@Guardar cambios">Guardar cambios</label>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- CONTENT -->
+            <div class='content' *ngIf="!nuevaSolicitud">
+
+                <div style="display:flex; flex-flow: column; overflow: auto;">
+
+
+                    <!-- PANEL IZQUIERDA-->
+                    <div style="
+                        flex-flow: column;
+                        display: flex;
+                        overflow: auto;
+                    ">
+
+                        <!-- TEXTO AYUDA (CREANDO) -->
+                        <div *ngIf='nuevaSolicitud'>
+                            <h4 style="margin: 0 0 12px 0" *ngIf='!editando' i18n="@cajachi.singlesol.1">Selecciona
+                                chaja
+                                chica y sociedad</h4>
+                            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;" *ngIf='!editando'
+                                i18n="@cajachi.singlesol.2"> Selecciona la caja chica y la sociedad de los combobox de
+                                la
+                                izquierda y presiona el botón Crear nueva solicitud. Una vez creada la solicitud podrás
+                                agregar gastos.
+                            </p>
+                        </div>
+
+                        <!-- TEXTO AYUDA (EDITANDO) -->
+                        <div
+                            *ngIf="!nuevaSolicitud && solicitud.estatus != 'Contabilizado' && !autorizando && !contabilizando">
+                            <h4 style="margin: 0 0 12px 0" *ngIf='gastos.length > 1'>
+                                {{gastos.length}} <span i18n="@@gastos cargados">gastos cargados</span></h4>
+                            <h4 style="margin: 0 0 12px 0" *ngIf='gastos.length == 1' i18n="@@Un gasto cargado">Un gasto
+                                cargado</h4>
+                            <h4 style="margin: 0 0 12px 0" *ngIf='gastos.length == 0' i18n="@@Cargue sus gastos"
+                                i18n="@@Cargue sus gastos">Cargue sus gastos</h4>
+                            <p *ngIf='editando && (solicitud.estatus == "Abierto" || solicitud.estatus == "Rechazado")'
+                                style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;"
+                                i18n="@@cajachi.singlesol.help2">
+                                Presione el botón agregar gasto en la barra de herramientas de arriba para agregar
+                                gastos a
+                                su solicitud de contabilización de caja chica.
+                            </p>
+                            <p *ngIf='editando && !(solicitud.estatus == "Abierto" || solicitud.estatus == "Rechazado")'
+                                style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;">
+                                <span i18n="@@cajachi.singlesol.help3">La solicitud tiene por estatus </span>
+                                <b>{{solicitud.estatus}}</b><span i18n="@@cajachi.singlesol.help4">, en este momento no
+                                    es posible agregar o remover gastos. </span>
+                            </p>
+                        </div>
+
+                        <!-- TEXTO AYUDA (EDITANDO UN VIAJE POR AUTORIZAR) 
+                        <div *ngIf="editando && viaje && viaje.estatus == 'Por Autorizar'">
+                            <h4 style="margin: 0 0 12px 0">
+                                Espere a que el autorizador resuelva el viaje</h4>
+                                <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;">
+                                    El viaje está en proceso de ser aprobado. Es responsabilidad del autorizador de gastos de
+                                    viaje aprobar o rechazar el viaje.
+                                </p>
+                            </div>
+                        -->
+
+                        <!-- TEXTO AYUDA (AUTORIZANDO) -->
+                        <div *ngIf='autorizando'>
+                            <h4 style="margin: 0 0 12px 0" i18n="@@Apruebe o rechace los comprobantes">Apruebe o rechace
+                                los
+                                comprobantes</h4>
+                            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;"
+                                i18n="@@cajachi.singlesol.help5">
+                                Para aprobar o rechazar un gasto presione el renglón y luego la acción correspondiente
+                                que
+                                aparecerá en el menú de arriba. Puede seleccionar varios gastos a la vez.
+                            </p>
+                        </div>
+
+                        <!-- VISTA DE TABLA -->
+                        <div class="iigwo-search-space" style="
+                                overflow-y: auto;
+                                border-top: solid 1px rgba(0,0,0,0.1);"
+                            *ngIf='mostrarTablaDeGastos && gastos && gastos.length'>
+                            <table>
+                                <tr>
+                                    <th class='' i18n="@@Id Comprobante">Id Comprobante </th>
+                                    <th *ngIf='mc.estatus' class='' i18n="@@Estatus">Estatus </th>
+                                    <th *ngIf='mc.documentoContable' class='' i18n="@@Documento contable">Documento
+                                        contable
+                                    </th>
+                                    <th *ngIf='mc.descripcionGasto' class='' i18n="@@Operación">Operación </th>
+                                    <th *ngIf='mc.totalFactura' class='' i18n="@@Total">Total </th>
+                                    <!--<th *ngIf='mc.importe' class=''        i18n="@@Importe" >Importe                            </th>-->
+                                    <th *ngIf='mc.subtotal' class='' i18n="@@Subtotal">Subtotal </th>
+                                    <th *ngIf='mc.descuento' class='' i18n="@@Descuento">Descuento </th>
+                                    <th *ngIf='mc.iva' class='' i18n="@@IVA">IVA </th>
+                                    <th *ngIf='mc.isr' class='' i18n="@@Otros gastos">Otros gastos </th>
+                                    <th *ngIf='mc.ish' class='' i18n="@@ISH">ISH </th>
+                                    <th *ngIf='mc.tua' class='' i18n="@@TUA">TUA </th>
+                                    <th *ngIf='mc.ieps' class='' i18n="@@IEPS">IEPS </th>
+                                    <th *ngIf='mc.texto' class='' i18n="@@Texto">Texto </th>
+                                    <th *ngIf='mc.centroDeCosto' class='' i18n="@@Ceco">Ceco </th>
+                                    <th *ngIf='mc.orden' class='' i18n="@@Orden">Orden </th>
+                                    <th *ngIf='mc.centroDeBeneficio' class='' i18n="@@Centro de beneficio">Centro de
+                                        beneficio </th>
+                                    <th *ngIf='mc.elementoPep' class='' i18n="@@Elemento PEP">Elemento PEP </th>
+                                    <th *ngIf='mc.grafo' class='' i18n="@@Grafo">Grafo </th>
+                                    <th *ngIf='mc.operacionGrafo' class='' i18n="@@Op. Grafo">Op. Grafo </th>
+                                    <th *ngIf='mc.rutaXml' i18n="@@XML">XML </th>
+                                    <th *ngIf='mc.rutaPdf' i18n="@@PDF">PDF </th>
+
+                                </tr>
+
+                                <tr *ngFor='let e of gastos' (click)="seleccionar(e)"
+                                    [ngClass]="{selectedRow: e.seleccionado, seleccionable: permitirSeleccionar}">
+
+                                    <td class='accent'>
+                                        <!--<a routerLink='./gastos/{{e.id}}'>-->
+                                        <span i18n="@@Gasto">Gasto</span> {{e.id}}
+                                        <!--</a>-->
+                                    </td>
+                                    <td *ngIf='mc.estatus' class='accent' style="white-space:nowrap">{{e.estatus}}</td>
+                                    <td *ngIf='mc.documentoContable' class='accent'>{{e.documentoContable}}</td>
+
+                                    <td *ngIf='mc.descripcionGasto' class='accent' style="white-space:nowrap">
+                                        {{e.gastoCaja.descripcionGasto}}</td>
+                                    <td *ngIf='mc.totalFactura' class='number accent'>
+                                        {{e.totalFactura | number: '1.2-2':'en'}}
+                                    </td>
+                                    <!--<td *ngIf='mc.importe' class='number accent'>{{e.importe | number: '1.2-2':'en'}}</td>-->
+                                    <td *ngIf='mc.subtotal' class='number accent'>{{e.subtotal | number: '1.2-2':'en'}}
+                                    </td>
+                                    <td *ngIf='mc.descuento' class='number accent'>
+                                        {{e.descuento | number: '1.2-2':'en'}}
+                                    </td>
+                                    <td *ngIf='mc.iva' class='number accent'>{{e.iva | number: '1.2-2':'en'}}</td>
+                                    <td *ngIf='mc.isr' class='number accent'>{{e.isr | number: '1.2-2':'en'}}</td>
+                                    <td *ngIf='mc.ish' class='number accent'>{{e.ish | number: '1.2-2':'en'}}</td>
+                                    <td *ngIf='mc.tua' class='number accent'>{{e.tua | number: '1.2-2':'en'}}</td>
+                                    <td *ngIf='mc.ieps' class='number accent'>{{e.ieps | number: '1.2-2':'en'}}</td>
+                                    <td *ngIf='mc.texto' class='accent accent' style="white-space:nowrap">{{e.texto}}
+                                    </td>
+                                    <td *ngIf='mc.centroDeCosto' class='accent accent'>{{e.centroDeCosto}}</td>
+                                    <td *ngIf='mc.orden' class='accent accent'>{{e.orden}}</td>
+                                    <td *ngIf='mc.centroDeBeneficio' class='accent accent'>{{e.centroDeBeneficio}}</td>
+                                    <td *ngIf='mc.elementoPep' class='accent accent'>{{e.elementoPep}}</td>
+                                    <td *ngIf='mc.grafo' class='accent accent'>{{e.grafo}}</td>
+                                    <td *ngIf='mc.operacionGrafo' class='accent accent'>{{e.operacionGrafo}}</td>
+                                    <td *ngIf='mc.rutaXml'>
+                                        <a *ngIf='e.rutaXml'
+                                            href="{{api}}/contabilizacion-caja-chica/{{id}}/gastos/{{e.id}}/xml"
+                                            target="_blank" (click)="$event.stopPropagation();">XML</a>
+                                    </td>
+                                    <td *ngIf='mc.rutaPdf'>
+                                        <a *ngIf='e.rutaPdf' (click)='verPdf(id, e.id)' target="_blank"
+                                            (click)="$event.stopPropagation();">PDF</a>
+                                    </td>
+                                </tr>
+
+                                <tr class="" style="font-family:bold;">
+                                    <td class='accent'>Total</td>
+                                    <td *ngIf='mc.estatus' class=''></td>
+                                    <td *ngIf='mc.descripcionGasto' class=''></td>
+                                    <td *ngIf='mc.totalFactura' class='number accent'>{{totalg.totalFactura | number:
+                                    '1.2-2':'en'}}</td>
+                                    <!--<td *ngIf='mc.importe' class='number accent'>{{totalg.importe | number: '1.2-2':'en'}}</td>-->
+                                    <td *ngIf='mc.subtotal' class='number accent'>
+                                        {{totalg.subtotal | number: '1.2-2':'en'}}
+                                    </td>
+                                    <td *ngIf='mc.descuento' class='number accent'>
+                                        {{totalg.descuento | number: '1.2-2':'en'}}
+                                    </td>
+                                    <td *ngIf='mc.iva' class='number accent'>{{totalg.iva | number: '1.2-2':'en'}}</td>
+                                    <td *ngIf='mc.isr' class='number accent'>{{totalg.isr | number: '1.2-2':'en'}}</td>
+                                    <td *ngIf='mc.ish' class='number accent'>{{totalg.ish | number: '1.2-2':'en'}}</td>
+                                    <td *ngIf='mc.tua' class='number accent'>{{totalg.tua | number: '1.2-2':'en'}}</td>
+                                    <td *ngIf='mc.ieps' class='number accent'>{{totalg.ieps | number: '1.2-2':'en'}}
+                                    </td>
+                                    <td *ngIf='mc.texto' class=''></td>
+                                    <td *ngIf='mc.centroDeCosto' class=''></td>
+                                    <td *ngIf='mc.orden' class=''></td>
+                                    <td *ngIf='mc.centroDeBeneficio' class=''></td>
+                                    <td *ngIf='mc.elementoPep' class=''></td>
+                                    <td *ngIf='mc.grafo' class=''></td>
+                                    <td *ngIf='mc.operacionGrafo' class=''></td>
+                                    <td *ngIf='mc.rutaXml'></td>
+                                    <td *ngIf='mc.rutaPdf'></td>
+                                </tr>
+
+                            </table>
+                        </div>
+
+                        <p style="margin-top: 12px; margin-bottom: 0px; font-size: 13px;"
+                            *ngIf="!mostrarTodasLasColumnas && !nuevaSolicitud && gastos && gastos.length">
+                            <span i18n="@@cajachi.singlesol.help7"> Si desea mostrar todas las columnas en la tabla haga
+                                clic en </span>
+                            <span (click)="mostrarTodasLasColumnas=true; calcularColumnasEnBlanco()"
+                                class="link">mostrar
+                                todas las columnas</span>
+                        </p>
+
+                        <p style="margin-top: 12px; margin-bottom: 0px; font-size: 13px;"
+                            *ngIf="mostrarTodasLasColumnas && !nuevaSolicitud && gastos && gastos.length">
+                            <span i18n="@@cajachi.singlesol.help8">Si desea ocultar las columnas en ceros o con campos
+                                vacíos ha clic en </span><span
+                                (click)="mostrarTodasLasColumnas=false; calcularColumnasEnBlanco()" class="link">ocultar
+                                columnas con campos vacíos</span>
+                        </p>
+
+                        <!-- HISTORIAL? -->
+                        <hr *ngIf="bitacora.length">
+
+                        <div *ngIf="!nuevaSolicitud && mostrarBitacora" class="iigwo-search-space" style="
+                                overflow-y: auto;
+                                margin-top: 40px;
+                                border-top: solid 1px rgba(0,0,0,0.1);">
+
+                            <h4 style="margin: 36px 0 12px 0;" 
+                                i18n="@@contelec.historialdesolicitud">
+                                Historial de solicitud
+                            </h4>
+                            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;"
+                                i18n="@cajachi.historialdesolicitud.descripcion"> Se enlistan los eventos de aprobación
+                                de esta solicitud. Se muestran los mas recientes primero.
+                            </p>
+
+                            <table class="informative">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Evento</th>
+                                    <th>Usuario</th>
+                                    <th>Motivo</th>
+                                </tr>
+                                <tr *ngFor='let e of bitacora'>
+                                    <td style="white-space: nowrap;">{{e.fecha | date:'yyyy-MM-dd HH:mm':'':'en'}}</td>
+                                    <td>{{e.evento}}</td>
+                                    <td>{{e.usuario.nombre}}</td>
+                                    <td style="font-style: italic;">{{e.motivo}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <p style="margin-top: 12px; margin-bottom: 0px; font-size: 13px;" *ngIf="bitacora.length">
+
+                            <span *ngIf="!mostrarBitacora" i18n="@@cajachi.singlesol.mostrarBitacora0">La solicitud
+                                tiene una bitacora de eventos. </span>
+                            <span *ngIf="!mostrarBitacora" (click)="mostrarBitacora=true" class="link"
+                                i18n="@@cajachi.singlesol.mostrarBitacora">Mostrar bitacora</span>
+
+                            <span *ngIf="mostrarBitacora" (click)="mostrarBitacora=false" class="link"
+                                i18n="@@cajachi.singlesol.ocultarBitacora">Ocultar bitacora</span>
+                        </p>
+
+                        <!-- TEXTO AYUDA (EDITAR) -->
+                        <!--
+                    <p style="margin-top: 6px; margin-bottom: 18px; font-size: 13px;"
+                        *ngIf="editando && viaje.comprobantes && viaje.comprobantes.length && (viaje.estatus == 'Abierto' || viaje.estatus == 'Rechazado')">
+                        Cuando haya cargado todos sus comprobantes presione el botón <b>solicitar
+                            autorización</b>.
+                    </p>
+                    -->
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!--Cargando-->
+        <div class='iigwo-loading' *ngIf="loading">
+            <mat-spinner></mat-spinner>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,74 @@
+<app-workspace-nav>
+    <app-caja-chica-nav></app-caja-chica-nav>
+</app-workspace-nav>
+
+<div class='workspace'>
+    <div class='main'>
+
+        <app-experimental-menu titulo="Configuración de Cajas chicas" i18n-titulo="@@Configuración de Cajas chicas">
+
+            <button (click)='refrescar()'>
+                <mat-icon svgIcon="refresh"></mat-icon>
+                <label i18n="@@Refrescar">Refrescar</label>
+            </button>
+
+        </app-experimental-menu>
+
+        <div class='content'>
+
+            <h4 style="margin: 0 0 12px 0" i18n="@@Fecha de inicial de facturas de caja chica">Fecha de inicial de
+                facturas de caja chica</h4>
+
+            <div class="iigwo-input">
+                <label i18n="@@Fecha inicial de carga">Fecha inicial de carga</label>
+                <input [(ngModel)]="fechaInicialFacturasCajaChica" type="date"
+                    [attr.readOnly]="cambiandoFechaInicialFacturasCajaChica ? null : false">
+            </div>
+
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;"
+                *ngIf="cambiandoFechaInicialFacturasCajaChica==false" i18n="@@cacachiadmin-1">
+                Las facturas electrónicas cargadas a caja chica emitidas antes de esta fecha son automaticamente
+                rechazadas por el sistema.
+            </p>
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;"
+                *ngIf="cambiandoFechaInicialFacturasCajaChica==true" i18n="@@cacachiadmin-2">
+                El formato de fecha es año, mes, dia (YYYY-MM-DD)
+            </p>
+
+            <button class="iigwo" (click)="cambiandoFechaInicialFacturasCajaChica=true"
+                *ngIf="cambiandoFechaInicialFacturasCajaChica==false">
+                <label i18n="@@Cambiar fecha">Cambiar fecha</label>
+            </button>
+
+            <button class="iigwo accent" (click)="cambiarFechaInicialFacturasCajaChica()"
+                *ngIf="cambiandoFechaInicialFacturasCajaChica==true">
+                <label i18n="@@Cambiar fecha">Cambiar fecha</label>
+            </button>
+            <button class="iigwo" (click)="cancelarFechaInicialFacturasCajaChica()"
+                *ngIf="cambiandoFechaInicialFacturasCajaChica==true">
+                <label i18n="@@Cancelar">Cancelar</label>
+            </button>
+
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;">
+                <span i18n="@@siNecesitaAyudaPuedeLeerEl">Si necesita ayuda puede leer el
+                </span>
+                <a target="_blank" [href]='utilService.rutaDeManual("ManualAdministracionCajaChica")' i18n="@@manualAdministracionCajaChica">manual de Administración de Caja Chica</a>
+            </p>
+        </div>
+
+        <!-- MENSAJE ERROR
+            <div *ngIf="mostrarMensaje" class='iigwo-dialog-background'>
+                <div class='iigwo-dialog'>
+                    <h3>{{tituloMensaje}}</h3>
+                    <p>{{textoMensaje}}</p>
+                    <button class='iigwo accent' (click)='mostrarMensaje = false'><label>Aceptar</label></button>
+                </div>
+            </div>
+        -->
+
+        <!--Cargando-->
+        <div class='iigwo-loading' *ngIf="cargando">
+            <mat-spinner></mat-spinner>
+        </div>
+    </div>
+</div>

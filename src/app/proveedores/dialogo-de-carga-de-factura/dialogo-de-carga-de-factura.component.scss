@@ -1,0 +1,16 @@
+.iigwo-dialog-background {
+    position: relative;
+    padding: 0;
+}
+
+.iigwo-dialog {
+    padding: 0;
+    border: none;
+    box-shadow: none;
+}
+
+button.iigwo { margin-bottom: 0; }
+
+.dialog-actions { display: flex; }
+.dialog-actions button.iigwo:first-of-type { margin-left: auto; }
+.dialog-actions button.iigwo:last-of-type { margin-right: 0; }

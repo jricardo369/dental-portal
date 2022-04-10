@@ -1,0 +1,237 @@
+<h2 mat-dialog-title *ngIf='!ocultarSeccionesDeDialogo'>Cargar comprobante</h2>
+
+<mat-dialog-content [ngClass]='{nodialog:ocultarSeccionesDeDialogo}'>
+    <div style="display:flex; min-height: 320px;">
+
+        <!-- FORMA (CREAR) -->
+        <div style="min-width: 350px;">
+
+            <div class="iigwo-input" *ngIf='!readOnly'>
+                <label>tipo de clase de gasto</label>
+                <select [(ngModel)]="tipoGasto" (ngModelChange)="actualizarClasesDeGasto()" [disabled]='loading'
+                    #selectDeTipoGasto>
+                    <option *ngFor="let e of tiposDeGasto" [ngValue]="e">{{e.descripcion}}</option>
+                </select>
+            </div>
+
+            <p *ngIf='tipoGasto && !clasesDeGasto.length && !loading' style="
+                background: whitesmoke;
+                padding: 12px;
+                font-size: 12px;
+                max-width: 296px;
+                border-radius: 1px;">
+                El tipo de clases de gasto seleccionado no tiene clases de gasto
+            </p>
+
+            <div class="iigwo-input" *ngIf='!creando'>
+                <label i18n="@@Estatus">Estatus</label>
+                <input [ngModel]="gasto.estatus" readOnly>
+            </div>
+
+            <!-- EL API NI REGRESA TEXTO EN LUGAR DEL OBJETO, ESO NO ESTÁ COOL. QUE SE CAMBIE EN UN FUTURO -->
+            <div class="iigwo-input" *ngIf='tipoGasto && clasesDeGasto.length && !readOnly'>
+                <label>clase de gasto</label>
+                <select [(ngModel)]="claseGasto" (ngModelChange)="limpiarValoresDeGastoPorCambioDeClase()">
+                    <option *ngFor="let e of clasesDeGasto" [ngValue]="e">{{e.descripcion}}</option>
+                </select>
+            </div>
+
+            <!-- EL API REGRESA TEXTO EN LUGAR DEL OBJETO, ESO NO ESTÁ COOL. QUE SE CAMBIE EN UN FUTURO -->
+            <div class="iigwo-input" *ngIf='readOnly'>
+                <label>clase de gasto</label>
+                <input [(ngModel)]="gasto.claseGasto" readOnly>
+            </div>
+
+            <div class="iigwo-input" *ngIf='claseGasto || readOnly'>
+                <label>fecha</label>
+                <input [(ngModel)]="gasto.fecha" [readOnly]='readOnly' type="date">
+            </div>
+
+            <div class="iigwo-input" *ngIf='claseGasto || readOnly'>
+                <label>moneda</label>
+                <input [(ngModel)]="gasto.moneda" [readOnly]='readOnly'>
+            </div>
+
+            <div class="iigwo-input" *ngIf='claseGasto || readOnly'>
+                <label>subtotal</label>
+                <input [(ngModel)]="gasto.subtotal" type="number" (ngModelChange)="actualizarTotal()"
+                    [readOnly]='readOnly && !autorizando'>
+            </div>
+
+            <div class="iigwo-input" *ngIf='claseGasto && claseGasto.indicador_iva || readOnly'>
+                <label>IVA</label>
+                <input [(ngModel)]="gasto.iva" type="number" (ngModelChange)="actualizarTotal()"
+                    [readOnly]='readOnly && !autorizando'>
+            </div>
+
+            <div class="iigwo-input" *ngIf='claseGasto && claseGasto.cuentaContableISR || readOnly'>
+                <label>ISR</label>
+                <input [(ngModel)]="gasto.isr" type="number" (ngModelChange)="actualizarTotal()"
+                    [readOnly]='readOnly && !autorizando'>
+            </div>
+
+            <div class="iigwo-input" *ngIf='claseGasto && claseGasto.cuentaContableISH || readOnly'>
+                <label>ISH</label>
+                <input [(ngModel)]="gasto.ish" type="number" (ngModelChange)="actualizarTotal()"
+                    [readOnly]='readOnly && !autorizando'>
+            </div>
+
+            <div class="iigwo-input" *ngIf='claseGasto && claseGasto.cuentaContableIEPS || readOnly'>
+                <label>IEPS</label>
+                <input [(ngModel)]="gasto.ieps" type="number" (ngModelChange)="actualizarTotal()"
+                    [readOnly]='readOnly && !autorizando'>
+            </div>
+
+            <div class="iigwo-input" *ngIf='claseGasto && claseGasto.cuentaContableTUA || readOnly'>
+                <label>TUA</label>
+                <input [(ngModel)]="gasto.tua" type="number" (ngModelChange)="actualizarTotal()"
+                    [readOnly]='readOnly && !autorizando'>
+            </div>
+
+            <div class="iigwo-input" *ngIf='claseGasto || readOnly'>
+                <label>total</label>
+                <input [(ngModel)]="gasto.total" type="number" [readOnly]='readOnly && !autorizando'>
+            </div>
+
+            <div *ngIf='ocultarSeccionesDeDialogo && !readOnly' style="
+                border-top: 1px rgba(0,0,0,0.1) solid;
+                padding-top: 12px;
+                margin-right: 30px;
+            ">
+                <button class="iigwo" style="margin-left:auto;" (click)='cancelar()'><label i18n="@@Cancelar">Cancelar</label></button>
+                <button class="iigwo accent" style="margin-right:0;" [disabled]="!puedeEnviarse()"
+                    (click)='enviar()'><label>Enviar
+                        comprobante</label></button>
+            </div>
+
+
+        </div>
+
+        <!-- PANEL DERECHA -->
+        <div>
+
+            <!-- TEXTO AYUDA TIPO GASTO -->
+            <div *ngIf='(!tipoGasto || !clasesDeGasto.length) && !readOnly'>
+                <h4 style="margin: 0 0 12px 0">Seleccione el tipo</h4>
+                <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;">Seleccione del
+                    combobox de la izquierda el tipo de clase de gasto del comprobante que va a cargar.</p>
+                <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;"
+                    *ngIf='tipoGasto && !clasesDeGasto.length && !loading'>
+                    Si el tipo de clase de gastos no tiene clases de gasto —siempre y cuando no sea un comportamiento
+                    esperado— consulte con su administrador, es posible que haya un error en la configuración.</p>
+            </div>
+
+            <!-- TEXTO AYUDA CLASE GASTO -->
+            <div *ngIf='tipoGasto && !claseGasto && clasesDeGasto.length'>
+                <h4 style="margin: 0 0 12px 0">Seleccione la clase</h4>
+                <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;">Seleccione del
+                    combobox de la izquierda la clase de gasto del comprobante que va a cargar.</p>
+            </div>
+
+            <!-- TEXTO AYUDA CLASE GASTO -->
+            <div *ngIf='tipoGasto && claseGasto'>
+                <h4 style="margin: 0 0 12px 0">Describe el comprobante</h4>
+                <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;">Describe el comprobante que estas
+                    cargando, selecciona los archivos que lo acompañan y presiona el botón <b>Enviar comprobante</b>
+                    del fondo.</p>
+            </div>
+
+            <!-- ARCHIVOS -->
+            <div class='iigwo-panel' *ngIf='claseGasto'>
+
+                <div class="iigwo-input" style='margin-bottom:6px;' *ngIf='claseGasto && claseGasto.deducibleImpuestos'>
+                    <label>archivo XML</label>
+                    <label for='xmlFileId' style='width:132px;'
+                        [class]='xmlFile==null?"fake-button accent":"fake-button"'
+                        tabindex="0">{{xmlFile==null?'Seleccionar XML':'XML seleccionado'}}</label>
+                    <label style="display: inline-block; line-height: 32px; font-size: 13px; color:rgba(0,0,0,0.5);"
+                        *ngIf="xmlFile==null">No
+                        hay archivo seleccionado</label>
+                    <label style="display: inline-block; line-height: 32px; font-size: 13px;"
+                        *ngIf="xmlFile!=null">{{xmlFile.name}}</label>
+                    <input id='xmlFileId' type="file" #xmlFileInput (change)="onXmlFileSelected(xmlFileInput.files)"
+                        accept="text/xml" style='display:none;'>
+                </div>
+
+                <div class="iigwo-input" *ngIf='claseGasto'>
+                    <label>archivo PDF</label>
+                    <label for='pdfFileId' style='width:132px;'
+                        [class]='pdfFile==null?"fake-button accent":"fake-button"'
+                        tabindex="0">{{pdfFile==null?'Seleccionar PDF':'PDF seleccionado'}}</label>
+                    <label style="display: inline-block; line-height: 32px; font-size: 13px; color:rgba(0,0,0,0.5);"
+                        *ngIf="pdfFile==null">No
+                        hay archivo seleccionado</label>
+                    <label style="display: inline-block; line-height: 32px; font-size: 13px;"
+                        *ngIf="pdfFile!=null">{{pdfFile.name}}</label>
+                    <input id='pdfFileId' type="file" #pdfFileInput (change)="onPdfFileSelected(pdfFileInput.files)"
+                        accept="application/pdf" style='display:none;'>
+                </div>
+
+            </div>
+
+            <!-- SEGREGACIONES -->
+            <div *ngIf="claseGasto">
+
+                <h4 style="margin: 0 0 12px 0">Segregaciones</h4>
+                <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;">Es posible segregar un gasto a
+                    diversos tipos de costo<span *ngIf="!segregacionesManuales">, para segregarlo activa el switch de
+                        abajo</span>.</p>
+
+                <table *ngIf='segregacionesManuales'>
+                    <tr>
+                        <th>Centro de costos</th>
+                        <th class="number">Monto</th>
+                        <th>Eliminar</th>
+                    </tr>
+                    <tr *ngFor="let e of segregaciones">
+                        <td>{{e.centroCosto}}</td>
+                        <td class="number">{{e.importeSegregado}}</td>
+                        <td>
+                            <button class="iigwo small" style="padding:0" style="margin: 0"
+                                (click)="eliminarSegregacion(e)">
+                                <mat-icon svgIcon="remove"></mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="segregaciones.length > 1">
+                        <td>Total</td>
+                        <td class="number">{{sumaDeSegregaciones()}}</td>
+                    </tr>
+                    <tr>
+                        <button [ngClass]="{
+                            iigwo: true,
+                            accent: (sumaDeSegregaciones() < gasto.subtotal)
+                        }" style="margin-top: 8px;" (click)="agregarSegregacion()">Agregar segregación</button>
+                    </tr>
+                </table>
+
+
+                <div class="iigwo-input">
+                    <label>segregaciones manuales
+                        <span>{{!segregacionesManuales ? "desactivadas" : "activadas"}}</span></label>
+                    <label class="switch">
+                        <input [(ngModel)]="segregacionesManuales" type="checkbox">
+                        <div class="slider"></div>
+                    </label>
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions *ngIf='!ocultarSeccionesDeDialogo'>
+
+    <button class="iigwo" style="margin-left:auto;" (click)='cancelar()'><label i18n="@@Cancelar">Cancelar</label></button>
+    <button class="iigwo accent" style="margin-right:0;" [disabled]="!puedeEnviarse()" (click)='enviar()'><label>Enviar
+            comprobante</label></button>
+
+</mat-dialog-actions>
+
+<!-- CARGANDO-->
+<div class='iigwo-loading' *ngIf="loading && !disableLoading">
+    <mat-spinner></mat-spinner>
+</div>

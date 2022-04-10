@@ -1,0 +1,47 @@
+<app-workspace-nav>
+    <app-viajes-nav></app-viajes-nav>
+</app-workspace-nav>
+<div class='workspace'>
+	<div class='main'>
+		<div class='menu'>
+			<label class='home'>Tipos de Viajes</label>
+
+			<button class='iigwo'>
+            <mat-icon svgIcon="add-box"></mat-icon>
+            <label routerLink="/administracion/viajes/tipos-de-viaje/nuevoviaje">Nuevo tipo de viaje</label>
+        </button>
+
+			<button class='iigwo' (click)='refresh()'>
+            <mat-icon svgIcon="refresh"></mat-icon>
+            <label i18n="@@Refrescar">Refrescar</label>
+        </button>
+
+			
+
+		</div>
+		<div class='content'>
+
+			<table class='big'>
+				<tr>
+					<th class=''>Tipo de viaje</th>
+					<th class=''>Descripción</th>
+
+				</tr>
+				<tr *ngFor='let tv of tiposdeViaje'>
+					<td class=''><a routerLink="/administracion/viajes/tipos-de-viaje/{{tv.id}}">{{tv.id}}</a></td>
+					<td class=''><a routerLink="/administracion/viajes/tipos-de-viaje/{{tv.id}}">{{tv.descripcion}}</a></td>
+				</tr>
+			</table>
+
+			<p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;">
+                <span i18n="@@siNecesitaAyudaPuedeLeerEl">Si necesita ayuda puede leer el
+                </span>
+                <a target="_blank" [href]='utilService.rutaDeManual("ManualAdministracionViajes")' i18n="@@manualAdministracionViajes">manual de Administración de Viajes</a>
+            </p>
+		</div>
+		
+		<div class='iigwo-loading' *ngIf="cargando">
+			<mat-spinner></mat-spinner>
+		</div>
+	</div>
+</div>

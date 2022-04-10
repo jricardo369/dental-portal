@@ -1,0 +1,130 @@
+<app-workspace-nav>
+    <app-caja-chica-nav></app-caja-chica-nav>
+</app-workspace-nav>
+<div class='workspace'>
+    <div class='main'>
+
+        <app-experimental-menu [titulo]="titulo">
+
+            <button *ngIf='mostrarBotonCrear'>
+                <mat-icon svgIcon="add-box"></mat-icon>
+                <label routerLink="/caja-chica/nueva-solicitud-de-contabilizacion" i18n="@@Crear solicitud">
+                    Crear solicitud</label>
+            </button>
+
+            <button (click)='refresh(true, false, true)'>
+                <mat-icon svgIcon="refresh"></mat-icon>
+                <label i18n="@@Refrescar">Refrescar</label>
+            </button>
+
+        </app-experimental-menu>
+
+        <!-- SI HAY SOLICITUDES -->
+        <div class='content'>
+
+            <!-- FILTRO CAJA CHICA -->
+            <div class="iigwo-input" *ngIf="mostrarFiltroCajaChica">
+                <label i18n="@@Caja chica">Caja chica</label>
+                <select [(ngModel)]='noCaja' (ngModelChange)='actualizarSociedades()'>
+                    <option [ngValue]="null" i18n="@@Mostrar todas las solicitudes">Mostrar todas las solicitudes
+                    </option>
+                    <option *ngFor="let e of cajasChicasDeUsuario" [ngValue]="e.noCaja">{{e.descripcion}}</option>
+                </select>
+            </div>
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;" *ngIf='!noCaja && mostrarFiltroCajaChica'
+                i18n="cajachica.sol.help2"> Si desea ver las solicitudes de una sola caja chica a su cargo seleccionela
+                en el combobox de arriba. </p>
+
+            <!-- FILTRO SOCIEDAD DE CAJA CHICA -->
+            <div class="iigwo-input" *ngIf='noCaja'>
+                <label i18n="@@Sociedad">Sociedad</label>
+                <select [(ngModel)]='sociedad' (ngModelChange)='actualizarSolicitudes()'>
+                    <option [ngValue]="null" i18n="@@Mostrar solicitudes de todas las sociedades">Mostrar solicitudes de
+                        todas las sociedades</option>
+                    <option *ngFor="let e of sapSociedades" [ngValue]="e.sociedad">{{e.sociedad}}</option>
+                </select>
+            </div>
+
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;" *ngIf='!sociedad && noCaja'
+                i18n="@@cajachica.solcont.help3">
+                Si desea ver las solicitudes de una sola sociedad de la caja chica seleccionela en el combobox de
+                arriba.
+            </p>
+
+            <!-- NO HAY SOLICITUDES -->
+            <div *ngIf='!(solicitudes && solicitudes.length)'>
+                <hr>
+                <div *ngIf='mostrarSolicitudesPendientes'>
+                    <p i18n="@@cajachica.solcont.help4">No tiene solicitudes abiertas, rechazadas, pendientes de
+                        autorización o contabilización.</p>
+                    <p i18n="@@cajachica.solcont.help4.1">Para crear una solicitud presione el botón Crea solicitud de
+                        la barra de herramientas de arriba.
+                    </p>
+                </div>
+                <div *ngIf='mostrarSolicitudesParaAutorizador'>
+                    <p i18n="@@cajachica.solcont.help6">No tiene autorizaciones pendientes, buen trabajo.</p>
+                </div>
+                <div *ngIf='mostrarSolicitudesParaContabilizador'>
+                    <p i18n="@@cajachica.solcont.help6">No tiene contabilizaciones pendientes, buen trabajo.</p>
+                </div>
+                <div *ngIf='mostrarSolicitudesContabilizadas'>
+                    <p i18n="@@cajachica.solcont.help7">No tiene solicitudes contabilizadas.</p>
+                    <p><span i18n="@@cajachica.solcont.help8">Para que una solicitud se contabilice debe ir a la
+                            pantalla de </span><a routerLink='/caja-chica/nueva-solicitud-de-contabilizacion'
+                            i18n="@@cajachica.solcont.help9">Tus solicitudes pendientes</a><span
+                            i18n="@@cajachica.solcont.help10"> y crear una solicitud.
+                        </span>
+                    </p>
+                </div>
+                <p i18n="@@cajachica.solcont.help11">Si cree que esto es un error puede presionar el botón Refrescar de
+                    arriba, esto actualizará la lista de solicitudes de la pantalla.</p>
+            </div>
+
+            <!-- SI HAY SOLICITUDES -->
+            <div *ngIf='solicitudes && solicitudes.length'>
+
+                <!-- TABLA DE SOLICITUDES DE CONTABILIZACION -->
+
+                <div class="table-wrapper" (scroll)="utilService.tableWrapperScroll($event)"
+                    style="border-right-width: 1px">
+                    <table class='big'>
+                        <tr>
+                            <th class='' i18n="@@Id">Id</th>
+                            <th class='' i18n="@@Referencia">Referencia</th>
+                            <th class='' i18n="@@Estatus">Estatus</th>
+                            <th class='' i18n="@@Caja chica">Caja chica</th>
+                            <th class='' i18n="@@Sociedad">Sociedad</th>
+                            <th class='' i18n="@@Fecha de documento">Fecha de documento</th>
+                            <th class='' i18n="@@Fecha de contabilizacion">Fecha de contabilizacion</th>
+
+                        </tr>
+                        <tr *ngFor='let e of solicitudes'>
+                            <td class=''><a routerLink="./{{e.id}}">{{e.id}}</a></td>
+                            <td class=''><a routerLink="./{{e.id}}">{{e.referencia}}</a></td>
+                            <td class='accent'>{{e.estatus}}</td>
+                            <td class='accent'>{{e.cajaChica.descripcion}}</td>
+                            <td class='accent'>{{e.sociedad.soc}}</td>
+                            <td class='accent'>{{e.fechaDocumento}}</td>
+                            <td class='accent'>{{e.fechaContabilizacion}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <p style="margin-top: 0px; margin-bottom: 18px; font-size: 11px; max-width: 300px;"
+                    i18n="@@cajachica.solcont.help1">
+                    Para ver el detalle de una solicitud, haga clic en el Id o la Referencia del registro</p>
+
+            </div>
+            
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;">
+                <span i18n="@@siNecesitaAyudaPuedeLeerEl">Si necesita ayuda puede leer el
+                </span>
+                <a target="_blank" [href]='utilService.rutaDeManual("ManualCajaChica")' i18n="@@manualCajaChica">manual de Caja Chica</a>
+            </p>
+        </div>
+
+        <div class='iigwo-loading' *ngIf="loading">
+            <mat-spinner></mat-spinner>
+        </div>
+
+    </div>
+</div>

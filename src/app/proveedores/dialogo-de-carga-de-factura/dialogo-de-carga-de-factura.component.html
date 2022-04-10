@@ -1,0 +1,47 @@
+<div class='iigwo-dialog'>
+
+    <!-- XML -->
+    <div class="iigwo-input" style='margin-bottom:6px;' *ngIf="!disableXml">
+        <label for='xmlFileId' style='width:132px;' [class]='xmlFile==null?"fake-button accent":"fake-button"'
+            tabindex="0">
+            <span *ngIf="xmlFile==null" i18n="@@contelec.selectXml">Seleccionar XML</span>
+            <span *ngIf="xmlFile!=null" i18n="@@contelec.xmlSelected">XML Seleccionado</span>
+        </label>
+        <label style="display: inline-block; line-height: 32px; font-size: 13px; color:rgba(0,0,0,0.5);"
+            *ngIf="xmlFile==null" i18n="@@contelec.noFileSelected">No hay archivo seleccionado</label>
+        <label style="display: inline-block; line-height: 32px; font-size: 13px;"
+            *ngIf="xmlFile!=null">{{xmlFile.name}}</label>
+        <input id='xmlFileId' type="file" #xmlFileInput (change)="onXmlFileSelected(xmlFileInput.files)"
+            accept="text/xml" style='display:none;'>
+    </div>
+
+    <!-- PDF -->
+    <div class="iigwo-input">
+        <label for='pdfFileId' style='width:132px;' [class]='pdfFile==null?"fake-button accent":"fake-button"'
+            tabindex="0">
+            <span *ngIf="pdfFile==null" i18n="@@contelec.selectPdf">Seleccionar PDF</span>
+            <span *ngIf="pdfFile!=null" i18n="@@contelec.pdfSelected">PDF Seleccionado</span>
+        </label>
+        <label style="display: inline-block; line-height: 32px; font-size: 13px; color:rgba(0,0,0,0.5);"
+            *ngIf="pdfFile==null" i18n="@@contelec.noFileSelected">No hay archivo seleccionado</label>
+        <label style="display: inline-block; line-height: 32px; font-size: 13px;"
+            *ngIf="pdfFile!=null">{{pdfFile.name}}</label>
+        <input id='pdfFileId' type="file" #pdfFileInput (change)="onPdfFileSelected(pdfFileInput.files)"
+            accept="application/pdf" style='display:none;'>
+    </div>
+
+    <hr style="margin-top: -6px;">
+
+    <div class='dialog-actions'>
+
+        <button class="iigwo" (click)="cancelar()">
+            <label i18n="@@contelec.cancel">Cancelar</label>
+        </button>
+
+        <button class="iigwo accent" (click)="enviarArchivos()" [disabled]='(xmlFile==null && !disableXml)||pdfFile==null'>
+            <label i18n="@@contelec.sendFiles">Enviar archivos</label>
+        </button>
+
+    </div>
+
+</div>

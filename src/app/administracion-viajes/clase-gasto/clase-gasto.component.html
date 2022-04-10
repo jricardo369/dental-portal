@@ -1,0 +1,198 @@
+<app-workspace-nav>
+	<app-viajes-nav></app-viajes-nav>
+</app-workspace-nav>
+
+<div class='workspace'>
+	<div class='main'>
+		<!--Menu-->
+		<div class='menu'>
+
+			<button class='iigwo' (click)='cancelar()' style="background: none;margin-right: 24px;margin-left: -12px;">
+                <mat-icon svgIcon="arrow-back"></mat-icon>
+            </button>
+
+			<label class='home'>Clase de Gasto </label>
+
+			<div *ngIf="id != 'nuevo'">
+				<button class='iigwo' (click)='refrescar()'>
+                <mat-icon svgIcon="refresh"></mat-icon>
+                <label i18n="@@Refrescar">Refrescar</label>
+            </button>
+
+				<button class='iigwo' (click)='eliminar()'>
+                <mat-icon svgIcon="delete"></mat-icon>
+                <label>Eliminar</label>
+            </button>
+			</div>
+		</div>
+		<!--Menu-->
+		<!--Contenido-->
+		<div class='content'>
+			<table *ngIf="id == 'nuevo'">
+				<tr>
+					<td>
+						<!-- FILTRO AREA-->
+						<div style="margin-bottom: 20px;" >
+							<h5 style="margin: 0 0 3px 0;">Áreas</h5>
+							<div class="iigwo-input inline">
+								<select [(ngModel)]="idarea" (ngModelChange)="filtro()">
+						<option value="-3">Selecciona una área</option>
+						<option *ngFor="let a of areas" value="{{a.idarea}}">{{a.descripcion}}</option>
+					</select>
+							</div>
+						</div>
+					</td>
+					<td>
+						<!-- FILTRO TIPOS CLASES-->
+						<div style="margin-bottom: 20px;" *ngIf="idarea != -3 && tiposgasto.length != 0">
+							<h5 style="margin: 0 0 3px 0;">Tipo Clases de Gasto</h5>
+							<div class="iigwo-input inline">
+								<select [(ngModel)]="idtcg" (ngModelChange)="refrescar()">
+						<option value="-3">Selecciona un tipo de gasto</option>
+						<option *ngFor="let cg of tiposgasto" value="{{cg.id}}">{{cg.descripcion}}</option>
+					</select>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</table>
+
+			<div class="iigwo-input">
+				<label>Descripción</label>
+				<input #description [(ngModel)]="clasesGasto.descripcion" maxlength="45">
+			</div>
+			<div class="iigwo-input">
+				<label>Cuenta Contable</label>
+				<input #description [(ngModel)]="clasesGasto.cuentaContable" maxlength="10">
+			</div>
+			<div class="iigwo-input">
+				<label>Activado para visualización</label>
+				<label class="switch">
+					<input  type="checkbox" [(ngModel)]="clasesGasto.activo">
+					<div class="slider"></div>
+				</label>
+			</div>
+			<div class="iigwo-input">
+				<label>Activado para Segregación</label>
+				<label class="switch">
+					<input  type="checkbox" [(ngModel)]="clasesGasto.segregacion">
+					<div class="slider"></div>
+				</label>
+			</div>
+			<div class="iigwo-input">
+				<label>Deducible de impuestos</label>
+				<label class="switch">
+					<input  type="checkbox" [(ngModel)]="clasesGasto.deducibleImpuestos">
+					<div class="slider"></div>
+				</label>
+			</div>
+			<br>
+			<!--IMPUESTOS-->
+			<div class="iigwo-input">
+				<label><b>Impuestos</b></label>
+			</div>
+			<hr style="margin:  24px 0;">
+			<div class="iigwo-input-check">
+				<label>IVA</label>
+				<input [(ngModel)]="ivaB" type="checkbox" (ngModelChange)="countIVA()">
+			</div>
+			<div *ngIf="ivaB" class="iigwo-input-gasto">
+				<label>Indicador IVA</label>
+				<input [(ngModel)]="clasesGasto.indicador_iva" maxlength="2">
+			</div>
+			<hr style="margin:  24px 0;">
+			<div class="iigwo-input-check">
+				<label>Otros gastos</label>
+				<input [(ngModel)]="isrB" type="checkbox" (ngModelChange)="countISR()">
+			</div>
+			<div *ngIf="isrB" class="iigwo-input-gasto">
+				<label>Cuenta contable</label>
+				<input [(ngModel)]="clasesGasto.cuentaContableISR" maxlength="10">
+				<label>Indicador otros gastos</label>
+				<input [(ngModel)]="clasesGasto.indicador_isr" maxlength="2">
+			</div>
+
+
+			<hr style="margin:  24px 0;">
+			<div class="iigwo-input-check">
+				<label>ISH</label>
+				<input [(ngModel)]="ishB" type="checkbox" (ngModelChange)="countISH()">
+			</div>
+			<div *ngIf="ishB" class="iigwo-input-gasto">
+				<label>Cuenta contable</label>
+				<input [(ngModel)]="clasesGasto.cuentaContableISH" maxlength="10">
+				<label>Indicador ISH</label>
+				<input [(ngModel)]="clasesGasto.indicador_ish" maxlength="2">
+			</div>
+
+			<hr style="margin:  24px 0;">
+			<div class="iigwo-input-check">
+				<label>TUA</label>
+				<input [(ngModel)]="tuaB" type="checkbox" (ngModelChange)="countTUA()">
+			</div>
+			<div *ngIf="tuaB" class="iigwo-input-gasto">
+				<label class="">Cuenta contable</label>
+				<input [(ngModel)]="clasesGasto.cuentaContableTUA" maxlength="10">
+				<label>Indicador TUA</label>
+				<input [(ngModel)]="clasesGasto.indicador_tua" maxlength="2">
+			</div>
+
+
+			<hr style="margin:  24px 0;">
+			<div class="iigwo-input-check">
+				<label>IEPS</label>
+				<input [(ngModel)]="iepsB" type="checkbox" (ngModelChange)="countIEPS()">
+			</div>
+			<div *ngIf="iepsB" class="iigwo-input-gasto">
+				<label>Cuenta contable</label>
+				<input [(ngModel)]="clasesGasto.cuentaContableIEPS" maxlength="10">
+				<label>Indicador TUA</label>
+				<input [(ngModel)]="clasesGasto.indicador_ieps" maxlength="2">
+			</div>
+			<hr style="margin:  24px 0;">
+			<!--BOTONES-->
+			<div *ngIf="id != 'nuevo'">
+				<button class='accent iigwo' (click)='guardar()'>
+                    <label>Guardar</label>
+                </button>
+				<button class='iigwo' (click)='cancelar()'>
+                    <label i18n="@@Cancelar">Cancelar</label>
+                </button>
+			</div>
+			<div *ngIf="id == 'nuevo'">
+				<button class='accent iigwo' (click)='crear()'>
+                    <label>Crear</label>
+                </button>
+				<button class='iigwo' (click)='cancelar()'>
+                    <label i18n="@@Cancelar">Cancelar</label>
+                </button>
+			</div>
+		</div>
+		<!--BOTONES-->
+
+		<!-- MENSAJE -->
+		<div *ngIf="msjdel" class='iigwo-dialog-background'>
+			<div class='iigwo-dialog'>
+				<h3>Eliminar {{clasesGasto.descripcion}} </h3>
+				<p>Estás a punto de eliminar ésta Clase de Gasto, la operación es irreversible ¿estás seguro de que deseas eliminarla?</p>
+				<button class='iigwo accent' (click)='confirmarDel()'><label>Eliminar {{clasesGasto.descripcion}} </label></button>
+				<!---->
+				<button class='iigwo' (click)='msjdel = false'><label i18n="@@Cancelar">Cancelar</label></button>
+			</div>
+		</div>
+		<!-- MENSAJE ERROR-->
+		<div *ngIf="error" class='iigwo-dialog-background'>
+			<div class='iigwo-dialog'>
+				<h3>{{tituloerror}}</h3>
+				<p>{{msjerror}}</p>
+				<!---->
+				<button class='iigwo accent' (click)='error = false'><label>Aceptar</label></button>
+			</div>
+		</div>
+		<!--Cargando-->
+		<div class='iigwo-loading' *ngIf="cargando">
+			<mat-spinner></mat-spinner>
+		</div>
+
+	</div>
+</div>

@@ -1,0 +1,109 @@
+<app-workspace-nav>
+	<app-viajes-nav></app-viajes-nav>
+</app-workspace-nav>
+
+<div class='workspace'>
+	<div class='main'>
+		<!--Menu-->
+		<div class='menu'>
+
+			<button class='iigwo' (click)='cancelar()' style="background: none;margin-right: 24px;margin-left: -12px;">
+                <mat-icon svgIcon="arrow-back"></mat-icon>
+            </button>
+
+			<label class='home'>Tipo Gasto </label>
+
+			<div *ngIf="id != 'nuevo'">
+				<button class='iigwo' (click)='refrescar()'>
+                <mat-icon svgIcon="refresh"></mat-icon>
+                <label i18n="@@Refrescar">Refrescar</label>
+            </button>
+
+				<button class='iigwo' (click)='eliminar()'>
+                <mat-icon svgIcon="delete"></mat-icon>
+                <label>Eliminar</label>
+            </button>
+			</div>
+		</div>
+		<!--Menu-->
+		<!--Contenido-->
+		<div class='content'>
+			<!-- SELECCIONA AREA -->
+			<div *ngIf="id == 'nuevo'">
+				<div class="iigwo-input">
+					<label>Área</label>
+					<div class="iigwo-input inline">
+						<select [(ngModel)]="idarea">
+						<option value="-3">Selecciona una área</option>
+						<option *ngFor="let a of areas" value="{{a.idarea}}">{{a.descripcion}}</option>
+					</select>
+					</div>
+				</div>
+
+			</div>
+
+			<div *ngIf="id != 'nuevo'">
+				<div class="iigwo-input">
+					<label>Id Tipo Gasto</label>
+					<input #description [(ngModel)]="tgasto.id" readOnly>
+				</div>
+			</div>
+			<div class="iigwo-input">
+				<label>Descripción</label>
+				<input #description [(ngModel)]="tgasto.descripcion">
+			</div>
+
+			<div class="iigwo-input">
+				<label>Activo</label>
+				<label class="switch">
+					<input  type="checkbox" [(ngModel)]="tgasto.activo">
+					<div class="slider"></div>
+				</label>
+			</div>
+			<hr style="margin:  24px 0;">
+			<!--BOTONES-->
+			<div *ngIf="id != 'nuevo'">
+				<button class='accent iigwo' (click)='guardar()'>
+                    <label>Guardar</label>
+                </button>
+				<button class='iigwo' (click)='cancelar()'>
+                    <label i18n="@@Cancelar">Cancelar</label>
+                </button>
+			</div>
+			<div *ngIf="id == 'nuevo'">
+				<button class='accent iigwo' (click)='crear()'>
+                    <label>Crear</label>
+                </button>
+				<button class='iigwo' (click)='cancelar()'>
+                    <label i18n="@@Cancelar">Cancelar</label>
+                </button>
+			</div>
+		</div>
+		<!--BOTONES-->
+
+		<!-- MENSAJE -->
+		<div *ngIf="msjdel" class='iigwo-dialog-background'>
+			<div class='iigwo-dialog'>
+				<h3>Eliminar {{tgasto.descripcion}} </h3>
+				<p>Estás a punto de eliminar éste tipo de clase de gastos, la operación es irreversible ¿estás seguro de que deseas eliminarlo?</p>
+				<button class='iigwo accent' (click)='confirmarDel()'><label>Eliminar {{tgasto.descripcion}} </label></button>
+				<!---->
+				<button class='iigwo' (click)='msjdel = false'><label i18n="@@Cancelar">Cancelar</label></button>
+			</div>
+		</div>
+		<!-- MENSAJE ERROR-->
+		<div *ngIf="error" class='iigwo-dialog-background'>
+			<div class='iigwo-dialog'>
+				<h3>{{tituloerror}}</h3>
+				<p>{{msjerror}}</p>
+				<!---->
+				<button class='iigwo accent' (click)='error = false'><label>Aceptar</label></button>
+			</div>
+		</div>
+		<!--Cargando-->
+		<div class='iigwo-loading' *ngIf="cargando">
+			<mat-spinner></mat-spinner>
+		</div>
+
+	</div>
+</div>

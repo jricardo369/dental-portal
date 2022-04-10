@@ -1,0 +1,35 @@
+<form *ngIf='!recuperandoPassword && !recuperarPasswordOnly'>
+
+    <mat-icon svgIcon="person"></mat-icon>
+    <div class='iigwo-input'>
+        <input [(ngModel)]='user.usuario' name='usuario' placeholder="Usuario">
+    </div>
+    <div class='iigwo-input'>
+        <input [(ngModel)]='user.password' name='password' placeholder="Contraseña" type="password">
+    </div>
+    <button class='iigwo accent' (click)='ingresar()'>
+        Ingresar</button>
+    <div style="padding: 15px 0px 0px 0px;">
+        <a class="rec" (click)='recuperandoPassword=true' style="display: block; text-align: center;">
+            Recuperar Contraseña</a>
+    </div>
+</form>
+
+<form *ngIf='recuperandoPassword || recuperarPasswordOnly'>
+
+    <p i18n="@@login.slogan2">Recuperación de credenciales</p>
+    <div class='iigwo-input' style="margin-top: 10px;">
+        <input [(ngModel)]='user.usuario' name='usuario' placeholder="Usuario" i18n-placeholder="@@Usuario">
+    </div>
+    <button class='iigwo accent' (click)='recuperar()' i18n="@@login.enviarCorreoDeRecuperacion">
+        Envíar correo de recuperación
+    </button>
+    <div style="margin: 15px 0px 0px 100px;" *ngIf="!recuperarPasswordOnly">
+        <a class="rec" (click)='recuperandoPassword=false'>Regresar</a>
+    </div>
+</form>
+
+<!-- LOADING -->
+<div class='iigwo-loading' *ngIf="loading">
+    <mat-spinner></mat-spinner>
+</div>

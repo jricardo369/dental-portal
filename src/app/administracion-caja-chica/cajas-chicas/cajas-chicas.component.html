@@ -1,0 +1,57 @@
+<app-workspace-nav>
+    <app-caja-chica-nav></app-caja-chica-nav>
+</app-workspace-nav>
+<div class='workspace'>
+    <div class='main'>
+
+        <app-experimental-menu titulo="Cajas Chicas" i18n-titulo="@@cajachica.cajas chicas">
+
+            <button>
+                <mat-icon svgIcon="add-box"></mat-icon>
+                <label routerLink="/administracion/caja-chica/cajas-chicas/nueva-caja" i18n="@@Crear caja">Crear
+                    caja</label>
+            </button>
+
+            <button (click)='refresh()'>
+                <mat-icon svgIcon="refresh"></mat-icon>
+                <label i18n="@@Refrescar">Refrescar</label>
+            </button>
+
+        </app-experimental-menu>
+
+        <div class='content'>
+
+            <table class='big'>
+                <tr>
+                    <th class='' i18n="@@>No. Caja">No. Caja</th>
+                    <th class='' i18n="@@>Descripción">Descripción</th>
+                    <th class='' i18n="@@>No. Acreedor / Empleado SAP">No. Acreedor / Empleado SAP</th>
+                    <th class='' i18n="@@>CME">CME</th>
+                    <th class='' i18n="@@>Usuario portal">Usuario portal</th>
+
+                </tr>
+                <tr *ngFor='let e of cajaschicas'>
+                    <td class=''><a routerLink="/administracion/caja-chica/cajas-chicas/{{e.noCaja}}">{{e.noCaja}}</a>
+                    </td>
+                    <td class=''><a
+                            routerLink="/administracion/caja-chica/cajas-chicas/{{e.noCaja}}">{{e.descripcion}}</a></td>
+                    <td class='accent'>{{e.acredor}}</td>
+                    <td class='accent'>{{e.cme}}</td>
+                    <td class='accent'>{{e.usuarioSap}}</td>
+                </tr>
+
+            </table>
+
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;">
+                <span i18n="@@siNecesitaAyudaPuedeLeerEl">Si necesita ayuda puede leer el
+                </span>
+                <a target="_blank" [href]='utilService.rutaDeManual("ManualAdministracionCajaChica")' i18n="@@manualAdministracionCajaChica">manual de Administración de Caja Chica</a>
+            </p>
+        </div>
+
+        <div class='iigwo-loading' *ngIf="cargando">
+            <mat-spinner></mat-spinner>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,95 @@
+<app-workspace-nav>
+    <app-proveedores-nav></app-proveedores-nav>
+</app-workspace-nav>
+<div class='workspace'>
+    <div class='main'>
+
+        <div class='menu'>
+            <label class='home' i18n="proveedores.nc.title">Carga de facturas de nota de crédito</label>
+        </div>
+
+        <div class='content'>
+
+            <!-- PANELES -->
+            <div style="display:flex; height:100%;">
+
+                <!-- PANEL DE BUSQUEDA DE ORDEN DE COMPRA -->
+                <div style="
+                            height: 100%;
+                            position: relative;
+                            display: flex;
+                            flex-flow: column;
+                
+                            margin-right: 32px;
+                        ">
+
+                    <!-- INSTRUCCIONES -->
+                    <h4 style="margin: 0 0 12px 0" i18n="proveedores.nc.seleccioneLosArchivos">Seleccione los archivos
+                    </h4>
+                    <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;"
+                        i18n="proveedores.nc.seleccioneLosArchivosInfo">
+                        Presione el botón seleccionar archivos del fondo. Si la nota de crédito está relacionada
+                        con una orden de compra marque el checkbox de abajo y llene la caja de texto que aparecerá
+                    </p>
+
+                    <!-- CHECKBOX -->
+                    <div class="iigwo-input">
+                        <label>
+                            <span *ngIf="conOrdenDeCompra" i18n="proveedores.nc.conOC">Con orden de compra</span>
+                            <span *ngIf="!conOrdenDeCompra" i18n="proveedores.nc.sinOC">Sin orden de compra</span>
+                        </label>
+                        <label class="switch">
+                            <input [(ngModel)]="conOrdenDeCompra" type="checkbox">
+                            <div class="slider"></div>
+                        </label>
+                    </div>
+
+                    <!-- FORMA DE BUSQUEDA -->
+                    <div class='iigwo-panel' *ngIf='conOrdenDeCompra' style="padding:12px;">
+                        <div style="display:flex;min-height: 56px;">
+                            <div class="iigwo-input" style="flex:1; margin-right: 0;">
+                                <label i18n="contelec.PurchaseOrder">Orden de compra</label>
+                                <input type="input" i18n-placeholder placeholder="Orden de compra"
+                                    [(ngModel)]='numeroDeOrdenDeCompra' />
+                            </div>
+                        </div>
+                        <mat-radio-group [(ngModel)]="tipoDeOperacion">
+                            <mat-radio-button value="D" i18n="proveedores.nc.porDevMerc">Por devolución de mercancía
+                            </mat-radio-button>
+                            <mat-radio-button value="P" i18n="proveedores.nc.porDifPrec">Por diferencia de precio
+                            </mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+
+                    <button class='iigwo primary' style="max-width:fit-content;"
+                        (click)="abrirVentanaDeSeleccionDeFacturas()"
+                        [disabled]="conOrdenDeCompra && numeroDeOrdenDeCompra==''"
+                        i18n="proveedores.nc.seleccionarArchivos">Seleccionar archivos</button>
+
+                    <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;">
+                        <span i18n="proveedores.em.siNecesitaAyudaPuedeLeerEl">Si necesita ayuda puede leer el </span><a target="_blank" [href]='utilService.rutaDeManual("ManualProveedores")'
+                            i18n="proveedores.em.manualDeCargaDeFacturas">manual de carga de facturas</a></p>
+
+                </div>
+
+                <!-- INSTRUCCIONES PRE SELECCIONAR ORDEN DE COMPRA -->
+                <div style="
+                        height: 100%;
+                        position: relative;
+                        display: flex;
+                        flex-flow: column;
+                        overflow: hidden;
+                    " *ngIf="ordenDeCompraSeleccionada == null">
+
+                </div>
+
+            </div>
+
+            <!-- LOADING -->
+            <div class='iigwo-loading' *ngIf="loading">
+                <mat-spinner></mat-spinner>
+            </div>
+
+        </div>
+    </div>
+</div>

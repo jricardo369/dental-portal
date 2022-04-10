@@ -1,0 +1,92 @@
+<app-workspace-nav>
+	<app-viajes-nav></app-viajes-nav>
+</app-workspace-nav>
+<div class='workspace'>
+	<div class='main'>
+		<div class='menu'>
+			<button class='iigwo' (click)='cancel()' style="background: none;margin-right: 24px;margin-left: -12px;">
+                <mat-icon svgIcon="arrow-back"></mat-icon>
+            </button>
+			<label class='home'>Tipo de viaje {{tiposdeviaje.id}}</label>
+
+			<div *ngIf="idtipoviaje != 'nuevoviaje'">
+				<button class='iigwo' (click)='refresh()'>
+					<mat-icon svgIcon="refresh"></mat-icon>
+					<label i18n="@@Refrescar">Refrescar</label>
+				</button>
+
+				<button class='iigwo' (click)='eliminar()'>
+					<mat-icon svgIcon="delete"></mat-icon>
+					<label>Eliminar</label>
+				</button>
+			</div>
+
+		</div>
+		<div class='content'>
+			<div class="iigwo-input">
+				<label>Descripción</label>
+				<input #description [(ngModel)]="tiposdeviaje.descripcion" maxlength="45">
+			</div>
+			<div class="iigwo-input">
+				<label>Tipo Anticipo</label>
+				<label class="switch">
+					<input [(ngModel)]="tiposdeviaje.tipoAnticipo" type="checkbox">
+					<div class="slider"></div>
+    			</label>
+			</div>
+
+			<div class="iigwo-input">
+				<label>Activado para visualización</label>
+				<label class="switch">
+					<input [(ngModel)]="tiposdeviaje.activo" type="checkbox">
+					<div class="slider"></div>
+    			</label>
+			</div>
+
+
+
+			<hr style="margin:  24px 0;">
+
+
+			<button *ngIf="idtipoviaje != 'nuevoviaje'" class='accent iigwo' (click)='guardar()'>
+						<label>Guardar</label>
+			</button>
+			<button *ngIf="idtipoviaje == 'nuevoviaje'" class='accent iigwo' (click)='crear()'>
+						<label>Crear</label>
+			</button>
+			<button class='iigwo' (click)='cancel()'>
+                    <label i18n="@@Cancelar">Cancelar</label>
+            </button>
+
+
+		</div>
+		<!--MENSAJE ELIMINAR-->
+		<div *ngIf="msjeliminarTV" class='iigwo-dialog-background'>
+			<div class="iigwo-dialog">
+				<h3>Eliminar el tipo de viaje {{tiposdeviaje.id}} </h3>
+				<p>Estás a punto de borrar el viaje {{tiposdeviaje.id}}, esta operación es irreversible ¿Estás seguro que deseas eliminar?</p>
+				<button class="iigwo accent" (click)="deleteConfirmTV()">
+					<label>Eliminar el tipo de viaje {{tiposdeviaje.id}} </label>
+				</button>
+				<button class="iigwo" (click)="msjeliminarTV = false">
+					<label i18n="@@Cancelar">Cancelar</label>
+				</button>
+			</div>
+		</div>
+
+		<!-- MENSAJE ERROR-->
+		<div *ngIf="msjerrorTV" class='iigwo-dialog-background'>
+			<div class='iigwo-dialog'>
+				<h3>{{respuestaTV}}</h3>
+				<p>{{msjTV}}</p>
+				<!---->
+				<button class='iigwo accent' (click)='msjerrorTV = false'><label>Aceptar</label></button>
+			</div>
+		</div>
+
+		<!-- MENSAJE CARGANDO-->
+		<div class='iigwo-loading' *ngIf="cargandoTV">
+			<mat-spinner></mat-spinner>
+		</div>
+	</div>
+</div>

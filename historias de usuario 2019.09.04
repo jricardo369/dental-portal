@@ -1,0 +1,30 @@
+Quitar la leyenda de INFRA
+Quitar la leyenda de DEMO
+Mover el boton de agregar gasto, debajo de las instrucciones de agregar gasto, con un color diferente
+    NEGOCIAMOS QUE MEJOR SOLO LO HACEMOS RESALTAR
+El panel izquierdo de cabecera probablemente ponerle otro color de background ligeramente diferente
+    VAMOS A PONERLE UNA BARRA QUE SEPARE, NO VAMOS A COMPROMETER LA UX
+Diferentes logos para cada permiso
+	A VER QUE SE NOS OCURRE
+Eliminar la opción de gastos de viaje, probablemente enviar directamente al panel de caja chica
+	SI NO TIENEN MAS MODULOS REDIRIGIR A EL UNICO MODULO QUE TIENEN
+	
+Poner de diferente color la cabecera de las tablas de posiciones
+	HEADER CON FONDO NEGRO, SE VE CHINGÓN
+
+**************************
+No muestra el PDF previamente cargado
+	PREVIEW DEL PDF!
+No permite actualizar la referencia de la comprobación de caja chica. OK
+
+**************************
+Rol autorizador
+No le permite visualizar el PDF que cargó el solicitador
+	PREVIEW DEL PDF!
+
+**************************
+Rol contabilizador
+No le permite visualizar el PDF que cargó el solicitador
+	PREVIEW DEL PDF!
+Al momento de aprobar solicitud, aunque no tenga ninguna solicitud rechazada me pide que capture el motivo de rechazo
+	APARECE TEXTO DE EXITO, PERO SOLICITA TEXTO DE RECHAZO

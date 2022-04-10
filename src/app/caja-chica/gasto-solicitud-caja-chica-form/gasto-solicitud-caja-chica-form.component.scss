@@ -1,0 +1,38 @@
+:host {
+    position: relative;
+    display: block;
+}
+
+mat-dialog-content.nodialog {
+    max-height: 100%;
+}
+
+.panel-container {
+    display:flex; 
+    min-height: 320px;
+}
+
+.gasto-panel {
+    min-width: 350px;
+}
+
+@media(max-width: 480px) {
+
+    .panel-container {
+        flex-flow: column;
+        width: calc(100vw - 72px);
+    }
+    
+    .gasto-panel {
+        min-width: 100%;
+
+        textarea {
+            min-width: 100% !important;
+        }
+
+        .iigwo-panel {
+            max-width: 100% !important;
+            box-sizing: border-box;
+        }
+    }
+}

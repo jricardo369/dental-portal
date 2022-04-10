@@ -1,0 +1,165 @@
+<app-workspace-nav>
+    <app-proveedores-nav></app-proveedores-nav>
+</app-workspace-nav>
+<div class='workspace'>
+    <div class='main'>
+
+        <div class='menu'>
+            <label class='home' i18n="proveedores.consultafac.title">Consulta de facturas</label>
+        </div>
+
+        <!--
+        -->
+
+        <div class='content'>
+
+            <!-- PANELES -->
+            <div style="display:flex; height:100%; position: relative;">
+
+                <div *ngIf='withResults' class="results">
+                    <table class='big'>
+                        <tr>
+                            <th i18n='proveedores.consultafac.Sociedad'>Sociedad</th>
+                            <th i18n='proveedores.consultafac.Proveedor'>Proveedor</th>
+                            <th i18n='proveedores.consultafac.Orden de Compra'>Orden de Compra</th>
+                            <th i18n='proveedores.consultafac.Número de Referencía'>Número de Referencía</th>
+                            <th i18n='proveedores.consultafac.Importe'>Importe</th>
+                            <th i18n='proveedores.consultafac.Moneda'>Moneda</th>
+                            <th i18n='proveedores.consultafac.Fecha'>Fecha</th>
+                            <th i18n='proveedores.consultafac.Serie'>Serie</th>
+                            <th i18n='proveedores.consultafac.Folio'>Folio</th>
+                            <th i18n='proveedores.consultafac.Status Factura'>Status Factura</th>
+                            <th i18n='proveedores.consultafac.Documento de Pago'>Documento de Pago</th>
+                            <th i18n='proveedores.consultafac.Fecha de Pago'>Fecha de Pago</th>
+                        </tr>
+                        <tr *ngFor='let e of ZTMM_CON_FACTURAS'>
+                            <td>{{e.BUKRS}}</td>
+                            <td>{{e.LIFNR}}</td>
+                            <td>{{e.EBELN}}</td>
+                            <td>{{e.XBLNR}}</td>
+                            <td>{{e.WRBTR | currency}}</td>
+                            <td>{{e.WAERS}}</td>
+                            <td>{{e.BLDAT}}</td>
+                            <td>{{e.SERIE}}</td>
+                            <td>{{e.FOLIO}}</td>
+                            <td>{{e.STATUS_FACT}}</td>
+                            <td>{{e.AUGBL}}</td>
+                            <td>{{e.AUGDT}}</td>
+                        </tr>
+                    </table>
+                </div>
+
+				<!-- INPUT DE NUMERO DE PROVEEDOR (USADO POR EMPLEADO CON PERMISO) -->
+                <div style="display:flex;min-height: 56px;" *ngIf="usuario != null && usuario.rol.id == 2"  [class.configPanel2]="withResults">
+
+                    <div class="iigwo-input" style="flex:1;">
+                        <label i18n="@@proveedores.em.numeroDeProveedor"> número de proveedor</label>
+                        <input [disabled]="numeroDeProveedorParaUsuarioEmpleado != null"
+                            [(ngModel)]='proveedorInput' type="input" 
+                            i18n-placeholder="@@proveedores.em.numeroDeProveedor"
+                            placeholder="Número de proveedor" />
+                    </div>
+                
+                    <button *ngIf="numeroDeProveedorParaUsuarioEmpleado == null" class="iigwo primary small"
+                        [disabled]="proveedorInput == 0" style="
+                        margin: 18px 0 0 -4px;
+                        min-height: 0;
+                        height: 24px;
+                        line-height: 22px;" i18n="@@contelec.aceptar"
+                        (click)="seleccionarProveedor()">Aceptar</button>
+                
+                    <button *ngIf="numeroDeProveedorParaUsuarioEmpleado != null" class="iigwo primary small" 
+                        [disabled]="proveedorInput == 0" style="
+                        margin: 18px 0 0 -4px;
+                        min-height: 0;
+                        height: 24px;
+                        line-height: 22px;" i18n="@@contelec.cancelar"
+                        (click)="deseleccionarProveedor()">Cancelar</button>
+
+                    <!-- INSTRUCCIONES PARA SELECCIONAR PROVEEDOR -->
+                    <div style="margin-left: 30px;"
+                        *ngIf="usuario != null && usuario.rol.id == 2 && numeroDeProveedorParaUsuarioEmpleado == null && withResults == false" >
+                        <h4 style="margin: 0 0 14px 0" i18n="@@proveedores.em.ingresaElProveedor">Ingresa el número de
+                            proveedor
+                        </h4>
+                        <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;">
+                            <span i18n="@@proveedores.em.ingresaElProveedorDetalle">
+                                Ingresa en la caja de la izquierda el número de proveedor para el que deseas cargar facturas
+                                y presiona el botón
+                            </span>
+                            <b i18n="@@contelec.aceptar">Aceptar</b>.
+                        </p>
+                    </div>
+            
+
+                </div>
+                <!-- PANEL DE BUSQUEDA DE ORDEN DE COMPRA -->
+                <div [ngClass]='{configPanel:true, withResults:withResults}' style="
+                            height: 100%;
+                            display: flex;
+                            flex-flow: column;
+                        "
+                        [class.bajar]="visible" *ngIf="visible || esProveedor">
+
+                    <!-- INSTRUCCIONES -->
+                    <h4 style="margin: 0 0 12px 0" i18n="proveedores.consultafac.helpTitle">Define los parametros de
+                        búsqueda
+                    </h4>
+                    <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;"
+                        i18n="proveedores.consultafac.helpParagraph">
+                        Busca por orden de compra o por rango de fechas
+                    </p>
+
+                    <!-- FORMA DE BUSQUEDA -->
+
+                    <div class="iigwo-input">
+                        <label i18n="proveedores.consultafac.Orden de compra">Orden de compra</label>
+                        <input [(ngModel)]="I_EBELN" type="text" placeholder="Opcional"
+                            i18n-placeholder="contelec.opcional">
+                    </div>
+
+                    <div class="iigwo-input">
+                        <label i18n="proveedores.consultafac.Fecha inicial">Fecha inicial</label>
+                        <input [ngModel]="I_FECHA_INI | date:'yyyy-MM-dd':'':'en'"
+                            (ngModelChange)='I_FECHA_INI = safeYYYYMMDD($event)' type="date">
+                    </div>
+                    <p *ngIf='!I_EBELN' style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;"
+                        i18n="proveedores.consultafac.Este campo es obligatorio">Este campo es
+                        obligatorio si no se especifica una orden de compra</p>
+
+                    <div class="iigwo-input">
+                        <label i18n="proveedores.consultafac.Fecha final">Fecha final</label>
+                        <input [ngModel]="I_FECHA_FIN | date:'yyyy-MM-dd':'':'en'"
+                            (ngModelChange)='I_FECHA_FIN = safeYYYYMMDD($event)' type="date">
+                    </div>
+                    <p *ngIf='!I_EBELN' style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;"
+                        i18n="proveedores.consultafac.Este campo es obligatorio">Este campo es
+                        obligatorio si no se especifica una orden de compra</p>
+
+                    <div class="iigwo-input">
+                        <label i18n="proveedores.consultafac.Documento referencia">Documento referencia</label>
+                        <input [(ngModel)]="I_XBLNR" type="text" placeholder="Opcional"
+                            i18n-placeholder="contelec.opcional">
+                    </div>
+
+
+                    <!-- BOTON DE CONSULTAR -->
+                    <button class='iigwo primary' style="max-width:fit-content;" (click)="consultar()"
+                        i18n="contelec.Consultar">Consultar</button>
+
+                    <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;">
+                        <span i18n="proveedores.em.siNecesitaAyudaPuedeLeerEl">Si necesita ayuda puede leer el </span><a target="_blank" [href]='utilService.rutaDeManual("ManualProveedores")'
+                            i18n="proveedores.em.manualDeCargaDeFacturas">manual de carga de facturas</a></p>
+
+                </div>
+
+            </div>
+
+            <!-- LOADING -->
+            <div class='iigwo-loading' *ngIf="loading">
+                <mat-spinner></mat-spinner>
+            </div>
+
+        </div>
+    </div>
+</div>

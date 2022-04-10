@@ -1,0 +1,115 @@
+<app-workspace-nav>
+    <app-general-nav></app-general-nav>
+</app-workspace-nav>
+<div class='workspace'>
+    <div class='main'>
+
+        <app-experimental-menu titulo="Configuración general" i18n-titulo="@@Configuración general">
+
+            <button (click)='refrescar()'>
+                <mat-icon svgIcon="refresh"></mat-icon>
+                <label i18n="@@Refrescar">Refrescar</label>
+            </button>
+        
+        </app-experimental-menu>
+
+        <div class='content'>
+
+            <!-- ================================================== -->
+
+            <h4 style="margin: 0 0 12px 0" i18n="@@Fecha de inicial de facturas de proveedores">Fecha de cierre</h4>
+
+            <div class="iigwo-input">
+                <label i18n="@@Fecha inicial de carga">Fecha cierre</label>
+                <input [(ngModel)]="fechaInicialFacturasProveedores" type="date"
+                    [attr.readOnly]="cambiandoFechaInicialFacturasProveedores ? null : false">
+            </div>
+
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;"
+                *ngIf="cambiandoFechaInicialFacturasProveedores==false"
+                i18n="@@configuracion general - 1">
+                .
+            </p>
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;"
+                *ngIf="cambiandoFechaInicialFacturasProveedores==true"
+                i18n="@@configuracion general - 2">
+                El formato de fecha es año, mes, dia (YYYY-MM-DD)
+            </p>
+
+            <button class="iigwo" (click)="cambiandoFechaInicialFacturasProveedores=true"
+                *ngIf="cambiandoFechaInicialFacturasProveedores==false">
+                <label i18n="@@Cambiar fecha">Cambiar fecha</label>
+            </button>
+
+            <button class="iigwo accent" (click)="cambiarFechaInicialFacturasProveedores()"
+                *ngIf="cambiandoFechaInicialFacturasProveedores==true">
+                <label i18n="@@Cambiar fecha">Cambiar fecha</label>
+            </button>
+            <button class="iigwo" (click)="cancelarFechaInicialFacturasProveedores()"
+                *ngIf="cambiandoFechaInicialFacturasProveedores==true">
+                <label i18n="@@Cancelar">Cancelar</label>
+            </button>
+
+            <!-- ================================================== -->
+
+            <hr style="max-width:396px;margin-bottom:24px;">
+
+            <!-- ================================================== -->
+
+           <!-- <h4 style="margin: 0 0 12px 0"  i18n="@@Fecha de inicial de facturas por FB60">Fecha de inicial de facturas por FB60</h4>
+
+            <div class="iigwo-input">
+                <label i18n="@@Fecha inicial de carga">Fecha inicial de carga</label>
+                <input [(ngModel)]="fechaInicialFacturasFB60" type="date"
+                    [attr.readOnly]="cambiandoFechaInicialFacturasFB60 ? null : false">
+            </div>
+
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;"
+                *ngIf="cambiandoFechaInicialFacturasFB60==false" i18n="@@configuracion general - 3">
+                Las facturas electrónicas cargadas por FB60 emitidas antes de esta fecha son automaticamente rechazadas
+                por el sistema.
+            </p>
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;"
+                *ngIf="cambiandoFechaInicialFacturasFB60==true" i18n="@@configuracion general - 4">
+                El formato de fecha es año, mes, dia (YYYY-MM-DD)
+            </p>
+
+            <button class="iigwo" (click)="cambiandoFechaInicialFacturasFB60=true"
+                *ngIf="cambiandoFechaInicialFacturasFB60==false">
+                <label i18n="@@Cambiar fecha">Cambiar fecha</label>
+            </button>
+
+            <button class="iigwo accent" (click)="cambiarFechaInicialFacturasFB60()"
+                *ngIf="cambiandoFechaInicialFacturasFB60==true">
+                <label i18n="@@Cambiar fecha">Cambiar fecha</label>
+            </button>
+            <button class="iigwo" (click)="cancelarFechaInicialFacturasFB60()"
+                *ngIf="cambiandoFechaInicialFacturasFB60==true">
+                <label i18n="@@Cancelar">Cancelar</label>
+            </button> -->
+
+            <!-- ================================================== -->
+            
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;">
+                <span i18n="@@siNecesitaAyudaPuedeLeerEl">Si necesita ayuda puede leer el
+                </span>
+                <a target="_blank" [href]='utilService.rutaDeManual("ManualAdministracionGeneral")' i18n="@@manualAdministracionGeneral">manual de administrador</a>
+            </p>
+        </div>
+
+        <!-- MENSAJE ERROR-->
+        <div *ngIf="mostrarMensaje" class='iigwo-dialog-background'>
+            <div class='iigwo-dialog'>
+                <h3>{{tituloMensaje}}</h3>
+                <p>{{textoMensaje}}</p>
+                <!---->
+                <button class='iigwo accent' (click)='mostrarMensaje = false'><label>Aceptar</label></button>
+            </div>
+        </div>
+
+        <!--Cargando-->
+        <div class='iigwo-loading' *ngIf="cargando">
+            <mat-spinner></mat-spinner>
+        </div>
+    </div>
+</div>
