@@ -86,7 +86,7 @@ export class SessionService {
         return this.sessionUsuarioPromise;
     }
 
-    iniciarSesion(usuario: string, password: string): Promise<boolean> {
+    /*iniciarSesion(usuario: string, password: string): Promise<boolean> {
         this.sessionUsuarioPromise = null;
         return new Promise((resolve, reject) => this.http
             .get(API_URL + 'auth/' + "login", {
@@ -108,6 +108,33 @@ export class SessionService {
                     resolve(true);
 
                 } else resolve(false);
+            })
+            .catch(reason => reject(reason))
+        );
+    }*/
+
+    iniciarSesion(usuario: string, password: string): Promise<boolean> {
+        return new Promise((resolve, reject) => this.http
+            .post(API_URL + 'autenticaciones/inicio-sesion', { usuario : usuario, contrasenia: password },
+            { withCredentials: true, observe: 'response', responseType: 'text' })
+            .toPromise()
+            .then(response => {
+                if (response.status === 200) {
+                    //localStorage.clear();
+
+                    let lang = 'es';
+
+                    if (document.location.href.includes('/en')) { lang = 'en'; }
+                    if (document.location.href.includes('/es')) { lang = 'es'; }
+
+                    // this.cambiarIdioma(lang).then(e0 => { }).catch(e => { });
+
+                    this.listeners.forEach(e => e.onIniciarSesion());
+
+                    localStorage.setItem('auth_token', response.body);
+                    localStorage.setItem('usuario', usuario);
+                    resolve(true);
+                } else { resolve(false); }
             })
             .catch(reason => reject(reason))
         );
