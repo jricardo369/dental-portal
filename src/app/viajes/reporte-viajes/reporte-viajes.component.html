@@ -1,0 +1,175 @@
+<app-workspace-nav>
+    <app-viajes-nav></app-viajes-nav>
+</app-workspace-nav>
+<div class='workspace'>
+    <div class='main'>
+        
+        <div class='menu' >
+            <label class='home'>{{titulo}}</label>
+            <button class='iigwo' (click)='obtenerSolicitudes()'>
+                <mat-icon svgIcon="refresh"></mat-icon>
+                <label>Refrescar</label>
+            </button>
+            <button class='iigwo' (click)='descargaViajesPDF()'>
+                <mat-icon svgIcon="file-download"></mat-icon>
+                <label>Descargar Solicitudes PDF</label>
+            </button>
+            <button class='iigwo' (click)='descargaViajesXLSX()'>
+                <mat-icon svgIcon="file-download"></mat-icon>
+                <label>Descargar Solicitudes XLSX</label>
+            </button>
+        </div>
+
+        <div class='content'>
+            <div style="display: inline-flex;">
+                <div style="display: inline-flex;">
+                    <div class="iigwo-input">
+                        <label i18n="@@Fecha inicio">Fecha inicio </label>
+                        <input type="date" [(ngModel)]="fechaI" (change)="obtenerSolicitudes()">
+                    </div>
+                    <div class="iigwo-input">
+                        <label i18n="@@Fecha fin">Fecha fin </label>
+                        <input type="date" [(ngModel)]="fechaF" (change)="obtenerSolicitudes()">
+                    </div>
+                </div>
+
+                <div class="iigwo-input" style="text-align:center;">
+                    <label>Evento</label>
+                    <input type="checkbox" name="CheckXml"
+                        style="width: 15px;display: inline-block;margin: 0;"
+                        (change)="busquedaEvento = !busquedaEvento;cambiarAEventos()"
+                        [checked]="busquedaEvento">
+                    <!-- <label
+                        style="display: inline-block;margin: 24px 0 0 0;"
+                        for="CheckXml">Evento</label> -->
+                </div>
+
+                <div class="iigwo-input" style="min-width: 308px;" *ngIf="!busquedaEvento">
+                    <label>Estatus</label>
+                    <mat-select 
+                        [(value)]="selected" 
+                        [ngModel]="selected" 
+                        (ngModelChange)="$event;seleEst()" 
+                        placeholder="Estatus" 
+                        multiple
+                        class="mat_select_design">
+                        <mat-option *ngFor="let est of estatus" [value]="est.id">{{est.descripcion}}</mat-option>
+                    </mat-select>
+                </div>
+
+                <div class="iigwo-input" style="min-width: 308px;" *ngIf="busquedaEvento">
+                    <label>Evento</label>
+                    <mat-select 
+                        [(value)]="evento" 
+                        [ngModel]="evento"
+                        (ngModelChange)="$event;this.obtenerSolicitudes()" 
+                        placeholder="Evento"
+                        class="mat_select_design">
+                        <!-- <mat-option value="Dispersión entrega">{{'Dispersión entrega'}}</mat-option>
+                        <mat-option value="Comprobación">{{'Comprobación'}}</mat-option>
+                        <mat-option value="Envió de póliza">{{'Envió de póliza'}}</mat-option> -->
+                        <mat-option *ngFor="let e of eventos" [value]="e">{{e}}</mat-option>
+                    </mat-select>
+                </div>
+
+                <div class="iigwo-input" style="min-width: 150px;">
+                    <label>No. de solicitud</label>
+                    <input type="number" [(ngModel)]="numeroSolicitudFiltro" (change)="obtenerSolicitudes()">
+                </div>
+
+                <button class='iigwo' (click)="limpiarFiltro()" style="align-self: flex-end;">Limpiar filtros</button>
+            </div>
+        </div>
+
+        <div class='content' style="margin-top: 80px;padding-top: 0;" >
+            <div class="table-wrapper" >
+                <table class='big' (scroll)="utilService.tableWrapperScroll($event)" style="border-right-width: 1px;margin-right: 0;">
+                    <tr>
+                        <td colspan="10" class='accent' style="
+                            font-size:11px;
+                            text-align: right;
+                            padding-right: 6px;
+                            ">Monto total: {{montoTotal | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+                    </tr>
+                    <tr>
+                        <th class=''>No. de solicitud</th>
+                        <th class=''>Empleado</th> 
+                        <th class=''>Motivo</th>
+                        <th class=''>Empresa</th>
+                        <th class=''>Centro de costos</th>
+                        <th class=''>Fecha Inicio</th>
+                        <th class=''>Fecha Fin</th>
+                        <th class=''>Fecha Creación</th>
+                        <th class=''>Monto Solicitado</th>
+                        <th class='' i18n="@@Estatus">Estatus</th>
+                    </tr>
+                    <tr *ngFor='let e of solicitudes | slice:paginacion.begin:paginacion.end'>
+                        <td class=''><a routerLink="{{e.numeroSolicitud}}">{{e.numeroSolicitud}}</a></td>
+                        <td class=''><a routerLink="{{e.numeroSolicitud}}">{{e.nombreCompletoUsuario}}</a></td>
+                        <td>{{e.motivo}}</td>
+                        <td>{{e.empresaDescripcion}}</td>
+                        <td>{{e.cecoDescripcion}}</td>
+                        <td class=''><a routerLink="{{e.numeroSolicitud}}">{{e.fechaInicio | date:'dd/MM/yyyy'}}</a></td>
+                        <td class=''><a routerLink="{{e.numeroSolicitud}}">{{e.fechaFin | date:'dd/MM/yyyy'}}</a></td>
+                        <td class=''><a routerLink="{{e.numeroSolicitud}}">{{e.fechaCreacion | date:'dd/MM/yyyy'}}</a></td>
+                        <td style="text-align:right;">{{e.totalAnticipo | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+                        <td>
+                            <span class="badge-status" 
+                            [ngClass]="{status_color_1: e.estatus=='1',
+                                        status_color_2: e.estatus=='2',
+                                        status_color_3: e.estatus=='3',
+                                        status_color_4: e.estatus=='4',
+                                        status_color_5: e.estatus=='5',
+                                        status_color_6: e.estatus=='6',
+                                        status_color_7: e.estatus=='7',
+                                        status_color_8: e.estatus=='8',
+                                        status_color_9: e.estatus=='9',
+                                        status_color_10: e.estatus=='10',
+                                        status_color_11: e.estatus=='11',
+                                        status_color_12: e.estatus=='12',
+                                        status_color_13: e.estatus=='13',
+                                        status_color_14: e.estatus=='14',
+                                        status_color_15: e.estatus=='15'}"
+                                    >
+                                {{e.estatusDescripcion}}
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="99" style="text-align: right;line-height: 24px;" class="mini"
+                            i18n="@@registrosporpagina">
+                            Registros por página
+                            <select [(ngModel)]="paginacion.size" (ngModelChange)="paginacion.fix()"
+                                style="margin: 0 8px; font-family: regular; height: 24px;">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            {{paginacion.begin + 1}}-{{paginacion.end}} de {{paginacion.array.length}}
+                            <button class="iigwo small" style="margin: 0 0 0 8px; padding:0; height: 24px; min-height: 24px;"
+                                (click)="paginacion.back();">
+                                <mat-icon svgIcon="arrow-back"></mat-icon>
+                            </button>
+                            <button class="iigwo small" style="margin: 0 0 0 8px; padding:0; height: 24px; min-height: 24px;"
+                                (click)="paginacion.forward();">
+                                <mat-icon svgIcon="arrow-forward"></mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+
+                </table>
+                
+            </div>
+        </div>
+
+        <!--Cargando-->
+        <div class='iigwo-loading' *ngIf="loading">
+            <mat-spinner></mat-spinner>
+        </div>
+
+    </div>
+</div>
+
+  

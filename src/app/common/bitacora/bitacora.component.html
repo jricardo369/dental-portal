@@ -1,0 +1,39 @@
+<!-- <div class='content' class="">
+    <div style="display:flex; flex-flow: column; overflow: auto;"> -->
+        <div *ngIf="mostrarBitacora" style="
+                overflow-y: auto;
+                border-top: solid 1px rgba(0,0,0,0.1);"> 
+
+            <h4 i18n="@@contelec.historialdesolicitud">Historial de solicitud</h4>
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 13px;"
+            i18n="@cajachi.historialdesolicitud.descripcion"> Se enlistan los eventos de aprobación
+            de esta solicitud. Se muestran los más recientes primero.
+            </p>
+
+            <table class="informative">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Evento</th>
+                    <th>Usuario</th>
+                    <th>Texto</th>
+                </tr>
+                <tr *ngFor='let e of bitacora'>
+                    <td style="white-space: nowrap;">{{e.fecha | date:'yyyy-MM-dd HH:mm':'':'en'}}</td>
+                    <td>{{e.evento}}</td>
+                    <td>{{e.usuario}}</td>
+                    <td style="font-style: italic;">{{e.texto}}</td>
+                </tr>
+            </table>
+        </div> 
+    <!--</div> 
+</div>-->
+    <p style="margin-bottom: 0px; font-size: 13px;">
+
+    <span *ngIf="!mostrarBitacora" i18n="@@cajachi.singlesol.mostrarBitacora0">La solicitud
+    tiene una bitácora de eventos. </span>
+    <span *ngIf="!mostrarBitacora" (click)="mostrarBitacora=true;refresh()" class="link"
+    i18n="@@cajachi.singlesol.mostrarBitacora">Mostrar bitácora</span>
+
+    <span *ngIf="mostrarBitacora" (click)="mostrarBitacora=false" class="link"
+    i18n="@@cajachi.singlesol.ocultarBitacora">Ocultar bitácora</span>
+    </p>

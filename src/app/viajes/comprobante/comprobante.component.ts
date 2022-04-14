@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ComprobanteFormComponent } from '../comprobante-form/comprobante-form.component';
-import { API_URL } from '../../app.config';
 
 @Component({
     selector: 'app-comprobante',
@@ -18,6 +17,7 @@ export class ComprobanteComponent implements OnInit {
     idComprobante: number = null;
 
     titulo: string = null;
+    mostrarXML: boolean = true;
 
     creando: boolean;
     editando: boolean;
@@ -29,7 +29,7 @@ export class ComprobanteComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        if (this.activatedRoute.routeConfig.path.endsWith('autorizaciones/:id/comprobantes/:jd')) {
+        if (this.activatedRoute.routeConfig.path.endsWith('comprobaciones-contador/:id/comprobantes/:jd')) {
             this.autorizando = true;
         } else if (this.activatedRoute.routeConfig.path.endsWith('comprobantes/:jd')) {
             this.editando = true;
@@ -48,20 +48,9 @@ export class ComprobanteComponent implements OnInit {
         }
     }
 
-    descargar(format: string) {
-        let link = document.createElement('a');
-        link.href = API_URL + 'viajes/' + this.noTrayecto + '/comprobantes/' + this.idComprobante + '/' + format;
-        link.target = '_blank';
-        link.click();
-    }
+    descargarPdf() { this.comprobanteForm.descargarPdfXml('pdf'); }
 
-    autorizar() { this.comprobanteForm.autorizar(); }
-
-    rechazar() { this.comprobanteForm.rechazar(); }
-
-    descargarPdf() { this.descargar('pdf'); }
-
-    descargarXml() { this.descargar('xml'); }
+    descargarXml() { this.comprobanteForm.descargarPdfXml('xml'); }
 
     actualizar() { this.comprobanteForm.actualizar(); }
 

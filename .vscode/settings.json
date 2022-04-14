@@ -1,3 +1,5 @@
 {
-    "deno.enable": false
+    "deno.enable": false,
+    "svg.preview.background": "transparent",
+    "compile-hero.disable-compile-files-on-did-save-code": false
 }

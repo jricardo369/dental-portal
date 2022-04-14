@@ -1,14 +1,17 @@
 import { Component, Output, EventEmitter, ViewChild, ElementRef, Input, OnInit } from '@angular/core';
-import { ClaseGasto } from '../../../model/clase-gasto';
-import { TipoGasto } from '../../../model/tipo-gasto';
 import { ViajesService } from '../../services/viajes.service';
 import { SessionService } from '../../services/session.service';
 import { UtilService } from '../../services/util.service';
 import { Usuario } from '../../../model/usuario';
-import { GastoViaje } from '../../../model/gasto-viaje';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogoSimpleComponent } from '../../common/dialogo-simple/dialogo-simple.component';
-import { Segregacion } from 'src/model/segregacion';
+import { UsuariosService } from 'src/app/services/usuarios.service';
+import { CuentasContablesService } from 'src/app/services/cuentas-contables.service';
+import { Subcuenta } from 'src/model/subcuenta';
+import { Comprobante } from 'src/model/comprobante';
+import { Cfdi } from 'src/model/cfdi';
+import { ActivatedRoute } from '@angular/router';
+import { CFDI } from 'src/util/cfdi';
 
 @Component({
     selector: 'app-comprobante-form',
@@ -35,6 +38,9 @@ export class ComprobanteFormComponent implements OnInit {
     @Input("autorizando")
     autorizando: boolean = false;
 
+    @Output("tieneXML")
+    tieneXML : EventEmitter<boolean> = new EventEmitter();
+
     @Output()
     onCancelar: EventEmitter<any> = new EventEmitter();
 
@@ -47,202 +53,260 @@ export class ComprobanteFormComponent implements OnInit {
     segregacionesManuales = false;
     segregaciones = [];
 
-    // @ViewChild('selectDeTipoGasto')   selectDeTipoGasto: ElementRef<HTMLSelectElement>;
-
     loading = false;
 
-    tiposDeGasto: TipoGasto[] = [];
-    clasesDeGasto: ClaseGasto[] = [];
     cecos: string[] = [];
+    cuentasContables: Subcuenta[] = [];
+    estatusSolicitud:string = '';
+    comprobante: Comprobante = {
+        aprobacionContador: false,
+        aprobacionGerente: false,
+        aprobacionNoAplica: false,
+        aprobacionPrestador: false,
+        cfdi: new Cfdi(),
+        estatusComprobante: '',
+        fecha: '',
+        idComprobanteViatico: 0,
+        ieps: null,
+        impuesto: null,
+        isr: null,
+        iva: null,
+        noAplica: 0,
+        numeroFactura: '',
+        numeroSolicitud: '',
+        observaciones: '',
+        propina: null,
+        rfc: '',
+        rutaPdf: '',
+        rutaXml: '',
+        seleccionado: false,
+        subCuenta: new Subcuenta(),
+        subCuentaContable: 0,
+        subTotal: null,
+        total: null
+    }
 
     usuario: Usuario;
-    tipoGasto: TipoGasto;
-    claseGasto: ClaseGasto;
 
-    gasto: GastoViaje = new GastoViaje();
-    xmlFile: File;
-    pdfFile: File;
+    xmlFile: File = null;
+    pdfFile: File = null;
+
+    inputs:boolean = false;
+    conXML:boolean = true;
+    conPDF:boolean = true;
+
+    formatoSubtotal: string;
+    formatoImpuesto: string;
+    formatoTotal: string;
+    formatoPropina: string;
+
+    ediandoCamposDeComprobante: boolean = false;
 
     constructor(
         private dialog: MatDialog,
         private sessionService: SessionService,
+        private cuentasService: CuentasContablesService,
+        private usuariosService: UsuariosService,
         private viajesService: ViajesService,
-        private utilService: UtilService,
+        public utilService: UtilService,
+        private activatedRoute: ActivatedRoute,
     ) {
 
-        this.gasto.moneda = 'MXN'; // por default no?
-        this.gasto.subtotal = 0;
-        this.gasto.total = 0;
-        this.gasto.ieps = 0;
-        this.gasto.iva = 0;
-        this.gasto.isr = 0;
-        this.gasto.ish = 0;
-        this.gasto.tua = 0;
-
-        this.sessionService
-            .getUsuario()
-            .then(usuario => {
-                this.usuario = usuario;
-                this.actualizarCatalogos();
-            }).catch(reason => this.utilService.manejarError(reason))
-
-        console.log("CONSTRUCTOR: " + this.noTrayecto);
+        this.obtenerCuentasContables();
     }
 
-    ngOnInit(): void {
-        console.log("ONINIT: " + this.noTrayecto);
-    }
+    ngOnInit(): void {}
 
-    agregarSegregacion() {
-        let options = this.cecos.map(e => {
-            return {
-                value: e,
-                display: e
-            };
-        });
-        let campos = [
-            { label: "Centro de costo", placeholder: "Centro de costo", value: "", type: "select", options: options },
-            { label: "Importe", placeholder: "Importe", value: 0, type: "number" },
-        ];
-        this.utilService
-            .mostrarDialogoConFormulario("Agregar segregación", "Agregar segregación", "Agregar segregación", "Cancelar", campos)
-            .then(e => {
-                if (e != 'ok') return;
-                let s = {
-                    centroCosto: campos[0].value,
-                    importeSegregado: campos[1].value
-                };
-                this.segregaciones.push(s);
-            })
-            .catch(e => this.utilService.manejarError(e));
-    }
-
-    eliminarSegregacion(s) {
-        let index = this.segregaciones.findIndex(e => e === s);
-        if (index >= 0) this.segregaciones.splice(index, 1);
-    }
-
-    sumaDeSegregaciones() {
-        return this.segregaciones.map(e => e.importeSegregado).reduce((v0, v1) => v0 + v1, 0);
-    }
-
-    actualizarCatalogos() {
-
-
-
+    obtenerCuentasContables() {
         this.loading = true;
-        Promise.all([
-            this.viajesService.obtenerTiposDeGasto(this.usuario.area.idarea),
-            this.viajesService.obtenerCentrosDeCosto()
-        ]).then(values => {
-
-            this.tiposDeGasto = values[0];
-            this.tiposDeGasto.sort((oa, ob) => {
-                let a = oa.id;
-                let b = ob.id;
-                return b - a;
-            });
-
-            this.cecos = values[1];
-            this.cecos.sort();
-
-        }).catch(reason => this.utilService.manejarError(reason)).then(() => this.loading = false);
-
+        if (this.activatedRoute.routeConfig && this.activatedRoute.routeConfig.path == 'comprobaciones-contador/:id/comprobantes/:jd') {
+            this.cuentasService.obtenerSubcuentas()
+                .subscribe(result => {
+                    this.cuentasContables = result;
+                    this.loading = false;
+                },
+                error => {
+                    this.utilService.manejarError(error);
+                    this.loading = false;
+                });
+        } else {
+            this.cuentasService.obtenerSubcuentasPorEmpresaYCeco()
+                .subscribe(result => {
+                    this.cuentasContables = result;
+                    this.loading = false;
+                },
+                error => {
+                    this.utilService.manejarError(error);
+                    this.loading = false;
+                });
+        }
     }
 
-    actualizarClasesDeGasto() {
+    cuentaContableSelected() {
+        this.comprobante.subCuentaContable = this.comprobante.subCuenta.id; // -----------------------------------------------------------------
+        this.limpiarValoresPorCambioDeCuentaContable();
+    }
+
+    currencyPattern() {
+        this.formatoSubtotal = this.utilService.formatoMoneda(this.comprobante.subTotal || 0);
+        this.formatoImpuesto = this.utilService.formatoMoneda(this.comprobante.impuesto || 0);
+        this.formatoTotal = this.utilService.formatoMoneda(this.comprobante.total || 0);
+        this.formatoPropina = this.utilService.formatoMoneda(this.comprobante.propina || 0);
+    }
+
+    limpiarValoresPorCambioDeCuentaContable() {
+        this.comprobante.subTotal = null;
+        this.comprobante.impuesto = 0;
+        this.xmlFile = null;
+        this.pdfFile = null;
+        this.actualizarTotal();
+    }
+
+    actualizarTotal() {
+        this.comprobante.total
+            = parseFloat((this.comprobante.subTotal || '0').toString())
+            + parseFloat((this.comprobante.impuesto || '0').toString());
+    }
+
+    cambiarANumber() {
+        this.comprobante.ieps = parseFloat((this.comprobante.ieps || '0').toString());
+        this.comprobante.impuesto = parseFloat((this.comprobante.impuesto || '0').toString());
+        this.comprobante.isr = parseFloat((this.comprobante.isr || '0').toString());
+        this.comprobante.iva = parseFloat((this.comprobante.iva || '0').toString());
+        this.comprobante.propina = parseFloat((this.comprobante.propina || '0').toString());
+        this.comprobante.subTotal = parseFloat((this.comprobante.subTotal || '0').toString());
+    }
+
+    // onXmlFileSelected(files: FileList) {
+    //     this.loading = true;
+    //     this.xmlFile = files.length ? files.item(0) : null;
+        
+    //     this.comprobante.subTotal = null;
+    //     this.comprobante.impuesto = 0;
+    //     this.actualizarTotal();
+
+    //     this.viajesService
+    //         .validarXML(this.xmlFile)
+    //         .then(response => {
+                
+    //             this.readFileAsText(this.xmlFile).then(result => {
+    //                 var parser = new DOMParser();
+    //                 var xmlDoc = parser.parseFromString(result,"text/xml");
+    //                 this.comprobante.subTotal = parseFloat(xmlDoc.getElementsByTagName("cfdi:Comprobante")[0].getAttribute('SubTotal')); // Subtotal
+    //                 this.comprobante.total = parseFloat(xmlDoc.getElementsByTagName("cfdi:Comprobante")[0].getAttribute('Total')); // Total
+        
+    //                 // let impuesto = (this.comprobante.total - this.comprobante.subTotal).toFixed(2);
+    //                 // this.comprobante.impuesto = parseFloat(impuesto); //Impuesto
+    //                 console.log(xmlDoc.getElementsByTagName("cfdi:Impuestos"))
+    //                 this.comprobante.impuesto = parseFloat(xmlDoc.getElementsByTagName("cfdi:Comprobante")[0].getAttribute('Total')); //Impuesto
+    //             });
+
+    //         }).catch(reason => {
+    //             this.xmlFile = null;
+    //             this.utilService.manejarError(reason);
+    //         }).then(() => this.loading = false)
+    // }
+
+    onXmlFileSelected(files: FileList) {
+        this.xmlFile = files.length ? files.item(0) : null;
+
         this.loading = true;
         this.viajesService
-            .obtenerClasesDeGasto(this.tipoGasto.id)
-            .then(clasesDeGasto => {
-                this.claseGasto = null;
-                this.clasesDeGasto = clasesDeGasto;
+            .validarXML(this.xmlFile)
+            .then(response => {
+                CFDI.parseFile(this.xmlFile)
+                    .then(cfdi => {
+                        this.comprobante.total = cfdi.Total;
+                        this.comprobante.subTotal = cfdi.SubTotal;
+                        this.comprobante.impuesto = cfdi.TotalImpuestosTrasladados;
+                    })
+                    .catch(err => {
+                        this.xmlFile = null;
+                        this.utilService.manejarError(err);
+                    })
+                    .then(e => this.loading = false)
+            }).catch(reason => {
+                this.xmlFile = null;
+                this.utilService.manejarError(reason);
+            }).then(() => this.loading = false);
+    }
+
+    async readFileAsText(file) {
+        let result_base64 = await new Promise<string>((resolve) => {
+            let fileReader = new FileReader();
+            fileReader.onload = (e) => resolve(fileReader.result.toString());
+            fileReader.readAsText(file);
+        });
+    
+        return result_base64;
+    }
+
+    onPdfFileSelected(files: FileList) { this.pdfFile = files.length ? files.item(0) : null; }
+
+    cancelar() { this.onCancelar.emit(); }
+
+    actualizar() {
+        this.loading = true;
+        this.obtenerCuentasContables();
+        this.viajesService.obtenerViaje(this.noTrayecto.toString()).then(comprobante => {
+            let solicitud = comprobante;
+            this.estatusSolicitud = solicitud.estatus;
+            this.comprobante = solicitud.comprobantes.find(x => x.idComprobanteViatico.toString() === this.idComprobante.toString());
+            
+            // para que la subcuenta del comprobante corresponda a un ELEMENTO del ARREGLO de subcuentas contables
+            if (this.comprobante.subCuenta && this.comprobante.subCuenta.id)
+                this.comprobante.subCuenta = this.cuentasContables.find(e => e.id == this.comprobante.subCuenta.id);
+            if(!this.creando) {
+                this.conXML = (this.comprobante.rutaXml == "") ? false : true;
+                this.tieneXML.emit(this.conXML);
+            }
+            this.descargar(this.comprobante.idComprobanteViatico.toString(), this.comprobante.rutaPdf, 'pdf', false);
+        }).catch(reason => {
+            this.utilService.manejarError(reason)
+        }).then(() => this.loading = false);
+    }
+
+    descargar(idComprobanteViatico:string, ruta: string, formato: string, descargar: boolean) {
+        var filenameWithExtension = ruta.replace(/^.*[\\\/]/, '');
+        var filename = filenameWithExtension.split('.')[0];
+        
+        this.viajesService
+            .descargar(idComprobanteViatico, formato)
+            .then(response => {
+                if (descargar) {
+                    this.saveByteArray(filename, response, formato);
+                }
+                else {
+                    this.showPdf(response, filenameWithExtension);
+                }
             })
             .catch(reason => this.utilService.manejarError(reason))
             .then(() => this.loading = false);
     }
 
-    seleccionarClaseDeGastoViaje(claseGasto: ClaseGasto) {
-        this.claseGasto = claseGasto;
+    descargarPdfXml(formato: string) {
+        this.descargar(this.comprobante.idComprobanteViatico.toString(), this.comprobante.rutaPdf, formato, true);
     }
 
-    limpiarValoresDeGastoPorCambioDeClase() {
-        if (!this.claseGasto) return;
-        if (!(this.claseGasto.deducibleImpuestos)) this.gasto.iva = 0;
-        if (!(this.claseGasto.deducibleImpuestos && this.claseGasto.cuentaContableISR)) this.gasto.isr = 0;
-        if (!(this.claseGasto.deducibleImpuestos && this.claseGasto.cuentaContableISH)) this.gasto.ish = 0;
-        if (!(this.claseGasto.deducibleImpuestos && this.claseGasto.cuentaContableTUA)) this.gasto.tua = 0;
-        if (!(this.claseGasto.deducibleImpuestos && this.claseGasto.cuentaContableIEPS)) this.gasto.ieps = 0;
-        if (!(this.claseGasto.deducibleImpuestos)) this.xmlFile = null;
-        this.actualizarTotal();
+    showPdf(byte: ArrayBuffer, filenameWithExtension: string) {
+        var file = new Blob([byte], {type: 'application/pdf'});
+        var rutaPDF = URL.createObjectURL(file);
+        
+        let visualizador: any = window.document.getElementById('viewer');
+        visualizador.data = rutaPDF + '#zoom=scale';
+        visualizador.type="application/pdf";
+        visualizador.width="680px";
+        visualizador.height="480px";
+        visualizador.title=filenameWithExtension;
     }
 
-    actualizarTotal() {
-        this.gasto.total
-            = this.gasto.subtotal
-            + this.gasto.iva
-            + this.gasto.isr
-            + this.gasto.ieps
-            + this.gasto.tua
-            + this.gasto.ish
-            ;
-    }
-
-    onXmlFileSelected(files: FileList) { this.xmlFile = files.length ? files.item(0) : null; }
-    onPdfFileSelected(files: FileList) { this.pdfFile = files.length ? files.item(0) : null; }
-
-    puedeEnviarse() {
-        if (this.loading) return false;
-        if (!this.claseGasto) return false;
-        if (!(this.gasto.moneda && this.claseGasto && this.tipoGasto)) return false;
-        if (this.claseGasto.deducibleImpuestos) return this.pdfFile && this.xmlFile;
-        return this.pdfFile
-    }
-
-    cancelar() { this.onCancelar.emit(); }
-
-    autorizar() { this.actualizarEstatus('Aprobado'); }
-
-    rechazar() { this.actualizarEstatus('Rechazado') }
-
-    actualizarEstatus(estatus: string) {
-
-        let verbo = (estatus == 'Aprobado' ? 'Aprobar' : 'Rechazar');
-
-        let dialogRef = this.dialog.open(DialogoSimpleComponent, {
-            data: {
-                titulo: verbo + ' comprobante',
-                texto: 'Esta a punto de cambiar el estatus del viaje y cualquier valor que haya cambiado del comprobante',
-                botones: [
-                    { texto: 'Cancelar' },
-                    { texto: verbo + ' comprobante', color: verbo == 'Aprobar' ? 'accent' : 'primary', valor: 'ok' },
-                ]
-            },
-            disableClose: true,
-        });
-        dialogRef.afterClosed().subscribe(result => {
-            if (result == 'ok') {
-
-                this.loading = true;
-                this.viajesService.actualizarEstatusComprobante(this.noTrayecto, this.idComprobante, estatus, this.gasto.subtotal,
-                    this.gasto.iva, this.gasto.isr, this.gasto.ish, this.gasto.ieps, this.gasto.tua, this.gasto.total)
-                    .then(response => {
-                        this.cancelar();
-                    }).catch(reason => {
-                        this.utilService.manejarError(reason)
-                    }).then(() => this.loading = false);
-
-            }
-        });
-    }
-
-    actualizar() {
-        this.loading = true;
-        this.viajesService.obtenerComprobante(this.noTrayecto, this.idComprobante).then(gasto => {
-            this.gasto = gasto;
-        }).catch(reason => {
-            this.utilService.manejarError(reason)
-        }).then(() => this.loading = false);
+    saveByteArray(reportName: string, byte, formato: string) {
+        var file = formato === 'pdf' ? new Blob([byte], {type: 'application/pdf'}) : new Blob([byte], {type: 'application/xml'});
+        var fileURL = URL.createObjectURL(file);
+        let link: any = window.document.createElement('a');
+        link.href = fileURL;
+        link.download = reportName;
+        link.click();
     }
 
     eliminar(): any {
@@ -260,13 +324,63 @@ export class ComprobanteFormComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (result == 'ok') {
                 this.loading = true;
-                this.viajesService.eliminarComprobante(this.noTrayecto, this.idComprobante).then(response => {
+                this.viajesService.eliminarComprobante(this.idComprobante).then(response => {
                     this.onCancelar.emit();
                 }).catch(reason => {
                     this.utilService.manejarError(reason)
                 }).then(() => this.loading = false);
             }
         });
+    }
+
+    guardar() {
+        this.cambiarANumber();
+        this.loading = true;
+        this.viajesService
+            .actualizarComprobante(this.idComprobante.toString(), this.comprobante)
+            .then(comprobante => {
+                this.ediandoCamposDeComprobante = false;
+                this.actualizar();
+            })
+            .catch(reason => this.utilService.manejarError(reason))
+            .then(() => this.loading = false);
+    }
+
+    validarCamposRequeridos(): boolean {
+        let camposLlenos = false;
+        let xmlLleno = false;
+        let pdfLleno = false;
+        if(this.comprobante.subCuenta && this.comprobante.subCuenta.id) {
+            if(this.comprobante.fecha !== "") {
+                if(this.comprobante.subTotal !== null) {
+                    camposLlenos = true;
+                }
+            }
+        }
+
+        if(this.conXML) {
+            if(this.xmlFile !== null) {
+                xmlLleno = true;
+            }
+        }
+        else {
+            if(this.xmlFile === null) {
+                xmlLleno = true;
+            }
+        }
+
+        if(this.conPDF) {
+            if(this.pdfFile !== null) {
+                pdfLleno = true;
+            }
+        }
+        else {
+            if(this.pdfFile === null) {
+                pdfLleno = true;
+            }
+        }
+
+        return camposLlenos && xmlLleno && pdfLleno;
     }
 
     enviar() {
@@ -282,34 +396,16 @@ export class ComprobanteFormComponent implements OnInit {
             disableClose: true,
         });
         dialogRef.afterClosed().subscribe(result => {
-            let segregaciones = this.segregaciones.map(e => {
-                let e1 = new Segregacion();
-                e1.centroCosto = e.centroCosto;
-                e1.importeSegregado = e.importeSegregado;
-                return e1;
-            })
             if (result == 'ok') {
+                this.cambiarANumber();
                 this.loading = true;
                 this.viajesService.crearComprobante(
                     this.noTrayecto,
-                    this.claseGasto.deducibleImpuestos,
-                    this.claseGasto.id,
-                    this.gasto.moneda,
-                    this.gasto.total,
-                    this.gasto.subtotal,
-                    this.gasto.fecha,
-                    this.gasto.iva,
-                    this.gasto.isr,
-                    this.gasto.ish,
-                    this.gasto.ieps,
-                    this.gasto.tua,
-                    segregaciones,
-                    this.segregacionesManuales,
-                    this.usuario.centro_costo,
+                    this.comprobante,
                     this.pdfFile,
-                    this.xmlFile,
+                    this.xmlFile
                 ).then(response => {
-                    if (response.status == "") {
+                    if (response.status == 200) {
                         this.onEnviar.emit();
                     }
                 }).catch(reason => {
@@ -318,6 +414,4 @@ export class ComprobanteFormComponent implements OnInit {
             }
         });
     }
-
-
 }

@@ -1,3 +1,38 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$contelec-app-primary: mat-palette($mat-indigo);
+$contelec-app-accent: mat-palette($mat-pink, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$contelec-app-warn: mat-palette($mat-red);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$contelec-app-theme: mat-light-theme((
+  color: (
+    primary: $contelec-app-primary,
+    accent: $contelec-app-accent,
+    warn: $contelec-app-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($contelec-app-theme);
+
 @import './theme.scss';
 
 /* ============================================================================ */
@@ -166,6 +201,7 @@ app-bar .app-nav-user {
 
 app-bar .app-nav-user .container {
 	padding:12px;
+	// min-height:112px;
 	min-height:177px;
 	min-width:284px;
 	box-sizing:border-box;
@@ -562,7 +598,7 @@ td {
 th.accent { font-weight: bold; }
 
 .number {text-align:right;}
-table.big th {font-size:12px;padding-bottom:8px;}table.big td {font-size:13px;}
+/*table.big th {font-size:12px;padding-bottom:8px;}table.big td {font-size:13px;}
 
 /* ----------------------------------------------------- */
 
@@ -1561,4 +1597,162 @@ table.informative {
         background: rgba(0, 0, 0, 0.05);
         color: #000;
     }
+}
+
+// ----------------------- Currency Input -----------------------
+
+.currency {
+    position: relative;
+}
+
+.currency input {
+    padding-right: 27px;
+}
+
+.currency span {
+	position: absolute;
+	padding: 4px 9px 0 10px;
+    right: 2px;
+}
+
+.wrapper {
+    position: relative;
+}
+
+.wrapper span {
+	position: absolute;
+    right: 2px;
+}
+
+.badge {
+    display: inline-block;
+    min-width: 5px;
+    padding: 2px 5px;
+    font-size: 12px;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: mat-color($app-primary);
+	border-radius: 10px;
+	margin-left: 4px;
+}
+
+.badge-status {
+    display: inline-block;
+    min-width: 5px;
+    padding: 4px 9px;
+    font-size: 12px;
+    line-height: 1;
+    //color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: mat-color($app-secondary);
+	border-radius: 10px;
+	margin-left: 4px;
+}
+
+.status_color_1 {
+	background-color: mat-color($app-status-1);
+	color: black;
+}
+
+.status_color_2 {
+    background-color: mat-color($app-status-2);
+	color: black;
+}
+
+.status_color_3 {
+    background-color: mat-color($app-status-3);
+	color: black;
+}
+
+.status_color_4 {
+    background-color: mat-color($app-status-4);
+	color: black;
+}
+
+.status_color_5 {
+    background-color: mat-color($app-status-5);
+	color: black;
+}
+
+.status_color_6 {
+	background-color: mat-color($app-status-6);
+	color: black;
+}
+
+.status_color_7 {
+    background-color: mat-color($app-status-7);
+	color: black;
+}
+
+.status_color_8 {
+    background-color: mat-color($app-status-8);
+	color: black;
+}
+
+.status_color_9 {
+    background-color: mat-color($app-status-9);
+	color: black;
+}
+
+.status_color_10 {
+    background-color: mat-color($app-status-10);
+	color: black;
+}
+
+.status_color_11 {
+	background-color: mat-color($app-status-11);
+	color: black;
+}
+
+.status_color_12 {
+    background-color: mat-color($app-status-12);
+	color: black;
+}
+
+.status_color_13 {
+    background-color: mat-color($app-status-13);
+	color: black;
+}
+
+.status_color_14 {
+    background-color: mat-color($app-status-14);
+	color: black;
+}
+
+.status_color_15 {
+    background-color: mat-color($app-status-15);
+	color: black;
+}
+
+.renglon p {
+	margin: 0px;
+}
+html, body { height: 100%; }
+body { margin: 0; }
+
+.mat_select_design {
+    color: #000;
+    padding: 4px 6px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    font-size: 13px;
+    border-radius: 1px;
+    width: 100%;
+    max-width: 320px;
+    font-family: regular;
+    box-sizing: border-box;
+    height: 24px;
+    vertical-align: top;
+}
+
+td.accent {
+    color: mat-color($app-accent, darker);
+}
+
+p.accent {
+    color: mat-color($app-accent, darker);
 }

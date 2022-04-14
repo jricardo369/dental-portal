@@ -1,0 +1,157 @@
+<app-workspace-nav>
+    <app-viajes-nav></app-viajes-nav>
+</app-workspace-nav>
+<div class='workspace'>
+    <div class='main'>
+
+        <div class='menu'>
+            <label class='home'>Aprobaciones de comprobación pendientes</label>
+            <button class='iigwo' (click)='voBoSolicitudes()' 
+                *ngIf="solicitudesSelected.length > 0">
+                <mat-icon svgIcon="done-all"></mat-icon>
+                <label>VoBo. de la Solicitud seleccionada</label>
+            </button>
+            <button class='iigwo' (click)='obtenerSolicitudesPorAprobador()'>
+                <mat-icon svgIcon="refresh"></mat-icon>
+                <label i18n="@@Refrescar">Refrescar</label>
+            </button>
+        </div>
+
+        <div class='content'>
+            <div *ngIf="director">
+                <!-- <div style="display: inline-flex;"> -->
+                    <div style="display: inline-flex;">
+                        <div class="iigwo-input" style="min-width: 308px;">
+                            <label>Empresa</label>
+                            <!-- <input type="text" [(ngModel)]="empresaI" maxlength="45"> -->
+                            <select [(ngModel)]="empresaI" >
+                                <option *ngFor="let e of empresas" [value]="e.id">{{e.nombre}}({{e.id}})</option> 
+                            </select>
+                        </div>
+        
+                        <div style="display: inline-flex;">
+                            <div class="iigwo-input">
+                                <label>Semana</label>
+                                <input type="text" [ngModel]="dateAsDDMMYYYY(fechaI) + ' a ' + dateAsDDMMYYYY(fechaF)" readOnly>
+                            </div>
+                            <!-- <div class="iigwo-input">
+                                <label i18n="@@Fecha inicio">Fecha inicio </label>
+                                <input type="date" [(ngModel)]="fechaI" readOnly>
+                            </div>
+                            <div class="iigwo-input">
+                                <label i18n="@@Fecha fin">Fecha fin </label>
+                                <input type="date" [(ngModel)]="fechaF" readOnly>
+                            </div> -->
+                        </div>
+                    </div>
+                    <!-- <button class='iigwo primary' (click)='refrescar()' style="align-self: flex-end;"><mat-icon svgIcon="search" class="search-button"></mat-icon><label>Buscar</label></button>
+                </div> -->
+            </div>
+            <div class="table-wrapper" (scroll)="utilService.tableWrapperScroll($event)" style="border-right-width: 1px">
+                <table class='big'>
+                    <tr *ngIf="director">
+                        <td colspan="99" class='accent' style="text-align: right; padding-right: 0;">
+                            <div style="display: inline-flex;" *ngIf="solicitudesSelected.length > 0">
+                                <p class="accent" style="font-size:12px; margin-bottom: 0;">Total Monto Solicitado Seleccionado: <strong>{{montoSolicitadoTotalSelecccionado | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</strong></p>
+                                <p class="accent" style="font-size:12px; margin-bottom: 0;">Total Monto Comprobado Seleccionado: <strong>{{montoComprobadoTotalSelecccionado | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</strong></p>
+                            </div>
+                            <br *ngIf="solicitudesSelected.length > 0">
+                            <div style="display: inline-flex;">
+                                <p class="accent" style="font-size:12px; margin-bottom: 0;">Total Monto Solicitado: {{montoSolicitadoTotal | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</p>
+                                <p class="accent" style="font-size:12px; margin-bottom: 0;">Total Monto Comprobado: {{montoComprobadoTotal | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</p>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class='' *ngIf="director">
+                            <div class="iigwo-input" style="margin-bottom: 0; margin-right: 0;">
+                                <input type="checkbox" style="width: 15px;"
+                                    [checked]='estanTodosSeleccionados()'
+                                    (change)="seleccionarTodos()">
+                            </div>
+                        </th>
+                        <th class=''>No. de solicitud</th>
+                        <th class=''>Empleado</th> 
+                        <th class=''>Motivo</th>
+                        <th class=''>Empresa</th>
+                        <th class=''>Centro de costos</th>
+                        <th class=''>Departamento</th>
+                        <th class=''>Fecha inicio</th><!--Periodo-->
+                        <th class=''>Fecha fin</th><!--Periodo-->
+                        <th class=''>Monto solicitado</th>
+                        <th class=''>Monto comprobado</th>
+                        <th class='' i18n="@@Estatus">Estatus</th>
+                    </tr>
+                    <tr *ngFor='let e of solicitudes | slice:paginacion.begin:paginacion.end'>
+                        <td class='' *ngIf="director">
+                            <div class="iigwo-input" style="margin-bottom: 0; margin-right: 0;">
+                                <input type="checkbox" style="width: 15px;"
+                                    [checked]="estaSeleccionado(e.numeroSolicitud)"
+                                    (change)="seleccionar(e)">
+                            </div>
+                        </td>
+                        <td class=''><a routerLink="{{e.numeroSolicitud}}">{{e.numeroSolicitud}}</a></td>
+                        <td class=''><a routerLink="{{e.numeroSolicitud}}">{{e.nombreCompletoUsuario}}</a></td>
+                        <td>{{e.motivo}}</td>
+                        <td>{{e.empresaDescripcion}}</td>
+                        <td>{{e.cecoDescripcion}}</td>
+                        <td>{{e.departamento.descripcion}} </td>
+                        <td class=''><a routerLink="{{e.numeroSolicitud}}">{{e.fechaInicio | date:'dd/MM/yyyy'}}</a></td>
+                        <td class=''><a routerLink="{{e.numeroSolicitud}}">{{e.fechaFin | date:'dd/MM/yyyy'}}</a></td>
+                        <td class="number">{{e.totalAnticipo | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+                        <td class="number">{{e.totalComprobado | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+                        <td>
+                            <span class="badge-status" 
+                            [ngClass]="{status_color_1: e.estatus=='1',
+                                        status_color_2: e.estatus=='2',
+                                        status_color_3: e.estatus=='3',
+                                        status_color_4: e.estatus=='4',
+                                        status_color_5: e.estatus=='5',
+                                        status_color_6: e.estatus=='6',
+                                        status_color_7: e.estatus=='7',
+                                        status_color_8: e.estatus=='8',
+                                        status_color_9: e.estatus=='9',
+                                        status_color_10: e.estatus=='10',
+                                        status_color_11: e.estatus=='11',
+                                        status_color_12: e.estatus=='12',
+                                        status_color_13: e.estatus=='13',
+                                        status_color_14: e.estatus=='14',
+                                        status_color_15: e.estatus=='15'}"
+                                    >
+                                {{e.estatusDescripcion}}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="99" style="text-align: right;line-height: 24px;" class="mini"
+                            i18n="@@registrosporpagina">
+                            Registros por página
+                            <select [(ngModel)]="paginacion.size" (ngModelChange)="paginacion.fix()"
+                                style="margin: 0 8px; font-family: regular; height: 24px;">
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            {{paginacion.begin + 1}}-{{paginacion.end}} de {{paginacion.array.length}}
+                            <button class="iigwo small" style="margin: 0 0 0 8px; padding:0; height: 24px; min-height: 24px;"
+                                (click)="paginacion.back();">
+                                <mat-icon svgIcon="arrow-back"></mat-icon>
+                            </button>
+                            <button class="iigwo small" style="margin: 0 0 0 8px; padding:0; height: 24px; min-height: 24px;"
+                                (click)="paginacion.forward();">
+                                <mat-icon svgIcon="arrow-forward"></mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!--Cargando-->
+        <div class='iigwo-loading' *ngIf="loading">
+            <mat-spinner></mat-spinner>
+        </div>
+
+    </div>
+</div>

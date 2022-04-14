@@ -5,6 +5,8 @@ import { SessionService } from '../../services/session.service';
 
 import { VIAJES_ITEMS } from '../viajes-routing.module';
 import { UtilService } from 'src/app/services/util.service';
+import { UsuariosService } from 'src/app/services/usuarios.service';
+
 let ITEMS = VIAJES_ITEMS;
 
 @Component({
@@ -13,5 +15,7 @@ let ITEMS = VIAJES_ITEMS;
     styles: [NAV_MENU_IZQUIERDA_STYLES]
 })
 export class ViajesNavComponent extends UtilServiceTest {
-    constructor(router: Router, utilService: UtilService, sessionService: SessionService) { super(router, utilService, sessionService, ITEMS); }
+    constructor(router: Router, utilService: UtilService, usuariosService: UsuariosService) {
+        super(router, utilService, usuariosService, ITEMS);
+    }
 }

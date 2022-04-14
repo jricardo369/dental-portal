@@ -1,0 +1,57 @@
+<app-workspace-nav>
+    <app-general-nav></app-general-nav>
+</app-workspace-nav>
+<div class='workspace'>
+	<div class='main'>
+		<div class='menu'>
+			<label class='home'>Niveles de viáticos</label>
+
+			<button class='iigwo' (click)='nuevo()'>
+				<mat-icon svgIcon="add-box"></mat-icon>
+				<label i18n="@@Nuevo" >Nuevo</label>
+			</button>
+			
+			<button class='iigwo' (click)='refresh()'>
+				<mat-icon svgIcon="refresh"></mat-icon>
+				<label i18n="@@Refrescar">Refrescar</label>
+			</button>
+
+		</div>
+		<div class='content'>
+			<div class="table-wrapper" (scroll)="utilService.tableWrapperScroll($event)" style="border-right-width: 1px">
+				<table class='big'>
+					<tr>
+						<th class=''>Nivel</th>
+						<th class=''>Desayuno por día</th>
+						<th class=''>Comida por día</th>
+						<th class=''>Cena por día</th>
+						<th class=''>Hospedaje</th>
+						<th class=''>Propina</th>
+						<th class=''>Estacionamiento</th>
+						<th class=''>Atención a clientes</th>
+						<th class=''>Talachas</th>
+						<th class=''>No deducibles</th>
+						<th class=''>Taxis</th>
+					</tr>
+					<tr *ngFor='let nv of niveles'>
+						<td class=""><a [routerLink]="['/nivel/',nv.id]">{{nv.nivel}}</a></td>
+						<td class='number'>{{nv.totalAlimentosDesayunoDia | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+						<td class='number'>{{nv.totalAlimentosComidaDia | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+						<td class='number'>{{nv.totalAlimentosCenaDia | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+						<td class='number'>{{nv.hospedajeDia | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+						<td class='number'>{{nv.propina | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+						<td class='number'>{{nv.estacionamiento | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+						<td class='number'>{{nv.atencionClientes | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+						<td class='number'>{{nv.talachas | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+						<td class='number'>{{nv.noDeducibles | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+						<td class='number'>{{nv.taxis | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		
+		<div class='iigwo-loading' *ngIf="cargando">
+			<mat-spinner></mat-spinner>
+		</div>
+	</div>
+</div>

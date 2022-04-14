@@ -36,3 +36,73 @@ td button.iigwo.small {
 .hideSegregaciones tr:first-of-type {
     display: table-row;
 }
+
+.dropdown {
+    overflow: hidden;
+    position: relative;
+    display: inline-block;
+}
+
+.more-menu .dropdown-content{
+    width: max-content;
+    right: 0;
+}
+
+.more-menu-content button {
+    overflow: visible;
+    width: 100%;
+}
+
+.more-menu button {
+    margin: 0;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    width: 350px;
+    max-height: 500px;
+    overflow-y: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.dropdown:hover{
+    overflow: visible;
+}
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.alert-info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+.alert-warning {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+.alert {
+    padding: 10px;
+    border: 1px solid transparent;
+}
+
+.alert p{
+    margin: 2px 0px 0px 0px;
+}

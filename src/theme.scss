@@ -15,30 +15,26 @@
 
 /* ============================================================================ */
 
-// INFRA
-// $app-primary: mat-palette($mat-indigo, 800);
-// $app-accent:  mat-palette($mat-orange, A400);
+// NU3
+$app-primary: mat-palette($mat-purple, 400);
+$app-accent:  mat-palette($mat-purple, 100);
+$app-secondary:  mat-palette($mat-grey, 600);
 
-/* ============================================================================ */
-
-// ANGLOBAL
-// $app-primary: mat-palette($mat-grey, 800);
-// $app-accent:  mat-palette($mat-teal, A400);
-// $app-secondary:  mat-palette($mat-grey, 500);
-
-/* ============================================================================ */
-
-// AGILETHOUGHT
-// $app-primary: mat-palette($mat-blue, 700);
-// $app-accent:  mat-palette($mat-blue, 800);
-// $app-secondary:  mat-palette($mat-grey, 500);
-
-/* ============================================================================ */
-
-// COLORFUL
- $app-primary: mat-palette($mat-purple, 400);
- $app-accent:  mat-palette($mat-purple, 100);
- $app-secondary:  mat-palette($mat-grey, 600);
+$app-status-1: mat-palette($mat-status, 1);
+$app-status-2: mat-palette($mat-status, 2);
+$app-status-3: mat-palette($mat-status, 3);
+$app-status-4: mat-palette($mat-status, 4);
+$app-status-5: mat-palette($mat-status, 5);
+$app-status-6: mat-palette($mat-status, 6);
+$app-status-7: mat-palette($mat-status, 7);
+$app-status-8: mat-palette($mat-status, 8);
+$app-status-9: mat-palette($mat-status, 9);
+$app-status-10: mat-palette($mat-status, 10);
+$app-status-11: mat-palette($mat-status, 11);
+$app-status-12: mat-palette($mat-status, 12);
+$app-status-13: mat-palette($mat-status, 13);
+$app-status-14: mat-palette($mat-status, 14);
+$app-status-15: mat-palette($mat-status, 15);
 
 /* ============================================================================ */
 

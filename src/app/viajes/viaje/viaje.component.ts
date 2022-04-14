@@ -1,16 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { Viaje } from '../../../model/viaje';
 import { ViajesService } from '../../services/viajes.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Location } from '@angular/common';
-import { safeYYYY_MM_DD } from 'src/app/app.config';
 import { UtilService } from '../../services/util.service';
 import { DialogoSimpleComponent } from '../../common/dialogo-simple/dialogo-simple.component';
-import { GastoViaje } from '../../../model/gasto-viaje';
 import { DialogoComprobanteComponent } from '../dialogo-comprobante/dialogo-comprobante.component';
-import { TiposDeViaje } from 'src/model/tipos-de-viaje';
+import { Solicitud } from './../../../model/solicitud';
+import { Alerta } from 'src/model/alerta';
+import { Comprobante } from 'src/model/comprobante';
+import { UsuariosService } from 'src/app/services/usuarios.service';
 
+interface Alert {
+    title: string;
+    content: string;
+    type: any;
+}
 
 @Component({
     selector: 'app-viaje',
@@ -19,44 +24,50 @@ import { TiposDeViaje } from 'src/model/tipos-de-viaje';
 })
 export class ViajeComponent {
 
-    safeYYYYMMDD = safeYYYY_MM_DD; // un horrible workaround porque angular, xD, y no había AngularMaterial cuando comenzó el proyecto
+    // alerts: Alert[] = [];
+    alertas: Alerta[] = [];
+    contadorAlertas: number = 0;
 
     noTrayecto: string = null;
     titulo: string = null;
-    viaje: Viaje = new Viaje();
+    solicitud: Solicitud = new Solicitud();
     loading = false;
+    mostrarCamposOcultos: boolean = false;
 
     creando = false;
     editando = false;
-    autorizandoPorSociedad = false;
-    autorizandoPorCentroDeCosto = false;
-    autorizandoAutorizador = false;
+    cerrado = false;
 
     ediandoCamposDeCabecera = false;
 
-    totalgv: GastoViaje = new GastoViaje();
+    totalgv: Comprobante = new Comprobante();
 
-    tiposViaje: TiposDeViaje[] = [];
+    formatoMonto: string;
 
     constructor(
         activatedRoute: ActivatedRoute,
-        private utilService: UtilService,
+        public utilService: UtilService,
         private viajesService: ViajesService,
+        private usuarios: UsuariosService,
         private router: Router,
         private location: Location,
         private dialog: MatDialog
     ) {
+        this.solicitud.departamento = {id:'', descripcion:''}; // marca error sino se inicializa
+        this.solicitud.grupo = {id:'', nombre:''}; // marca error sino se inicializa
 
         if (activatedRoute.routeConfig.path == 'nuevo-viaje') {
-            this.titulo = 'Nuevo viaje';
+            this.titulo = 'Nueva solicitud';
             this.creando = true;
             this.ediandoCamposDeCabecera = true;
-
-            this.loading = true;
-            this.actualizarTiposDeViaje()
-                .then(e => { })
-                .catch(err => this.utilService.manejarError(err))
-                .then(() => this.loading = false);
+            this.solicitud.estatus = '1';
+            this.solicitud.estatusDescripcion = 'Solicitud inicial';
+            this.solicitud.concepto = '003';
+            this.solicitud.motivo = '';
+            this.solicitud.totalAnticipo = null;
+            this.solicitud.fechaInicio = '';
+            this.solicitud.fechaFin = '';
+            this.obtenerDatosDeUsuario();
         }
 
         if (activatedRoute.routeConfig.path == 'viajes-abiertos/:id' ||
@@ -64,142 +75,20 @@ export class ViajeComponent {
             this.editando = true;
         }
 
-        if (activatedRoute.routeConfig.path == 'autorizaciones/:id') {
-            this.autorizandoPorSociedad = true;
+        if (activatedRoute.routeConfig.path == 'viajes-cerrados/:id') {
+            this.cerrado = true;
         }
 
-        if (activatedRoute.routeConfig.path == 'autorizaciones-ceco/:id') {
-            this.autorizandoPorCentroDeCosto = true;
-        }
-
-        if (activatedRoute.routeConfig.path == 'autorizaciones-aut-cc/:id') {
-            this.autorizandoAutorizador = true;
-        }
-
-        if (this.editando || this.autorizandoPorSociedad || this.autorizandoPorCentroDeCosto || this.autorizandoAutorizador) {
+        if (this.editando) {
             activatedRoute.params.forEach(data => {
                 this.noTrayecto = data.id;
-
-                this.loading = true;
-                this.actualizarTiposDeViaje()
-                    .then(e => this.actualizarViaje())
-                    .catch(err => {
-                        this.utilService.manejarError(err)
-                        this.loading = false;
-                    });
+                this.actualizarViaje();
             })
         }
-
-    }
-
-    actualizarTiposDeViaje() {
-        return new Promise((ok, no) => {
-            this
-                .viajesService
-                .obtenerTiposDeViaje()
-                .then(tipos => {
-                    this.tiposViaje = tipos;
-                    ok();
-                })
-                .catch(err => {
-                    no();
-                });
-        })
     }
 
     debug(event) {
         console.log(event);
-    }
-
-    // -----------------------------------------------------------------------
-
-    comprobantesSeleccionados: GastoViaje[] = [];
-
-    seleccionar(e: GastoViaje) {
-
-        if (!this.editando && !this.autorizandoPorSociedad && !this.autorizandoPorCentroDeCosto) return;
-
-        if (this.editando && !(this.viaje.estatus == 'Abierto' || this.viaje.estatus == 'Rechazado')) return;
-        if (this.autorizandoPorSociedad && this.viaje.estatus != 'Por Autorizar') return;
-        if (this.autorizandoPorCentroDeCosto && this.viaje.estatus != 'En Autorización') return;
-
-        (e as any).seleccionado = !(e as any).seleccionado;
-        this.actualizarComprobantesSeleccionados();
-    }
-
-    actualizarComprobantesSeleccionados() {
-        if (!this.viaje) return 0;
-        if (!this.viaje.comprobantes) return 0;
-        this.comprobantesSeleccionados.length = 0;
-        this.viaje.comprobantes.forEach(e => {
-            if ((e as any).seleccionado) {
-                this.comprobantesSeleccionados.push(e);
-            }
-        })
-        return this.comprobantesSeleccionados.length;
-    }
-
-    limpiarSeleccionDeComprobantes() {
-        if (!this.viaje || !this.viaje.comprobantes) return;
-        this.viaje.comprobantes.forEach(e => (e as any).seleccionado = false);
-        this.comprobantesSeleccionados.length = 0;
-    }
-
-    aprobarSegregacionesDeComprobantesSeleccionados = () => this.cambiarEstatusDeSegregacionesDeComprobantesSeleccionados("Aprobado");
-    rechazarSegregacionesDeComprobantesSeleccionados = () => this.cambiarEstatusDeSegregacionesDeComprobantesSeleccionados("Rechazado");
-
-    cambiarEstatusDeSegregacionesDeComprobantesSeleccionados(estatus: string) {
-        this.loading = true;
-        let promises = this.comprobantesSeleccionados.map(e =>
-            this.viajesService.actualizarEstatusComprobanteCeco(e.idComprobante, estatus))
-        Promise
-            .all(promises)
-            .then(e => { })
-            .catch(err => this.utilService.manejarError(err))
-            .then(() => { this.loading = false; this.actualizarViaje(); });
-    }
-
-    aprobarComprobantesSeleccionados() { this.cambiarEstatusDeComprobantesSeleccionados('Aprobado'); }
-    rechazarComprobantesSeleccionados() { this.cambiarEstatusDeComprobantesSeleccionados('Rechazado'); }
-
-    cambiarEstatusDeComprobantesSeleccionados(estatus: string) {
-        this.loading = true;
-        let promises = this.comprobantesSeleccionados.map(e => {
-            return this.viajesService.actualizarEstatusComprobante(
-                Number.parseInt(this.noTrayecto), e.idComprobante, estatus,
-                e.subtotal, e.iva, e.isr, e.ish, e.ieps, e.tua, e.total);
-        })
-        Promise
-            .all(promises)
-            .then(e => { })
-            .catch(err => this.utilService.manejarError(err))
-            .then(() => { this.loading = false; this.actualizarViaje(); });
-    }
-
-    eliminarComprobantesSeleccionados() {
-        this.dialog.open(DialogoSimpleComponent, {
-            data: {
-                titulo: 'Eliminar comprobantes',
-                texto: 'Está a punto de eliminar los comprobantes seleccionados. Esta operación no es reversible.',
-                botones: [
-                    { texto: 'No eliminar', color: '', valor: '' },
-                    { texto: 'Eliminar comprobantes permanentemente', color: 'primary', valor: 'eliminar' },
-                ]
-            },
-            disableClose: true,
-        }).afterClosed().toPromise().then(valor => {
-            if (valor == 'eliminar') {
-                this.loading = true;
-                let promises = this.comprobantesSeleccionados.map(e => {
-                    return this.viajesService.eliminarComprobante(Number.parseInt(this.noTrayecto), e.idComprobante);
-                })
-                Promise
-                    .all(promises)
-                    .then(results => { })
-                    .catch(reasons => { })
-                    .then(() => { this.loading = false; this.actualizarViaje(); });
-            }
-        }).catch(reason => this.utilService.manejarError(reason));
     }
 
     // -----------------------------------------------------------------------
@@ -216,12 +105,12 @@ export class ViajeComponent {
     solicitarAutorizacion() {
         this.dialog.open(DialogoSimpleComponent, {
             data: {
-                titulo: 'Solicitar autorización',
-                texto: 'Está a punto de enviar el viaje ' + this.noTrayecto + ' con destino a '
-                    + this.viaje.destino + ' para su autorización. Mientras el viaje está siendo autorizado no podrá agregar más comprobantes.',
+                titulo: 'Solicitar aprobación',
+                texto: 'Está a punto de enviar la solicitud ' + this.noTrayecto + 
+                ' para su aprobación. Mientras la solicitud está siendo aprobada no podrá editarla.',
                 botones: [
                     { texto: 'No enviar ahora', color: '', valor: '' },
-                    { texto: 'Enviar el viaje a autorización', color: 'accent', valor: 'enviar' },
+                    { texto: 'Enviar la solicitud a aprobación', color: 'accent', valor: 'enviar' },
                 ]
             },
             disableClose: true,
@@ -230,7 +119,7 @@ export class ViajeComponent {
                 this.loading = true;
                 this.viajesService
                     .solicitarAutorizacion(this.noTrayecto)
-                    .then(viaje => {
+                    .then(() => {
                         this.actualizarViaje();
                     })
                     .catch(reason => this.utilService.manejarError(reason))
@@ -239,122 +128,25 @@ export class ViajeComponent {
         }).catch(reason => this.utilService.manejarError(reason));
     }
 
-    terminarAprobacionCeco() {
-
-        // DECIDIR SI SE APRUEBA O RECHAZA DEBERÍA OCURRIR DEL LADO DEL API
-
-        let aprobar = !this.viaje.comprobantes
-            .map(gasto => gasto.segregacions)
-            .reduce((a, b) => a.concat(b), [])
-            .map(s => s.estatus == 'Aprobado')
-            .includes(false);
-
-        let campos = [];
-        if (!aprobar) campos.push({ label: "Comentarios", type: "textarea", placeholder: "El motivo del rechazo del viaje es ...", value: "" });
-
-        this.utilService
-            .mostrarDialogoConFormulario(
-
-                aprobar ? "Aprobar viaje" : "Rechazar viaje",
-                aprobar ? "Está a punto de terminar la aprobación de las segregaciones del viaje, esta operación es irreversible."
-                    : "Está a punto de terminar la aprobación de las segregaciones del viaje, esta operación es irreversible.",
-                aprobar ? "Aprobar viaje" : "Rechazar viaje",
-                "Cancelar", campos, 
-                aprobar ? 'accent' : undefined
-
-            ).then(o => {
-
-                if (o != 'ok') return;
-
-                let promise = null;
-                if (aprobar) promise = this.viajesService.aprobarViajePorCeco(this.noTrayecto);
-                else promise = this.viajesService.rechazarViajePorCeco(this.noTrayecto, campos[0].value);
-
-                this.loading = true;
-                promise
-                    .then(response => {
-                        let e = response.body as any;
-                        console.log(e);
-                        this.utilService.mostrarDialogoSimple(e.status, e.message)
-                        this.cancelar();
-                    })
-                    .catch(err => this.utilService.manejarError(err))
-                    .then(e => this.loading = false);
-
-            }).catch(e => this.utilService.manejarError(e))
-
-
-    }
-
-    terminarAprobacion() {
-
-        if (this.autorizandoPorCentroDeCosto) {
-            this.terminarAprobacionCeco();
-            return;
-        }
-
-        let estatus = null;
-        if (this.autorizandoPorSociedad) estatus = 'En Autorización';
-        else if (this.autorizandoPorCentroDeCosto) estatus = 'Cerrado';
-        this.viaje.comprobantes.forEach(e => {
-            if (e.estatus == 'Rechazado')
-                estatus = 'Rechazado';
-        })
-
-        let aprobado = true;
-        let rechazado = false;
-        let pendiente = false;
-        for (let i = 0; i < this.viaje.comprobantes.length; i++) {
-            if (this.viaje.comprobantes[i].estatus != 'Aprobado') aprobado = false;
-            if (this.viaje.comprobantes[i].estatus == 'Rechazado') rechazado = true;
-            if (this.viaje.comprobantes[i].estatus == 'Pendiente') pendiente = true;
-        }
-
-        if (pendiente && !rechazado) {
-            this.dialog.open(DialogoSimpleComponent, {
-                data: {
-                    titulo: 'Quedan comprobantes pendientes de aprobar',
-                    texto: 'No puede terminar aprobación si tiene comprobantes pendientes de aprobar, apruebe o rechace los comprobantes pendientes',
-                    botones: [{ texto: 'Entendido', color: 'primary' },]
-                },
-            })
-            return;
-        }
-
+    solicitarAutorizacionDeComprobacion() {
         this.dialog.open(DialogoSimpleComponent, {
             data: {
-                titulo: 'Terminar aprobación',
-                texto: (aprobado ? 'Está a punto de aprobar' : 'Esta a punto de rechazar') + ' el viaje ' + this.noTrayecto + ' con destino a '
-                    + this.viaje.destino + (aprobado ? '. Está operación es irreversible.' : '. El viajero podrá revisar los comprobanes que subió '
-                        + ' y hacer los ajustes necesarios antes de solicitar aprobación de nuevo.'),
+                titulo: 'Solicitar aprobación de la comprobación',
+                texto: 'Está a punto de enviar la comprobación de la solicitud ' + this.noTrayecto + 
+                ' para su aprobación. Mientras la comprobación está siendo aprobada no podrá editarla ni agregar comprobantes.',
                 botones: [
-                    { texto: 'No terminar ahora', color: '', valor: '' },
-                    {
-                        texto: aprobado ? 'Aprobar gastos de viaje' : 'Rechazar gastos de viaje',
-                        color: aprobado ? 'accent' : 'primary',
-                        valor: 'enviar'
-                    },
+                    { texto: 'No enviar ahora', color: '', valor: '' },
+                    { texto: 'Enviar la comprobación a aprobación', color: 'accent', valor: 'enviar' },
                 ]
             },
+            disableClose: true,
         }).afterClosed().toPromise().then(valor => {
             if (valor == 'enviar') {
                 this.loading = true;
                 this.viajesService
-                    .terminarAprobacion(this.noTrayecto, estatus)
-                    .then(result => {
-                        if (result.status == '') this.cancelar();
-                        else {
-
-                            this.dialog.open(DialogoSimpleComponent, {
-                                data: {
-                                    titulo: result.status,
-                                    texto: result.message,
-                                    botones: [{ texto: 'Entendido', color: 'primary' }]
-                                }
-                            });
-                            this.actualizarViaje();
-
-                        }
+                    .solicitarAutorizacionDeComprobacionPorContador(this.noTrayecto)
+                    .then(() => {
+                        this.actualizarViaje();
                     })
                     .catch(reason => this.utilService.manejarError(reason))
                     .then(() => this.loading = false);
@@ -362,114 +154,108 @@ export class ViajeComponent {
         }).catch(reason => this.utilService.manejarError(reason));
     }
 
-    aprobarViajeAutCC() {
-        this.utilService
-            .mostrarDialogoSimple(
-                "Aprobar viaje",
-                "Está a punto de aprobar el viaje del autorizador de centro de costos, " +
-                "esta operación es irreversible y resultará en la contabilización del viaje",
-                "Aprobar y contabilizar viaje",
-                "Cancelar", 'accent')
-            .then(o => {
-                if (o != "ok") return;
-                this.loading = true;
-                this.viajesService
-                    .aprobarViajeAutCC(this.noTrayecto)
-                    .then(e => {
-                        let json = e.body as any;
-                        if (json.result && json.result.status) {
-                            this.actualizarViaje();
-                            this.utilService
-                                .mostrarDialogoSimple(json.result.status, json.result.message);
-                        } else {
-                            this.utilService
-                                .mostrarDialogoSimple("Éxito", "Se contabilizó el viaje")
-                                .then(e => this.cancelar());
-                        }
-                    })
-                    .catch(err => this.utilService.manejarError(err))
-                    .then(e => this.loading = false);
-            });
-    }
-
-    rechazarViajeAutCC() {
-
-        let campos = [
-            { label: "Comentarios", type: "textarea", placeholder: "El motivo del rechazo del viaje es ...", value: "" }
-        ];
-
-        this.utilService
-            .mostrarDialogoConFormulario(
-                "Rechazar viaje",
-                "Está a punto de rechazar el viaje del autorizador de centro de costos, esta operación es irreversible",
-                "Rechazar viaje",
-                "Cancelar", campos)
-            .then(o => {
-                if (o != "ok") return;
-                this.loading = true;
-                this.viajesService
-                    .rechazarViajeAutCC(this.noTrayecto, campos[0].value)
-                    .then(e => {
-                        this.utilService.mostrarDialogoSimple("Éxito", "Se rechazó el viaje");
-                        this.cancelar();
-                    })
-                    .catch(err => this.utilService.manejarError(err))
-                    .then(e => this.loading = false);
-            });
+    obtenerDatosDeUsuario() {
+        let usuario = JSON.parse(localStorage.getItem('objUsuario'));
+        
+        this.solicitud.departamento = usuario.departamentos[0];
+        this.solicitud.grupo = usuario.grupo01[0];
+        this.solicitud.empresa = this. solicitud.grupo.id;
     }
 
     actualizarViaje() {
-
-        let promise = null;
-
-        if (this.autorizandoPorCentroDeCosto) promise = this.viajesService.obtenerViajePendientesDeAutorizacionPorCeco(this.noTrayecto)
-        else promise = this.viajesService.obtenerViaje(this.noTrayecto);
-
         this.loading = true;
-        promise
+        this.viajesService.obtenerViaje(this.noTrayecto)
             .then(viaje => {
-                this.titulo = 'Viaje ' + this.noTrayecto;
-                this.viaje = viaje;
+                this.titulo = 'Solicitud ' + this.noTrayecto;
+                this.solicitud = viaje;
+                if(this.solicitud.comprobantes.length > 0) {
+                    this.actualizarAlertas();
+                }
                 this.actualizarSumaDeComprobantes();
-
-                // para que tipo viaje del viaje corresponda a un ELEMENTO del ARREGLO de tipos viaje
-                if (this.viaje.tipoViaje && this.viaje.tipoViaje.id)
-                    this.viaje.tipoViaje = this.tiposViaje.find(e => e.id == this.viaje.tipoViaje.id);
-
-                if (this.viaje.comprobantes && this.autorizandoPorCentroDeCosto)
-                    this.viaje.comprobantes.forEach(gv => (gv as any).expandido = true);
-
-                if (this.viaje.estatus != 'Abierto')
-                    this.titulo += ' (' + this.viaje.estatus + ')';
-
-                this.limpiarSeleccionDeComprobantes();
             })
             .catch(reason => this.utilService.manejarError(reason))
             .then(() => this.loading = false)
     }
 
+    actualizarAlertas() {
+        this.viajesService
+            .obtenerAlertasPorSolicitud(this.noTrayecto)
+            .then(alertas => {
+                this.contadorAlertas = 0;
+                alertas.forEach(alerta => {
+                    if (alerta.tipo === 'W' || alerta.tipo === 'E') {
+                        this.contadorAlertas++;
+                    }
+                    alerta.tipo = alerta.tipo === 'S'? 'alert-success' : 
+                                    (alerta.tipo === 'W'? 'alert-warning' : 
+                                    (alerta.tipo === 'E'? 'alert-danger' : 'alert-info'));
+                });
+                this.alertas = alertas;
+            })
+            .catch(reason => this.utilService.manejarError(reason))
+            .then(() => this.loading = false);
+    }
+
     actualizarSumaDeComprobantes() {
-        let c = this.viaje.comprobantes;
+        let c = this.solicitud.comprobantes;
         if (!c) return;
-        this.totalgv = new GastoViaje();
+        this.totalgv = new Comprobante();
         this.totalgv.total = c.map(e => e.total).reduce((a, b) => a + b, 0);
-        this.totalgv.subtotal = c.map(e => e.subtotal).reduce((a, b) => a + b, 0);
+        this.totalgv.subTotal = c.map(e => e.subTotal).reduce((a, b) => a + b, 0);
+        this.totalgv.impuesto = c.map(e => e.impuesto).reduce((a, b) => a + b, 0);
         this.totalgv.iva = c.map(e => e.iva).reduce((a, b) => a + b, 0);
         this.totalgv.isr = c.map(e => e.isr).reduce((a, b) => a + b, 0);
-        this.totalgv.ish = c.map(e => e.ish).reduce((a, b) => a + b, 0);
-        this.totalgv.tua = c.map(e => e.tua).reduce((a, b) => a + b, 0);
         this.totalgv.ieps = c.map(e => e.ieps).reduce((a, b) => a + b, 0);
+        this.totalgv.propina = c.map(e => e.propina).reduce((a, b) => a + b, 0);
+    }
+
+    descargar(id:string, ruta: string, formato: string) {
+        this.loading = true;
+        var filenameWithExtension = ruta.replace(/^.*[\\\/]/, '');
+        var filename = filenameWithExtension.split('.')[0];
+        
+        this.viajesService
+            .descargar(id, formato)
+            .then(response => {
+                this.saveByteArray(filename, response, formato);
+            })
+            .catch(reason => this.utilService.manejarError(reason))
+            .then(() => this.loading = false);
+    }
+
+    saveByteArray(reportName: string, byte: ArrayBuffer, formato: string) {
+        var file = (formato === 'pdf' ? new Blob([byte], {type: 'application/pdf'}) 
+                        : (formato === 'xml' ? new Blob([byte], {type: 'application/xml'}) 
+                        : new Blob([byte], {type: 'application/zip'}))
+                    );
+        var fileURL = URL.createObjectURL(file);
+        let link: any = window.document.createElement('a');
+        link.href = fileURL;
+        link.download = reportName;
+        link.click();
+    }
+
+    descargaFactura() {
+        this.viajesService
+            .getDescargaFactura(this.solicitud.numeroSolicitud)
+            .subscribe(
+                data => {
+                const file = new Blob([data], { type: 'application/pdf' });
+                const fileURL = URL.createObjectURL(file);
+                window.open(fileURL);
+                }
+            );
     }
 
     eliminar() {
         this.dialog.open(DialogoSimpleComponent, {
             data: {
-                titulo: 'Eliminar viaje',
-                texto: 'Está a punto de eliminar el viaje con número de trayecto ' + this.noTrayecto + ' con destino a '
-                    + this.viaje.destino + '. Esta operación no es reversible.',
+                titulo: 'Eliminar solicitud',
+                texto: 'Está a punto de eliminar la solicitud con número de trayecto ' + this.noTrayecto + 
+                '. Esta operación no es reversible.',
                 botones: [
                     { texto: 'No eliminar', color: '', valor: '' },
-                    { texto: 'Eliminar viaje permanentemente', color: 'primary', valor: 'eliminar' },
+                    { texto: 'Eliminar solicitud permanentemente', color: 'primary', valor: 'eliminar' },
                 ]
             },
             disableClose: true,
@@ -490,11 +276,11 @@ export class ViajeComponent {
     crear() {
         this.loading = true;
         this.viajesService
-            .crearViaje(this.viaje)
-            .then(viaje => {
-                this.noTrayecto = '' + viaje.noTrayecto;
+            .crearViaje(this.solicitud)
+            .then(solicitud => {
+                this.noTrayecto = '' + solicitud.numeroSolicitud;
                 window.history.replaceState({}, 'no se para que es este parametro',
-                    '/viajes/viajes-abiertos/' + this.noTrayecto);
+                    '/viajes/viajes-abiertos/' + this.noTrayecto); // '/viajes/viajes-abiertos/'
                 this.editando = true;
                 this.ediandoCamposDeCabecera = false;
                 this.creando = false;
@@ -507,13 +293,27 @@ export class ViajeComponent {
     guardar() {
         this.loading = true;
         this.viajesService
-            .actualizarViaje(this.noTrayecto, this.viaje)
-            .then(viaje => {
+            .actualizarViaje(this.noTrayecto, this.solicitud)
+            .then(solicitud => {
                 this.ediandoCamposDeCabecera = false;
-                this.viaje = viaje; // este viaje no trae gastos, por eso invocamos actualizar aqui abajo
+                this.solicitud = solicitud; // este viaje no trae gastos, por eso invocamos actualizar aqui abajo
                 this.actualizarViaje();
             })
             .catch(reason => this.utilService.manejarError(reason))
             .then(() => this.loading = false);
+    }
+
+    currentPattern() {
+        this.formatoMonto = this.utilService.formatoMoneda(this.solicitud.totalAnticipo || 0);
+    }
+
+    validarCamposRequeridos(): boolean {
+        if(this.solicitud.motivo !== '' &&
+            this.solicitud.totalAnticipo !== null &&
+            this.solicitud.fechaInicio !== '' &&
+            this.solicitud.fechaFin !== '') {
+            return true;
+        }
+        return false;
     }
 }

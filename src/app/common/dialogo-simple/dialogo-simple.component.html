@@ -32,12 +32,11 @@
                 *ngIf='f.type != "select" && f.type != "textarea"'>
 
             <textarea (change)="onFieldChange($event, f)" [placeholder]="f.placeholder"
-                *ngIf='f.type == "textarea"' style="max-width:396px; height:64px; min-width:396px;"></textarea>
+                *ngIf='f.type == "textarea"' style="max-width:396px; height:64px; min-width:396px;" [maxLength]="f.maxLength"></textarea>
 
             <select (change)="onFieldChange($event, f)" *ngIf='f.type == "select"'>
                 <option *ngFor='let o of f.options' [value]="o.value">{{o.display}}</option>
             </select>
-
         </div>
     </form>
 

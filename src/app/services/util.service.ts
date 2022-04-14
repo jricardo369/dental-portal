@@ -19,17 +19,70 @@ export class UtilService {
     workspaceNavMenuOpened = false;
     workspaceNavMenuShortened = false;
 
-    goBack() {
-        this.location.back();
-    }
+    private sTimeout: any;
 
     constructor(
         private dialog: MatDialog,
         private router: Router,
         private location: Location,
         private customI18n: CustomI18nService
-    ) {
+    ) {}
 
+    formatoMoneda = function(amount) {
+        return '$' + parseFloat(amount).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+    };
+
+    validateInput(event:any){
+        let entrada = event.target.value;
+        let decimal:boolean = false;
+        let countDecimals: number = 0;
+        let valida: boolean;
+        for (var i = 0; i < entrada.length; i++) {
+            let charCode = entrada.charCodeAt(i);
+            if (charCode >= 48 && charCode <= 57) {
+                if(decimal) {
+                    if(countDecimals < 2) {
+                        countDecimals++;
+                        valida = true;
+                    } else {
+                        valida = false;
+                        break;
+                    }
+                } else {
+                    valida = true;
+                }
+            } else if(charCode == 46 && !decimal) {
+                decimal = true;
+                valida = true;
+            } else {
+                valida = false;
+                break;
+            }
+        }
+
+        let charCode = (event.which) ? event.which : event.keyCode;
+        if (charCode >= 48 && charCode <= 57) {
+            if(decimal) {
+                if(countDecimals < 2) {
+                    countDecimals++;
+                    valida = true;
+                } else {
+                    valida = false;
+                }
+            } else {
+                valida = true;
+            }
+        } else if(charCode == 46 && !decimal) {
+            decimal = true;
+            valida = true;
+        } else {
+            valida = false;
+        }
+        return valida;
+    }
+
+    goBack() {
+        this.location.back();
     }
 
     manejarError(reason: any) {
@@ -41,7 +94,7 @@ export class UtilService {
 
         if (reason instanceof HttpErrorResponse) {
 
-            if (reason.status == 401 || reason.status == 0) {
+            if (reason.status == 403) {
                 this.mostrarDialogoLogin();
                 return;
             }
@@ -67,6 +120,26 @@ export class UtilService {
                 if (reason.error.messageDialogDto) {
                     titulo = reason.error.messageDialogDto.title;
                     texto = reason.error.messageDialogDto.message;
+                }
+
+                if (reason.error.status) {
+                    titulo = reason.error.error;
+                    texto = reason.error.message;
+                }
+
+                // MANEJANDO los errores que regresan JSON
+                if (texto.substring(0,1) === '{') {
+                    let json = JSON.parse(texto);
+                    if (json.status) {
+                        titulo = json.error;
+                        texto = json.message;
+                    }
+                }
+
+                // Manejando el object ProgressEvent
+                if (reason.status == 0) {
+                    titulo = reason.name;
+                    texto = reason.message;
                 }
 
             } else {
@@ -118,7 +191,7 @@ export class UtilService {
             { texto: okText, color: okOptionColor, valor: 'ok' }
         ];
 
-        if (noText) botones.push({ texto: noText, color: null, valor: 'no' })
+        if (noText) botones.unshift({ texto: noText, color: null, valor: 'no' })
 
         let dialogRef = this.dialog.open(DialogoSimpleComponent, {
             data: {
@@ -132,7 +205,6 @@ export class UtilService {
     }
 
     mostrarDialogoFrame(src) {
-        console.log(src);
         let dialogRef = this.dialog.open(DialogoFrameComponent, {
             data: {
                 src: src
@@ -144,8 +216,6 @@ export class UtilService {
         });
         return dialogRef.afterClosed().toPromise();
     }
-
-
 
     /**
      * 
@@ -165,7 +235,7 @@ export class UtilService {
             { texto: okText, color: 'primary', valor: 'ok' }
         ];
 
-        if (noText) botones.push({ texto: noText, color: null, valor: 'no' })
+        if (noText) botones.unshift({ texto: noText, color: null, valor: 'no' })
 
         let dialogRef = this.dialog.open(DialogoSimpleComponent, {
             data: {
@@ -197,7 +267,7 @@ export class UtilService {
             { texto: okText, color: okColor, valor: 'ok' }
         ];
 
-        if (noText) botones.push({ texto: noText, color: null, valor: 'no' })
+        if (noText) botones.unshift({ texto: noText, color: null, valor: 'no' })
 
         let dialogRef = this.dialog.open(DialogoSimpleComponent, {
             data: {
@@ -224,50 +294,44 @@ export class UtilService {
         e.style.borderLeftWidth = needsLeftBorder ? '1px' : '0';
     }
 
-    /*rutaDeManual() {
-        let folder = API_URL.substr(0, API_URL.length - 4) + "-docs/";
-        let name = null
-        if (this.customI18n.localeId == 'en') name = "VendorsManual.pdf"
-        else name = "ManualProveedores.pdf"
-        return folder + name
-    }*/
-
-    rutaDeManual(manual: string) {
-        let folder = API_URL.substr(0, API_URL.length - 4) + "-docs/";
+    rutaManual() {
+        const folder = API_URL.replace("viaticos-api/", "") + 'docs/manuales/';
         let name = null;
-        switch (manual) {
-            case "ManualProveedores":
-                if (this.customI18n.localeId == 'en') name = "VendorsManual.pdf";
-                else name = "ManualProveedores.pdf";
+        switch (localStorage.getItem('manual_file')) {
+            case 'ManualEmpleadosSLAPI':
+                // name = this.customI18n.localeId === 'en' ? 'TravelExpensesManual.pdf' : 'ManualViaticos.pdf';
+                name = 'ManualEmpleadosSLAPI.pdf';
                 break;
-            case "ManualEmpleadoFB60":
-                if (this.customI18n.localeId == 'en') name = "EmployeeFb60Manual.pdf";
-                else name = "ManualEmpleadoFB60.pdf";
+            case 'ManualAprobadorSLAPI':
+                name = 'ManualAprobadorSLAPI.pdf';
                 break;
-            case "ManualCajaChica":
-                if (this.customI18n.localeId == 'en') name = "PettyCashManual.pdf";
-                else name = "ManualCajaChica.pdf";
-                break;
-            case "ManualGastosViaje":
-                if (this.customI18n.localeId == 'en') name = "TravelExpensesManual.pdf";
-                else name = "ManualGastosViaje.pdf";
-                break;
-            case "ManualAdministracionCajaChica":
-                if (this.customI18n.localeId == 'en') name = "PettyCashAdministrationManual.pdf";
-                else name = "ManualAdministracionCajaChica.pdf";
-                break;
-            case "ManualAdministracionGeneral":
-                if (this.customI18n.localeId == 'en') name = "GeneralAdministrationManual.pdf";
-                else name = "ManualAdministracionGeneral.pdf";
-                break;
-            case "ManualAdministracionViajes":
-                if (this.customI18n.localeId == 'en') name = "TravelAdministrationManual.pdf";
-                else name = "ManualAdministracionViajes.pdf";
+            case 'ManualAdministradorSLAPI':
+                name = 'ManualAdministradorSLAPI.pdf';
                 break;
             default:
                 break;
         }
-        
-        return folder + name;
+        // console.log('rutaManual() ' + folder + name);
+        window.open(folder + name, '_blank');
+    }
+
+    iniciarContadorDeSesion(){
+        let min = 120;
+        this.sTimeout = setTimeout(() => {
+            this.limpiarContadorDeSesion();
+            this.mostrarDialogoLogin()
+        }, ((min * 60) * 1000));
+    }
+
+    limpiarContadorDeSesion(){
+        clearTimeout(this.sTimeout);
+    }
+
+    deshabilitaRetroceso() {
+        window.location.hash="no-back-button";
+        window.location.hash="Again-No-back-button" //chrome
+        window.onhashchange=function(){
+            window.location.hash="";
+        }
     }
 }

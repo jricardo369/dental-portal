@@ -55,7 +55,7 @@ export class AppComponent implements OnInit, SessionServiceListener {
 
     title = 'contelec-app';
 
-    isRouterOutletVisible = false;
+    isRouterOutletVisible = true;
 
     isAppBarVisible = false;
 
@@ -76,21 +76,34 @@ export class AppComponent implements OnInit, SessionServiceListener {
             'shop', 'shopping-cart', 'sort', 'tclases', 'test', 'cancel',
             'test2', 'travel', 'trolley', 'update', 'settings',
             'assignment', 'assignment-ind', 'assignment-turned-in','users','general-manage',
+            'information', 'questions', 'alert', 'pending-black','to-do-list','pending-actions',
         ].forEach(e => iconRegistry.addSvgIcon(e, sanitizer.bypassSecurityTrustResourceUrl(document.baseURI + '/assets/svg/' + e + '.svg')));
+
+        //localStorage.clear();
     }
 
     ngOnInit(): void {
         this.sessionService.addListener(this);
-        this.sessionService
+        /*this.sessionService
             .isSessionValid()
             .then(isValid => {
                 if (!isValid) {
                     this.isAppBarVisible = false;
                     this.router.navigateByUrl('/ingresar');
-                } else this.isAppBarVisible = true;
+                } else { this.isAppBarVisible = true; }
             })
             .catch(reason => alert(reason))
-            .then(() => this.isRouterOutletVisible = true);
+            .then(() => this.isRouterOutletVisible = true);*/
+            if (localStorage.getItem('auth_token') === null) {
+                this.isAppBarVisible = false;
+                //this.isRouterOutletVisible = true;
+                this.router.navigateByUrl('/ingresar');
+            }
+            else {
+                this.isAppBarVisible = true;
+                //this.isRouterOutletVisible = true;
+                this.router.navigateByUrl('/inicio');
+            }
     }
 
     onIniciarSesion() {

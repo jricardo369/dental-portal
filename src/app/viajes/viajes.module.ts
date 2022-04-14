@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatSelectModule } from '@angular/material/select';
 
 import { ViajesRoutingModule } from './viajes-routing.module';
 import { ViajesComponent } from './viajes/viajes.component';
@@ -14,7 +16,14 @@ import { FormsModule } from '@angular/forms';
 import { ComprobanteComponent } from './comprobante/comprobante.component';
 import { ComprobanteFormComponent } from './comprobante-form/comprobante-form.component';
 import { DialogoComprobanteComponent } from './dialogo-comprobante/dialogo-comprobante.component';
-import { ContelecUiModule } from '../contelec-ui/contelec-ui.module';
+import { ViaticosUiModule } from '../viaticos-ui/viaticos-ui.module';
+import { SolicitudesPendientesComponent } from './solicitudes-pendientes/solicitudes-pendientes.component';
+import { SolicitudPendienteComponent } from './solicitud-pendiente/solicitud-pendiente.component';
+import { ComprobacionesContadorComponent } from './comprobaciones-contador/comprobaciones-contador.component';
+import { ComprobacionPendienteComponent } from './comprobacion-pendiente/comprobacion-pendiente.component';
+import { ReporteViajesComponent } from './reporte-viajes/reporte-viajes.component';
+import { ReporteViajesDetalleComponent } from './reporte-viajes-detalle/reporte-viajes-detalle.component';
+import { PolizaComponent } from './poliza/poliza.component';
 
 @NgModule({
     imports: [
@@ -25,7 +34,9 @@ import { ContelecUiModule } from '../contelec-ui/contelec-ui.module';
         MatDialogModule,
         FormsModule,
         MatStepperModule,
-        ContelecUiModule
+        ViaticosUiModule,
+        MatSliderModule,
+        MatSelectModule
     ],
     entryComponents: [
         DialogoComprobanteComponent
@@ -37,7 +48,14 @@ import { ContelecUiModule } from '../contelec-ui/contelec-ui.module';
         ViajeComponent,
         ComprobanteComponent,
         ComprobanteFormComponent,
-        DialogoComprobanteComponent
+        DialogoComprobanteComponent,
+        SolicitudesPendientesComponent,
+        SolicitudPendienteComponent,
+        ReporteViajesComponent,
+        ReporteViajesDetalleComponent,
+        ComprobacionesContadorComponent,
+        ComprobacionPendienteComponent,
+        PolizaComponent
     ]
 })
 export class ViajesModule { }

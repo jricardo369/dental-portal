@@ -1,46 +1,39 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
-import { Usuario } from '../model/usuario';
 import { LoginComponent } from './common/login/login.component';
 import { InicioComponent } from './common/inicio/inicio.component';
-import { TusCredencialesComponent } from './common/tus-credenciales/tus-credenciales.component';
+import { ConfiguracionComponent } from 'src/app/administracion-general/configuracion/configuracion.component';
+import { NivelesTopesCargaComponent } from 'src/app/administracion-general/niveles-topes-carga/niveles-topes-carga.component';
+import { NivelTopesCargaComponent } from 'src/app/administracion-general/nivel-topes-carga/nivel-topes-carga.component';
+import { CuentasContablesComponent } from 'src/app/administracion-general/cuentas-contables/cuentas-contables.component';
+import { CuentaContableComponent } from 'src/app/administracion-general/cuenta-contable/cuenta-contable.component';
+import { BitacoraComponent } from 'src/app/common/bitacora/bitacora.component';
+import { ReporteViajesDetalleComponent } from 'src/app/viajes/reporte-viajes-detalle/reporte-viajes-detalle.component';
+import { PolizaComponent } from 'src/app/viajes/poliza/poliza.component';
+
 
 const routes: Routes = [
 
     // CORE
     { path: 'ingresar', component: LoginComponent, },
     { path: 'inicio', component: InicioComponent, },
-    { path: 'credenciales', component: TusCredencialesComponent, },
+    { path: 'niveles', component: NivelesTopesCargaComponent, },
+    { path: 'nivel/:id', component: NivelTopesCargaComponent, },
+    { path: 'cuentas', component: CuentasContablesComponent, },
+    { path: 'cuenta/:id', component: CuentaContableComponent, },
+    { path: 'poliza/:id', component: PolizaComponent, },
+    { path: 'reporte-viajes/:id', component: ReporteViajesDetalleComponent },
+    { path: 'config', component: ConfiguracionComponent, },
+    { path: 'bitacora', component: BitacoraComponent, },
     { path: '', redirectTo: 'inicio', pathMatch: 'full' },
 
     { // ADMINISTRADOR (GENERAL)
-        path: 'administracion/general',
+        path: 'administracion-general',
         loadChildren: () => import('./administracion-general/administracion-general.module').then(m => m.AdministracionGeneralModule)
     },
-
-    { // ADMINISTRADOR (GASTOS DE VIAJE)
-        path: 'administracion/viajes',
-        loadChildren: () => import('./administracion-viajes/administracion-viajes.module').then(m => m.AdministracionViajesModule)
-    },
-
-    { // ADMINISTRADOR (CAJA CHICA)
-        path: 'administracion/caja-chica',
-        loadChildren: () => import('./administracion-caja-chica/administracion-caja-chica.module').then(m => m.AdministracionCajaChicaModule)
-    },
-
-    { // PROVEEDORES
-        path: 'proveedores',
-        loadChildren: () => import('./proveedores/proveedores.module').then(m => m.ProveedoresModule)
-    },
-
     { // VIAJES
         path: 'viajes',
         loadChildren: () => import('./viajes/viajes.module').then(m => m.ViajesModule)
-    },
-
-    { // CAJA CHICA
-        path: 'caja-chica',
-        loadChildren: () => import('./caja-chica/caja-chica.module').then(m => m.CajaChicaModule)
     },
 
 ];

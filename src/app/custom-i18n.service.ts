@@ -18,12 +18,19 @@ en.set('Consulta de facturas', 'Incoming invoice report');
 
 en.set('Administración general', 'General Administration');
 en.set('Usuarios', 'Users');
-en.set('Permisos', 'Permiss');
 en.set('Administra los usuarios y sus permisos en el portal', 'Manage the users and their permissions');
+en.set('Pacientes', 'Patients');
+en.set('Administra los pacientes y sus permisos en el portal', 'Manage the patients  and their permissions');
 en.set('Tareas programadas', 'Jobs');
 en.set('Ejecuta las tareas programadas fuera de su horario normal', 'Force job executions');
 en.set('Configuración general', 'General configurations');
 en.set('Configuración particular del módulo general', 'Configurations specific to the general module');
+en.set('Niveles de viáticos', 'viatic levels');
+en.set('Configuración para los topes de carga de comprobante por nivel de usuario', 'Configuration for receipt loading stops per user level');
+en.set('Cuentas contables', 'Accounting accounts');
+en.set('Configuración para las subcuentas del empleado', 'Configuration for employee sub-accounts');
+en.set('Empresas', 'Companies');
+en.set('Configuración para las empresas', 'Configuration for companies');
 
 en.set('Administración de viajes', 'Travels Administration');
 en.set('Tipos de viaje', 'Travel types');
@@ -51,13 +58,17 @@ en.set('Configuración de caja chica', 'Petty cash configuration');
 en.set('Configuraciones particulares de caja chica', 'Configurations specific to the petty cash module');
 en.set('Nueva caja chica', 'New petty cash');
 
-en.set('Gastos de viaje', 'Travel expenses');
-en.set('Nuevo viaje', 'New travel');
-en.set('Formulario para crear un nuevo viaje', 'New travel form');
-en.set('Tus viajes abiertos', 'You open travels');
-en.set('Administración de sus viajes abiertos', 'Manage your open travels');
-en.set('Tus viajes cerrados', 'You closed travels');
-en.set('Historico de sus viajes cerrados', 'Review your closed travels');
+en.set('Viáticos', 'Travel expenses');
+en.set('Nueva solicitud', '-');
+en.set('Reporte de solicitudes', '-');
+en.set('Formulario para crear una nueva solicitud de viáticos', '-');
+en.set('Solicitudes de viáticos abiertas', '-');
+en.set('Administración de sus solicitudes abiertas', '-');
+en.set('Solicitudes de viáticos cerradas', '-');
+en.set('Historico de sus solicitudes de viáticos cerradas', '-');
+en.set('Solicitudes pendientes por aprobar', '-');
+en.set('Aprobaciones de comprobación', '-');
+en.set('Comprobaciones pendientes por aprobación', '-');
 en.set('Autorizaciones por sociedad', 'Authorizations by company');
 en.set('Viajes esperando su autorización de primer nivel (por sociedad)', 'Travels waiting for level 1 authorization (company)');
 en.set('Autorizaciones por centro de costo', 'Authorizations by cost center');
@@ -67,7 +78,7 @@ en.set('Viajes de autorizadores esperando autorización de tercer nivel', 'Trave
 
 en.set('Nueva solicitud de caja chica', 'New petty cash request');
 en.set('Crea una nueva solicitud de contabilización de caja chica', 'Crea a new petty cash request');
-en.set('Tus solicitudes pendientes', 'Your pending requests');
+en.set('Aprobaciones de solicitud', 'Your pending requests');
 en.set('Tus solicitudes de contabilización de caja chica', 'Your petty cash accounting requests');
 en.set('Tus autorizaciones pendientes', 'Your pending authorizations');
 en.set('Autorizaciones pendientes', 'Pending authorizations');
@@ -95,6 +106,10 @@ en.set("Credenciales incorrectas", "Wrong credentials");
 en.set("El usuario o la contraseña no coinciden, verifique sus credenciales y pruebe de nuevo", "Credentials don't match. Verify and try again.");
 en.set("Error de conexión", "Connection error");
 en.set("No se logró la conexión con el servidor", "Can not establish connection to server");
+en.set("Una sesión activa", "-");
+en.set("Actualmente ya hay una sesión activa en este navegador web. Por favor, cierre sesión para poder iniciar una sesión nueva.", "-");
+en.set("No se puede reanudar la sesión", "-");
+en.set("El usuario con el que está intentando reanudar la sesión no coincide con el usuario de la sesión actual, verifique por favor.", "-");
 
 en.set("Tus solicitudes contabilizadas", "Your accounted requests");
 en.set("Autorizaciones pendientes", "Pending authorizations");
@@ -150,7 +165,6 @@ export class CustomI18nService {
     }
 
     get(key: string): any {
-        // console.log(key + " .. " + this.localeId)
         if (!key) return key;
         let map = this.map(this.localeId);
         if (!map.has(key)) throw "La llave '" + key + "' no se encuentra";
@@ -158,7 +172,6 @@ export class CustomI18nService {
     }
 
     private map(locale: string) {
-        // console.log(locale);
         if (locale == 'es' || locale.startsWith("es")) return es;
         if (locale == 'en' || locale.startsWith("en")) return en;
         throw "Locale '" + locale + "' no se encuentra";

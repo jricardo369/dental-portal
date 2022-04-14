@@ -1,6 +1,8 @@
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { Inject, Component } from "@angular/core";
-
+import { Inject, Component, ViewChild } from "@angular/core";
+import { UtilService } from "src/app/services/util.service";
+import { SessionService } from "src/app/services/session.service";
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'dialogo-login',
@@ -12,6 +14,9 @@ export class DialogoLoginComponent {
     recuperarPasswordOnly = false;
 
     constructor(
+        public utilService: UtilService,
+        private sessionService: SessionService,
+        private router: Router,
         public dialogRef: MatDialogRef<DialogoLoginComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any) {
         this.recuperarPasswordOnly = data.recuperarPasswordOnly;
@@ -19,4 +24,10 @@ export class DialogoLoginComponent {
 
     cerrar() { this.dialogRef.close(); }
 
+    salir() {
+        this.cerrar();
+        this.utilService.limpiarContadorDeSesion();
+        this.sessionService.cerrarSesion();
+        this.router.navigate(['/ingresar']);
+    }
 }

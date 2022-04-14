@@ -3,31 +3,36 @@ import { Routes, RouterModule } from '@angular/router';
 import { ViajesComponent } from './viajes/viajes.component';
 import { HomeComponent } from './home/home.component';
 import { ViajeComponent } from './viaje/viaje.component';
+import { SolicitudesPendientesComponent } from './solicitudes-pendientes/solicitudes-pendientes.component';
+import { ReporteViajesComponent } from './reporte-viajes/reporte-viajes.component';
+import { ReporteViajesDetalleComponent } from './reporte-viajes-detalle/reporte-viajes-detalle.component';
+import { SolicitudPendienteComponent } from './solicitud-pendiente/solicitud-pendiente.component';
 import { ComprobanteComponent } from './comprobante/comprobante.component';
-import { Usuario, PERMISO_AUTORIZAR_VIAJES as PERMISO_AUTORIZAR_VIAJES_POR_SOCIEDAD, PERMISO_CARGAR_GASTOS_DE_VIAJE, PERMISO_AUTORIZAR_GASTOS_DE_VIAJE_POR_CENTRO_DE_COSTO } from '../../model/usuario';
 import { AppBarNavItem } from '../app-nav-item';
 import { CustomI18nService } from '../custom-i18n.service';
+import { ComprobacionesContadorComponent } from './comprobaciones-contador/comprobaciones-contador.component';
+import { ComprobacionPendienteComponent } from './comprobacion-pendiente/comprobacion-pendiente.component';
+import { PolizaComponent } from './poliza/poliza.component';
 
 const routes: Routes = [
 
     { path: 'viajes-abiertos', component: ViajesComponent, },
     { path: 'viajes-cerrados', component: ViajesComponent },
-    { path: 'autorizaciones', component: ViajesComponent },
-    { path: 'autorizaciones-ceco', component: ViajesComponent },
-    { path: 'autorizaciones-aut-cc', component: ViajesComponent },
-
+    { path: 'solicitudes', component: SolicitudesPendientesComponent },
+    { path: 'comprobaciones-contador', component: ComprobacionesContadorComponent },
+    { path: 'reporte-viajes', component: ReporteViajesComponent },
+    { path: 'reporte-viajes/:id', component: ReporteViajesDetalleComponent },
+    { path: 'poliza/:id', component: PolizaComponent },
+    
     { path: 'nuevo-viaje', component: ViajeComponent },
     { path: 'viajes-abiertos/:id', component: ViajeComponent },
     { path: 'viajes-cerrados/:id', component: ViajeComponent },
-    { path: 'autorizaciones/:id', component: ViajeComponent },
-    { path: 'autorizaciones-ceco/:id', component: ViajeComponent },
-    { path: 'autorizaciones-aut-cc/:id', component: ViajeComponent },
+    { path: 'solicitudes/:id', component: SolicitudPendienteComponent },
+    { path: 'comprobaciones-contador/:id', component: ComprobacionPendienteComponent },
 
     { path: 'viajes-abiertos/:id/comprobantes/:jd', component: ComprobanteComponent },
     { path: 'viajes-cerrados/:id/comprobantes/:jd', component: ComprobanteComponent },
-    { path: 'autorizaciones/:id/comprobantes/:jd', component: ComprobanteComponent },
-    { path: 'autorizaciones-ceco/:id/comprobantes/:jd', component: ComprobanteComponent },
-    { path: 'autorizaciones-aut-cc/:id/comprobantes/:jd', component: ComprobanteComponent },
+    { path: 'comprobaciones-contador/:id/comprobantes/:jd', component: ComprobanteComponent },
 
     { path: 'home', component: HomeComponent },
     { path: '', redirectTo: 'home' }
@@ -35,61 +40,76 @@ const routes: Routes = [
 
 const MODULE: AppBarNavItem = {
     module: null,
-    title: 'Gastos de viaje',
+    title: 'Viáticos',
     subtitle: null,
     uri: 'viajes',
     svgName: 'airplane',
-    isVisibleFor: u => u.rol.id == 2 && u.tieneAlgunoDeLosPermisos(PERMISO_CARGAR_GASTOS_DE_VIAJE, PERMISO_AUTORIZAR_VIAJES_POR_SOCIEDAD),
+    isVisibleFor: u => u.rol.some(r => 
+        r.descripcion === 'EMPLEADO' ||
+        r.descripcion === 'CONTABILIDAD' ||
+        r.descripcion === 'GERENTES' ||
+        r.descripcion === 'CONTADOR PRESTADORA' ||
+        r.descripcion === 'DIRECTOR' ||
+        r.descripcion === 'ADMINISTRADOR')
 };
 
 export const VIAJES_ITEMS: AppBarNavItem[] = [
     {
         module: MODULE,
         svgName: 'add',
-        title: 'Nuevo viaje',
-        subtitle: 'Formulario para crear un nuevo viaje',
+        title: 'Nueva solicitud',
+        subtitle: 'Formulario para crear una nueva solicitud de viáticos',
         uri: 'nuevo-viaje',
-        isVisibleFor: u => u.rol.id == 2,
+        isVisibleFor: u => u.rol.some(r => r.descripcion === 'EMPLEADO')
     },
     {
         module: MODULE,
         svgName: 'airplane',
-        title: 'Tus viajes abiertos',
-        subtitle: 'Administración de sus viajes abiertos',
+        title: 'Solicitudes de viáticos abiertas',
+        subtitle: 'Administración de sus solicitudes abiertas',
         uri: 'viajes-abiertos',
-        isVisibleFor: u => u.rol.id == 2,
+        isVisibleFor: u => u.rol.some(r => r.descripcion === 'EMPLEADO')
+    },
+    {
+        module: MODULE,
+        svgName: 'to-do-list',
+        title: 'Solicitudes de viáticos cerradas',
+        subtitle: 'Historico de sus solicitudes de viáticos cerradas',
+        uri: 'viajes-cerrados',
+        isVisibleFor: u => u.rol.some(r => r.descripcion === 'EMPLEADO')
+    }, 
+    {
+        module: MODULE,
+        svgName: 'done',
+        title: 'Aprobaciones de solicitud',
+        subtitle: 'Solicitudes pendientes por aprobar',
+        uri: 'solicitudes',
+        isVisibleFor: u => u.rol.some(r => r.descripcion === 'CONTABILIDAD')
     },
     {
         module: MODULE,
         svgName: 'done-all',
-        title: 'Tus viajes cerrados',
-        subtitle: 'Historico de sus viajes cerrados',
-        uri: 'viajes-cerrados',
-        isVisibleFor: u => u.rol.id == 2,
+        title: 'Aprobaciones de comprobación',
+        subtitle: 'Comprobaciones pendientes por aprobación',
+        uri: 'comprobaciones-contador',
+        isVisibleFor: u => u.rol.some(r => 
+            r.descripcion === 'CONTABILIDAD' ||
+            r.descripcion === 'GERENTES' ||
+            r.descripcion === 'CONTADOR PRESTADORA' ||
+            r.descripcion === 'DIRECTOR')
     },
     {
         module: MODULE,
-        svgName: 'areas',
-        title: 'Autorizaciones por sociedad',
-        subtitle: 'Viajes esperando su autorización de primer nivel (por sociedad)',
-        uri: 'autorizaciones',
-        isVisibleFor: u => u.rol.id == 2 && u.tieneElPermiso(PERMISO_AUTORIZAR_VIAJES_POR_SOCIEDAD),
-    },
-    {
-        module: MODULE,
-        svgName: 'assignment',
-        title: 'Autorizaciones por centro de costo',
-        subtitle: 'Viajes esperando su autorización de segundo nivel (por centro de costos)',
-        uri: 'autorizaciones-ceco',
-        isVisibleFor: u => u.rol.id == 2 && u.tieneElPermiso(PERMISO_AUTORIZAR_GASTOS_DE_VIAJE_POR_CENTRO_DE_COSTO),
-    },
-    {
-        module: MODULE,
-        svgName: 'assignment-ind',
-        title: 'Autorizaciones de autorizadores',
-        subtitle: 'Viajes de autorizadores esperando autorización de tercer nivel',
-        uri: 'autorizaciones-aut-cc',
-        isVisibleFor: u => u.rol.id == 2 && u.tieneElPermiso(PERMISO_AUTORIZAR_GASTOS_DE_VIAJE_POR_CENTRO_DE_COSTO),
+        svgName: 'report',
+        title: 'Reporte de solicitudes',
+        subtitle: 'Reporte de solicitudes',
+        uri: 'reporte-viajes',
+        isVisibleFor: u => u.rol.some(r => 
+            r.descripcion === 'ADMINISTRADOR' || 
+            r.descripcion === 'CONTABILIDAD' ||
+            r.descripcion === 'GERENTES' ||
+            r.descripcion === 'CONTADOR PRESTADORA' ||
+            r.descripcion === 'DIRECTOR')
     },
 ];
 

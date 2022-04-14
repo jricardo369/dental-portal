@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UtilService } from '../../services/util.service';
-import { DialogoSimpleComponent } from '../dialogo-simple/dialogo-simple.component';
 import { CustomI18nService } from 'src/app/custom-i18n.service';
+import { UsuariosService } from 'src/app/services/usuarios.service';
 
 @Component({
     selector: 'app-login-form',
@@ -15,21 +15,13 @@ import { CustomI18nService } from 'src/app/custom-i18n.service';
 })
 export class LoginFormComponent {
 
-    @Input()
-    navigateToHomeAfterLogin: boolean = false;
-
-    @Input()
-    recuperarPasswordOnly: boolean = false;
-
     @Output()
     onLogin: EventEmitter<any> = new EventEmitter();
-
-    @Output()
-    onRecuperarEnviado: EventEmitter<any> = new EventEmitter();
-
+    
     user: Usuario = new Usuario();
+    password: string;
     loading: boolean = false;
-    recuperandoPassword = false;
+    navigateToHomeAfterLogin: boolean = false;
 
     constructor(
         private sessionService: SessionService,
@@ -41,59 +33,37 @@ export class LoginFormComponent {
 
     ngOnInit() { }
 
-    navegarAPaginaInicialSegunUsuario() {
-        this.sessionService.getUsuario().then(e => {
-            if (e.rol.id == 3) {
-                this.router.navigate(['/proveedores']);
-            } else {
-                this.router.navigate(['/inicio']);
-            }
-        });
-    }
-
     ingresar() {
-        this.loading = true;
-        this.sessionService
-            .iniciarSesion(this.user.usuario, this.user.password)
+        if (this.user.usuario == localStorage.getItem('usuario')) {
+            this.loading = true;
+            this.sessionService
+            .iniciarSesion(this.user.usuario, this.password)
             .then(success => {
-                console.log('BANANA:' + success);
                 if (success) {
-                    if (this.navigateToHomeAfterLogin) this.navegarAPaginaInicialSegunUsuario();
+                    this.utilService.iniciarContadorDeSesion();
                     this.onLogin.emit(success);
                 } else {
-                    this.loading = false;
                     this.utilService.mostrarDialogoSimple(
                         "Credenciales incorrectas",
                         "El usuario o la contraseña no coinciden, verifique sus credenciales y pruebe de nuevo");
                 }
-            }).catch(r => {
-                if (r instanceof HttpErrorResponse && (r as HttpErrorResponse).status == 0) {
-                    this.loading = false;
+            }).catch(reason => {
+                if (reason instanceof HttpErrorResponse && (reason as HttpErrorResponse).status == 0) {
+                    // this.loading = false;
                     this.utilService.mostrarDialogoSimple(
-                        "Error de conexión",
-                        "No se logró la conexión con el servidor");
+                        this.i18n.get('Error de conexión'),
+                        this.i18n.get('No se logró la conexión con el servidor')
+                    );
                 } else {
-                    console.log(r);
-                    alert(r)
+                    this.utilService.manejarError(reason)
                 }
-            });
-    }
-
-    recuperar() {
-        this.loading = true;
-        this.sessionService.recupera(this.user.usuario)
-            .then(result => {
-                this.dialog.open(DialogoSimpleComponent, {
-                    data: {
-                        titulo: result.success ? this.i18n.get('Exito') : 'Error',
-                        texto: result.message,
-                        botones: [{ texto: 'Entedido', color: 'accent' },]
-                    }
-                }).beforeClosed().toPromise().then(e => {
-                    this.onRecuperarEnviado.emit();
-                });
-            })
-            .catch(r => this.utilService.manejarError(r))
-            .then(() => this.loading = false);
+            }).then(() => this.loading = false);
+        }
+        else {
+            this.utilService.mostrarDialogoSimple(
+                this.i18n.get('No se puede reanudar la sesión'),
+                this.i18n.get('El usuario con el que está intentando reanudar la sesión no coincide con el usuario de la sesión actual, verifique por favor.')
+            );
+        }
     }
 }

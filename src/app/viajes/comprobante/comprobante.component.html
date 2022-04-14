@@ -12,22 +12,12 @@
 
             <label class='home'>{{titulo}}</label>
 
-            <button class='iigwo' (click)='autorizar()' *ngIf='autorizando'>
-                <mat-icon svgIcon="done"></mat-icon>
-                <label>Aprobar</label>
-            </button>
-
-            <button class='iigwo' (click)='rechazar()' *ngIf='autorizando'>
-                <mat-icon svgIcon="close"></mat-icon>
-                <label>Rechazar</label>
-            </button>
-
             <button class='iigwo' (click)='descargarPdf()' *ngIf='editando || autorizando'>
                 <mat-icon svgIcon="file-download"></mat-icon>
                 <label>Descargar PDF</label>
             </button>
 
-            <button class='iigwo' (click)='descargarXml()' *ngIf='editando || autorizando'>
+            <button class='iigwo' (click)='descargarXml()' *ngIf='(editando || autorizando) && mostrarXML'>
                 <mat-icon svgIcon="file-download"></mat-icon>
                 <label>Descargar XML</label>
             </button>
@@ -37,7 +27,7 @@
                 <label i18n="@@Refrescar">Refrescar</label>
             </button>
 
-            <button class='iigwo' (click)='eliminar()' *ngIf='editando || autorizando'>
+            <button class='iigwo' (click)='eliminar()' *ngIf='editando'>
                 <mat-icon svgIcon="delete"></mat-icon>
                 <label>Eliminar</label>
             </button>
@@ -47,6 +37,7 @@
         <div class='content'>
             <app-comprobante-form #comprobanteForm [noTrayecto]='noTrayecto' [idComprobante]='idComprobante'
                 [autorizando]='autorizando' [disableLoading]='true' ocultarSeccionesDeDialogo='true' (onCancelar)='cancelar()'
+                (tieneXML)='mostrarXML = $event'
                 [readOnly]='true'></app-comprobante-form>
         </div>
 
