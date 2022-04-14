@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { ComprobanteComponent } from './comprobante/comprobante.component';
 import { ComprobanteFormComponent } from './comprobante-form/comprobante-form.component';
 import { DialogoComprobanteComponent } from './dialogo-comprobante/dialogo-comprobante.component';
-import { ViaticosUiModule } from '../viaticos-ui/viaticos-ui.module';
+import { DentalUiModule } from '../dental-ui/dental-ui.module';
 import { SolicitudesPendientesComponent } from './solicitudes-pendientes/solicitudes-pendientes.component';
 import { SolicitudPendienteComponent } from './solicitud-pendiente/solicitud-pendiente.component';
 import { ComprobacionesContadorComponent } from './comprobaciones-contador/comprobaciones-contador.component';
@@ -34,7 +34,7 @@ import { PolizaComponent } from './poliza/poliza.component';
         MatDialogModule,
         FormsModule,
         MatStepperModule,
-        ViaticosUiModule,
+        DentalUiModule,
         MatSliderModule,
         MatSelectModule
     ],
