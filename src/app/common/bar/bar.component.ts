@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { Usuario } from '../../../model/usuario';
 import { AppBarNavItem } from '../../app-nav-item';
 import { SessionService } from '../../services/session.service';
-import { ViajesRoutingModule, VIAJES_ITEMS } from '../../viajes/viajes-routing.module';
 import { ADMIN_GENERAL_ITEMS } from '../../administracion-general/administracion-general-routing.module';
 
 import { CustomI18nService } from 'src/app/custom-i18n.service';
@@ -11,6 +10,9 @@ import { UtilService } from 'src/app/services/util.service';
 import { UsuariosService } from 'src/app/services/usuarios.service';
 
 import { DomSanitizer } from '@angular/platform-browser';
+import { AGENDA_ITEMS } from 'src/app/agenda/agenda-routing.module';
+import { HISTORIAL_CLINICO_ITEMS } from 'src/app/historial-clinico/historial-clinico-routing.module';
+import { PAGOS_ITEMS } from 'src/app/pagos/pagos-routing.module';
 
 @Component({
     selector: 'app-bar',
@@ -84,7 +86,9 @@ export class BarComponent {
 
                 let items = [
                     ADMIN_GENERAL_ITEMS,
-                    VIAJES_ITEMS
+                    AGENDA_ITEMS,
+                    HISTORIAL_CLINICO_ITEMS,
+                    PAGOS_ITEMS
                 ];
 
                 this.getImagen(this.usuario.foto);

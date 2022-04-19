@@ -21,6 +21,15 @@ en.set('Usuarios', 'Users');
 en.set('Administra los usuarios y sus permisos en el portal', 'Manage the users and their permissions');
 en.set('Pacientes', 'Patients');
 en.set('Administra los pacientes y sus permisos en el portal', 'Manage the patients  and their permissions');
+
+en.set('Agenda', 'Patients');
+en.set('Citas', 'Patients');
+
+en.set('Historial Clínico', 'Patients');
+en.set('Historial de pacientes', 'Patients');
+
+en.set('Pagos', 'Patients');
+
 en.set('Tareas programadas', 'Jobs');
 en.set('Ejecuta las tareas programadas fuera de su horario normal', 'Force job executions');
 en.set('Configuración general', 'General configurations');
