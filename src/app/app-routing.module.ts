@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { LoginComponent } from './common/login/login.component';
 import { InicioComponent } from './common/inicio/inicio.component';
-import { BitacoraComponent } from 'src/app/common/bitacora/bitacora.component';
+import { TusCredencialesComponent } from './common/tus-credenciales/tus-credenciales.component';
 
 
 const routes: Routes = [
@@ -10,7 +10,7 @@ const routes: Routes = [
     // CORE
     { path: 'ingresar', component: LoginComponent, },
     { path: 'inicio', component: InicioComponent, },
-    { path: 'bitacora', component: BitacoraComponent, },
+    { path: 'credenciales', component: TusCredencialesComponent, },
     { path: '', redirectTo: 'inicio', pathMatch: 'full' },
 
     { // ADMINISTRADOR (GENERAL)

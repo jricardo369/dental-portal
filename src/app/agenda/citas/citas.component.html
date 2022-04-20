@@ -4,7 +4,12 @@
 <div class='workspace'>
     <div class='main'>
 
-        <app-experimental-menu titulo="Usuarios" i18n-titulo="@@Configuración general">
+        <app-experimental-menu titulo="Citas" i18n-titulo="@@Configuración general">
+
+            <button (click)='crearCita()'>
+                <mat-icon svgIcon="add-box"></mat-icon>
+                <label i18n="@@Crear usuario">Crear Cita</label>
+            </button>
 
             <button (click)='refrescar()'>
                 <mat-icon svgIcon="refresh"></mat-icon>
@@ -15,6 +20,84 @@
 
         <div class='content' >
             
+            <div style="margin-bottom: 20px;">
+                <div class="iigwo-input" style="width: 118px;">
+                    <label>Fecha</label>
+                    <input [ngModel]="fecha | date:'dd-MM-yyyy':'':'es'" type="date">
+                </div>
+            </div>
+
+            <!-- TABLA CON REGISTROS -->
+            <div style="display:flex; overflow: auto;">
+                <div style="width: 144px;">
+                    <div><p class="accent header-dia">LUNES</p></div>
+                    <div class="cita" (click)="abrirCita()">
+                        <p class="nombre">Diana Lopez</p>
+                        <p>8:00am a 9:00am</p>
+                    </div>
+                </div>
+                <div style="width: 144px;">
+                    <div><p class="accent header-dia">MARTES</p></div>
+                    <div class="cita" (click)="abrirCita()">
+                        <p class="nombre">Diana Lopez</p>
+                        <p>8:00am a 9:00am</p>
+                    </div>
+                </div>
+                <div style="width: 144px;">
+                    <div><p class="accent header-dia">MIERCOLES</p></div>
+                    <div class="cita" (click)="abrirCita()">
+                        <p class="nombre">Diana Lopez</p>
+                        <p>8:00am a 9:00am</p>
+                    </div>
+                    <div class="cita" (click)="abrirCita()">
+                        <p class="nombre">Diana Lopez</p>
+                        <p>8:00am a 9:00am</p>
+                    </div>
+                    <div class="cita" (click)="abrirCita()">
+                        <p class="nombre">Diana Lopez</p>
+                        <p>8:00am a 9:00am</p>
+                    </div>
+                </div>
+                <div style="width: 144px;">
+                    <div><p class="accent header-dia">JUEVES</p></div>
+                    <div class="cita" (click)="abrirCita()">
+                        <p class="nombre">Diana Lopez</p>
+                        <p>8:00am a 9:00am</p>
+                    </div>
+                </div>
+                <div style="width: 144px;">
+                    <div><p class="accent header-dia">VIERNES</p></div>
+                    <div class="cita" (click)="abrirCita()">
+                        <p class="nombre">Diana Lopez</p>
+                        <p>8:00am a 9:00am</p>
+                    </div>
+                </div>
+                <div style="width: 144px;">
+                    <div><p class="accent header-dia">SABADO</p></div>
+                    <div class="cita" (click)="abrirCita()">
+                        <p class="nombre">Diana Lopez</p>
+                        <p>8:00am a 9:00am</p>
+                    </div>
+                    <div class="cita" (click)="abrirCita()">
+                        <p class="nombre">Diana Lopez</p>
+                        <p>8:00am a 9:00am</p>
+                    </div>
+                </div>
+                <div style="width: 144px;">
+                    <div><p class="accent header-dia">DOMINGO</p></div>
+                    <!-- <div class="cita" (click)="abrirCita()">
+                        <p class="nombre">Diana Lopez</p>
+                        <p>8:00am a 9:00am</p>
+                    </div> -->
+                </div>
+            </div>
+
+            <!-- <p style="margin-top: 12px; margin-bottom: 18px; font-size: 11px;">
+                <span i18n="@@siNecesitaAyudaPuedeLeerEl">Si necesita ayuda puede leer el
+                </span>
+                <a target="_blank" [href]='utilService.rutaManual("ManualAdministracionGeneral")' i18n="@@manualAdministracionGeneral">manual de Administración General</a>
+            </p> -->
+
         </div>
 
         <!--Cargando-->

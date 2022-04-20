@@ -1,0 +1,69 @@
+<h2 mat-dialog-title>{{titulo}}</h2>
+
+<mat-dialog-content>
+    <div class="iigwo-input" style="margin-right: 0;">
+        <label>Paciente</label>
+        <select [disabled]="!creando">
+            <option value="M">Diana Lopez</option>
+            <option value="F">Jose Lopez</option>
+        </select>
+    </div>
+
+    <div class="iigwo-input" style="margin-right: 0;">
+        <label>Fecha</label>
+        <input type="date" [readOnly]="!creando">
+    </div>
+
+    <div class="iigwo-input descripcion" style="margin-right: 0;">
+        <label>Descripción</label>
+        <textarea type="string" style="min-height: 130px; max-width: 900px;" [readOnly]="!creando"></textarea>
+    </div>
+
+    <div class="iigwo-input" style="margin-right: 0;">
+        <label>Tipo</label>
+        <select [disabled]="!creando">
+            <option value="M">Endodoncia</option>
+            <option value="F">Limpieza dental</option>
+        </select>
+    </div>
+
+    <div class="iigwo-input" *ngIf="creando" style="margin-right: 0;">
+        <label>Cargar imagen de odontograma</label>
+
+        <label for='fileId'
+            [class]='file==null?"fake-button accent":"fake-button"'
+            tabindex="0">
+            <span *ngIf="file==null">Seleccionar Archivo</span>
+            <span *ngIf="file!=null">Archivo Seleccionado</span>                    
+        </label>
+
+        <label style="display: inline-block; line-height: 32px; font-size: 13px; color:rgba(0,0,0,0.5);"
+            *ngIf="file==null">No hay archivo seleccionado</label>
+        <label style="display: inline-block; line-height: 32px; font-size: 13px;"
+            *ngIf="file!=null">{{file.name}}</label>
+        <input id='fileId' type="file" #fileInput (change)="onFileSelected(fileInput.files)"
+            accept="image/*" style='display:none;'>
+    </div>
+
+    <div *ngIf="!creando">
+        <label style="display: block; color: rgba(0, 0, 0, 0.7); margin-bottom: 4px; font-size: 12px;">Imagen:</label>
+
+        <div style="max-width: 912px; margin-top: 4px;">
+            <img src="{{baseHref}}assets/img/cover.jpg" alt="" style="width: 300px; margin: 0 2px;" >
+        </div>
+    </div>
+
+    
+</mat-dialog-content>
+
+<mat-dialog-actions>
+
+    <button class="iigwo" style="margin-left:auto;" (click)='cerrar()'>{{creando ? "Cancelar" : "Cerrar"}}</button>
+    <button *ngIf="creando" class="iigwo accent" style="margin-right:0;" (click)='crear()'>Crear</button>
+
+</mat-dialog-actions>
+
+<!-- CARGANDO-->
+<div class='iigwo-loading' *ngIf="cargando">
+    <mat-spinner></mat-spinner>
+</div>

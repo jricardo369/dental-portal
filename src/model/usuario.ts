@@ -1,20 +1,19 @@
-import { Rol } from "./rol";
-import { Organizacion } from './organizacion';
-import { Departamento } from "./departamento";
-import { Grupo } from "./grupo";
+import { Sociedad } from "./sociedad";
 
 export class Usuario {
-    ceco: string;
-    correoElectronico: string;
-    departamentos: Departamento[];
-    foto: string;
-    grupo01: Grupo[];
-    // empleado: boolean;
-    nivel: string;
-    nombre: string;
-    organizaciones: Organizacion[];
-    rol: Rol[];
+    ciudad: string;
     contrasenia: string;
-    // usEsAdmin: boolean;
+    correoElectronico: string;
+    direccion: string;
+    edad: number;
+    estatus: string;
+    fechaCreacion: string;
+    idUsuario: number;
+    intentos: number;
+    nombre: string;
+    rol: string;
+    sexo: string;
+    sociedad: Sociedad;
+    telefono: string;
     usuario: string;
 }

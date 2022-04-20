@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>Nuevo Pago</h2>
+
+<mat-dialog-content>
+    <div class="iigwo-input" style="margin-right: 0; min-width: 240px;">
+        <label>Paciente</label>
+        <select>
+            <option value="M">Diana Lopez</option>
+            <option value="F">Jose Lopez</option>
+        </select>
+    </div>
+
+    <div class="iigwo-input" style="margin-right: 0;">
+        <label>Fecha</label>
+        <input type="date">
+    </div>
+
+    <div class="iigwo-input" style="margin-right: 0;">
+        <div class="wrapper">
+            <label>Monto</label>
+        </div>
+        
+        <div class="currency">
+            <input type="text"
+                (keypress)="utilService.validateInput($event)">
+            <span>$</span>
+        </div>
+    </div>
+
+    <div class="iigwo-input" style="margin-right: 0;">
+        <label>Tipo</label>
+        <select>
+            <option value="M">Cargo</option>
+            <option value="F">Abono</option>
+        </select>
+    </div>
+
+    
+</mat-dialog-content>
+
+<mat-dialog-actions>
+
+    <button class="iigwo" style="margin-left:auto;" (click)='cerrar()'>Cancelar</button>
+    <button class="iigwo accent" style="margin-right:0;" (click)='crear()'>Crear</button>
+
+</mat-dialog-actions>
+
+<!-- CARGANDO-->
+<div class='iigwo-loading' *ngIf="cargando">
+    <mat-spinner></mat-spinner>
+</div>

@@ -11,13 +11,15 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatStepperModule } from '@angular/material/stepper';
 import { AgendaRoutingModule } from './agenda-routing.module';
+import { DialogoCitaComponent } from './dialogo-cita/dialogo-cita.component';
 
 
 
 @NgModule({
 	declarations: [
 		CitasComponent,
-		AgendaNavComponent, 
+		AgendaNavComponent,
+		DialogoCitaComponent, 
 	],
 	imports: [
 		CommonModule,
@@ -30,6 +32,10 @@ import { AgendaRoutingModule } from './agenda-routing.module';
         MatStepperModule,
         MatSliderModule,
         MatSelectModule,
-	]
+	],
+    entryComponents: [
+        DialogoCitaComponent,
+        
+    ]
 })
 export class AgendaModule { }

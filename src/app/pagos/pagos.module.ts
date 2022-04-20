@@ -11,13 +11,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatStepperModule } from '@angular/material/stepper';
 import { DentalUiModule } from '../dental-ui/dental-ui.module';
+import { DialogoPagoComponent } from './dialogo-pago/dialogo-pago.component';
+import { PagosHomeComponent } from './pagos-home/pagos-home.component';
 
 
 
 @NgModule({
 	declarations: [
 		PagosNavComponent, 
-		PagosComponent
+		PagosComponent, 
+		DialogoPagoComponent, PagosHomeComponent,
 	],
 	imports: [
 		CommonModule,
@@ -30,6 +33,9 @@ import { DentalUiModule } from '../dental-ui/dental-ui.module';
         MatStepperModule,
         MatSliderModule,
         MatSelectModule,
-	]
+	],
+    entryComponents: [
+        DialogoPagoComponent,
+    ]
 })
 export class PagosModule { }

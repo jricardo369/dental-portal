@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Usuario } from '../../../model/usuario';
 import { UsuariosService } from 'src/app/services/usuarios.service';
-import { Organizacion } from './../../../model/organizacion';
-import { Rol } from './../../../model/rol';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SessionService } from 'src/app/services/session.service';
 import { UtilService } from 'src/app/services/util.service';
@@ -57,19 +55,17 @@ export class InicioComponent implements OnInit {
     obtenerUsuario(usuarios: UsuariosService, appSearch: CustomSearchItem[]) {
         this.loading = true;
         usuarios.obtenerUsuario(localStorage.getItem('usuario')).then(usuario => {
-            localStorage.setItem('empresas', this.obtenerEmpresasParaAprobadores(usuario.organizaciones).replace(/\s+/g, ''));
             
-            usuario.rol.forEach(rol => {
+            /*usuario.rol.forEach(rol => {
                 rol.descripcion = rol.descripcion.toUpperCase();
             });
 
             usuario.organizaciones.forEach(o => {
                 o.id = o.id.replace(/\s+/g, '');
-            });
+            });*/
             
             localStorage.setItem('objUsuario', JSON.stringify(usuario));
             
-            this.obtenerRolParaAprobadores(usuario.rol);
             let groups = {};
             appSearch.filter(e => e.isVisibleFor(usuario)).forEach(e => {
                 let group: any[] = groups[e.subtitle];
@@ -87,26 +83,6 @@ export class InicioComponent implements OnInit {
                 this.grupos.push(key);
             }
         }).then(() => this.loading = false);
-    }
-
-    obtenerEmpresasParaAprobadores(organizaciones: Organizacion[]){
-        let empresas:string = '';
-        organizaciones.forEach(empresa => {
-            empresas += empresa.id.toString();
-            empresas += ',';
-        });
-        return empresas.substring(0, empresas.length - 1);
-    }
-
-    obtenerRolParaAprobadores(roles: Rol[]){
-        if(roles.length > 0) {
-            let roles_string = '';
-            roles.forEach(rol => {
-                roles_string += rol.descripcion;
-                roles_string += ',';
-            });
-            localStorage.setItem('rolAprobador', roles_string.substring(0, roles_string.length - 1)); // substring para quitar la Comma del final
-        }
     }
 
     ngOnInit(): void {

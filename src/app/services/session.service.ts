@@ -45,7 +45,11 @@ export class SessionService {
 
     iniciarSesion(usuario: string, password: string): Promise<boolean> {
         return new Promise((resolve, reject) => this.http
-            .post(API_URL + 'autenticaciones', new HttpParams().set('password', password).set('username', usuario),
+            .post(API_URL + 'autenticaciones/inicio-sesion', 
+            {
+                usuario: usuario,
+                contrasenia: password
+            },
             { withCredentials: true, observe: 'response', responseType: 'text' })
             .toPromise()
             .then(response => {
@@ -81,6 +85,29 @@ export class SessionService {
         localStorage.clear();
         this.listeners.forEach(e => e.onCerrarSesion());
         return true;
+    }
+
+    cambiarCredenciales(password: string, email: string) {
+        return new Promise((resolve, reject) => {
+            let params = new HttpParams();
+            this.http
+                .put(API_URL + "/credentials", null, {
+                    params: {
+                        password: password,
+                        email: email
+                    },
+                    withCredentials: true,
+                    observe: 'response'
+                })
+                .toPromise()
+                .then(r => {
+                    if (r.status == 204) resolve(true);
+                    else resolve(false);
+                }).catch(r => {
+                    if (r.status == 401) resolve(false);
+                    else reject(r);
+                });
+        });
     }
 
 }

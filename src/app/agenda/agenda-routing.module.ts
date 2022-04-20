@@ -16,7 +16,7 @@ const MODULE: AppBarNavItem = {
   subtitle: null,
   uri: 'agenda',
   svgName: 'general-manage',
-  isVisibleFor: u => u.rol.some(r => r.descripcion === 'ADMINISTRADOR')
+  isVisibleFor: u => u.rol == "2"
 };
 
 export const AGENDA_ITEMS: AppBarNavItem[] = [
@@ -26,7 +26,7 @@ export const AGENDA_ITEMS: AppBarNavItem[] = [
       title: 'Citas',
       subtitle: 'Administra los usuarios y sus permisos en el portal',
       uri: 'citas',
-      isVisibleFor: u => u.rol.some(r => r.descripcion === 'ADMINISTRADOR')
+      isVisibleFor: u => u.rol == "2"
   },
 ]
 

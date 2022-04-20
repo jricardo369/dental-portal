@@ -18,7 +18,7 @@ const MODULE: AppBarNavItem = {
     subtitle: null,
     uri: 'administracion-general',
     svgName: 'general-manage',
-    isVisibleFor: u => u.rol.some(r => r.descripcion === 'ADMINISTRADOR')
+    isVisibleFor: u => u.rol == "1"
 };
 
 export const ADMIN_GENERAL_ITEMS: AppBarNavItem[] = [
@@ -28,7 +28,7 @@ export const ADMIN_GENERAL_ITEMS: AppBarNavItem[] = [
         title: 'Usuarios',
         subtitle: 'Administra los usuarios y sus permisos en el portal',
         uri: 'usuarios',
-        isVisibleFor: u => u.rol.some(r => r.descripcion === 'ADMINISTRADOR')
+        isVisibleFor: u => u.rol == "1"
     },
     {
         module: MODULE,
@@ -36,7 +36,7 @@ export const ADMIN_GENERAL_ITEMS: AppBarNavItem[] = [
         title: 'Pacientes',
         subtitle: 'Administra los pacientes y sus permisos en el portal',
         uri: 'pacientes',
-        isVisibleFor: u => u.rol.some(r => r.descripcion === 'ADMINISTRADOR')
+        isVisibleFor: u => u.rol == "1"
     },
 ]
 

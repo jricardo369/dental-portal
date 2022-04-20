@@ -11,13 +11,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatStepperModule } from '@angular/material/stepper';
 import { DentalUiModule } from '../dental-ui/dental-ui.module';
+import { DialogoHistorialComponent } from './dialogo-historial/dialogo-historial.component';
+import { HistorialClinicoHomeComponent } from './historial-clinico-home/historial-clinico-home.component';
 
 
 
 @NgModule({
 	declarations: [
 		HistorialClinicoNavComponent, 
-		HistorialPacientesComponent
+		HistorialPacientesComponent, 
+		DialogoHistorialComponent, HistorialClinicoHomeComponent,
 	],
 	imports: [
 		CommonModule,
@@ -30,6 +33,9 @@ import { DentalUiModule } from '../dental-ui/dental-ui.module';
         MatStepperModule,
         MatSliderModule,
         MatSelectModule,
-	]
+	],
+    entryComponents: [
+        DialogoHistorialComponent,
+    ]
 })
 export class HistorialClinicoModule { }

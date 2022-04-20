@@ -27,8 +27,10 @@ en.set('Citas', 'Patients');
 
 en.set('Historial Clínico', 'Patients');
 en.set('Historial de pacientes', 'Patients');
+en.set('Mi historial', 'Patients');
 
 en.set('Pagos', 'Patients');
+en.set('Mis pagos', 'Patients');
 
 en.set('Tareas programadas', 'Jobs');
 en.set('Ejecuta las tareas programadas fuera de su horario normal', 'Force job executions');

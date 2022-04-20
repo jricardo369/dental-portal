@@ -4,17 +4,98 @@
 <div class='workspace'>
     <div class='main'>
 
-        <app-experimental-menu titulo="Usuarios" i18n-titulo="@@Configuración general">
+        <app-experimental-menu [titulo]="titulo" i18n-titulo="@@Configuración general">
+
+            <button (click)='altaHistorial()' *ngIf="!esPaciente">
+                <mat-icon svgIcon="add-box"></mat-icon>
+                <label i18n="@@Crear usuario">Alta Historial</label>
+            </button>
 
             <button (click)='refrescar()'>
                 <mat-icon svgIcon="refresh"></mat-icon>
                 <label i18n="@@Refrescar">Refrescar</label>
             </button>
+
+            <button (click)='descargarPdf()'>
+                <mat-icon svgIcon="file-download"></mat-icon>
+                <label>Descargar PDF</label>
+            </button>
         
         </app-experimental-menu>
 
         <div class='content' >
-            
+            <div style="display:flex;">
+                <div class="iigwo-input" style="min-width: 240px;" *ngIf="!esPaciente">
+                    <label>Paciente</label>
+                    <select>
+                        <option value="M">Diana Lopez</option>
+                        <option value="F">Jose Lopez</option>
+                    </select>
+                </div>
+                <div class="iigwo-input">
+                    <label>Fecha inicio</label>
+                    <input [ngModel]="fecha | date:'dd-MM-yyyy':'':'es'" type="date">
+                </div>
+                <div class="iigwo-input">
+                    <label>Fecha fin</label>
+                    <input [ngModel]="fecha | date:'dd-MM-yyyy':'':'es'" type="date">
+                </div>
+            </div>
+
+            <hr style="margin-top: 0;">
+
+            <!-- TABLA CON REGISTROS -->
+            <div style="display: flex; flex-flow: column; overflow: auto;">
+
+                <!--DATOS DEL PACIENTE-->
+                <div style="display:flex; margin-bottom: 12px;">
+                    <div class="pacienteI">
+                        <div>
+                            <label class="nombre" style="text-align: center;">Diana Maria Garcia</label>
+                            <label style="text-align: center;">41 años</label>
+                            <label class="activo" style="text-align: center;">Activo</label>
+                            <p style="text-align: center;">diana@gmail.com</p>
+                            <p class="fechaCreacion" style="margin-bottom: 0;">Fecha de creacion: 10-10-2022</p>
+                        </div>
+                    </div>
+                    <div class="pacienteC">
+                        <div>
+                            <label class="titulo">Dirección</label>
+                            <label>Calle madero # 323, La Piedad Michocacán</label>
+                        </div>
+                        <div>
+                            <label class="titulo">Telefono</label>
+                            <label>0123456789</label>
+                        </div>
+                        <div>
+                            <label class="titulo">Ocupacion</label>
+                            <label style="margin-bottom: 0">Ingeniero</label>
+                        </div>
+                    </div>
+                    <div class="pacienteD">
+                        <div>
+                            <label class="titulo">Historia clínica</label>
+                            <label style="margin-bottom: 0">No es alergico a medicamento
+                                Tiene pre diabetes</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="historial" (click)="abrirHistorial()">
+                        <p class="fecha">10-10-2022</p>
+                        <p>Limpieza dental</p>
+                        <p class="descripcion">Se realizó una limpieza dental.</p>
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- <p style="margin-top: 12px; margin-bottom: 18px; font-size: 11px;">
+                <span i18n="@@siNecesitaAyudaPuedeLeerEl">Si necesita ayuda puede leer el
+                </span>
+                <a target="_blank" [href]='utilService.rutaManual("ManualAdministracionGeneral")' i18n="@@manualAdministracionGeneral">manual de Administración General</a>
+            </p> -->
         </div>
 
         <!--Cargando-->

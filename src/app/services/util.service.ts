@@ -9,6 +9,12 @@ import { Location } from '@angular/common';
 import { API_URL } from '../app.config';
 import { CustomI18nService } from '../custom-i18n.service';
 
+export class Filter {
+    campo: string = 'nombre';
+    operador = 'startsWith';
+    valor = null;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -294,10 +300,10 @@ export class UtilService {
         e.style.borderLeftWidth = needsLeftBorder ? '1px' : '0';
     }
 
-    rutaManual() {
-        const folder = API_URL.replace("viaticos-api/", "") + 'docs/manuales/';
+    rutaManual(manual: string) {
+        /*const folder = API_URL.replace("viaticos-api/", "") + 'docs/manuales/';
         let name = null;
-        switch (localStorage.getItem('manual_file')) {
+        switch (manual) {
             case 'ManualEmpleadosSLAPI':
                 // name = this.customI18n.localeId === 'en' ? 'TravelExpensesManual.pdf' : 'ManualViaticos.pdf';
                 name = 'ManualEmpleadosSLAPI.pdf';
@@ -312,7 +318,7 @@ export class UtilService {
                 break;
         }
         // console.log('rutaManual() ' + folder + name);
-        window.open(folder + name, '_blank');
+        window.open(folder + name, '_blank');*/
     }
 
     iniciarContadorDeSesion(){

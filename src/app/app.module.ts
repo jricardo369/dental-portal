@@ -23,6 +23,7 @@ import { DialogoFrameComponent } from './common/dialogo-frame/dialogo-frame.comp
 
 import { registerLocaleData } from '@angular/common';
 import localeMx from '@angular/common/locales/es-MX';
+import { TusCredencialesComponent } from './common/tus-credenciales/tus-credenciales.component';
 
 registerLocaleData(localeMx, 'es-Mx');
 
@@ -38,6 +39,7 @@ registerLocaleData(localeMx, 'es-Mx');
         DialogoLoginComponent,
         DialogoFrameComponent,
         LoginFormComponent,
+        TusCredencialesComponent,
     ],
     imports: [
         BrowserModule,

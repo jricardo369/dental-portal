@@ -80,9 +80,9 @@ export class BarComponent {
             .then(u => {
 
                 this.usuario = u;
-                this.usuario.rol.forEach(rol => {
+                /*this.usuario.rol.forEach(rol => {
                     rol.descripcion = rol.descripcion.toUpperCase();
-                });
+                });*/
 
                 let items = [
                     ADMIN_GENERAL_ITEMS,
@@ -91,7 +91,7 @@ export class BarComponent {
                     PAGOS_ITEMS
                 ];
 
-                this.getImagen(this.usuario.foto);
+                // this.getImagen(this.usuario.foto);
 
                 this.pantallaItems = items.reduce((a, b) => a.concat(b), []);
                 this.moduloItems = this.pantallaItems
