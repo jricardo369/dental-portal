@@ -98,8 +98,8 @@
                     <tr *ngFor='let e of usuarios | slice:paginacion.begin:paginacion.end'>
                         <td class=''><input type="checkbox" [checked]="estaSeleccionado(e.idUsuario)"
                                 (change)="check($event, e.idUsuario)"></td>
-                        <td class=''><a (click)="editarUsuario(e.usuario)">{{e.idUsuario}}</a></td>
-                        <td class=''><a (click)="editarUsuario(e.usuario)">{{e.nombre}}</a></td>
+                        <td class=''><a (click)="editarUsuario(e.idUsuario)">{{e.idUsuario}}</a></td>
+                        <td class=''><a (click)="editarUsuario(e.idUsuario)">{{e.nombre}}</a></td>
                         <td class='accent'>{{e.usuario}}</td>
                         <td class='accent'>{{e.correoElectronico}}</td>
                         <td class='accent'>{{e.rol}}</td>

@@ -54,7 +54,7 @@ export class InicioComponent implements OnInit {
 
     obtenerUsuario(usuarios: UsuariosService, appSearch: CustomSearchItem[]) {
         this.loading = true;
-        usuarios.obtenerUsuario(localStorage.getItem('usuario')).then(usuario => {
+        usuarios.obtenerUsuarioPorUsuario(localStorage.getItem('usuario')).then(usuario => {
             
             /*usuario.rol.forEach(rol => {
                 rol.descripcion = rol.descripcion.toUpperCase();

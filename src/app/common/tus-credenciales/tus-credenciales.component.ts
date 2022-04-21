@@ -37,7 +37,7 @@ export class TusCredencialesComponent {
         private i18n: CustomI18nService,
         private utilService: UtilService) {
 			this.usuariosService
-            .obtenerUsuario(this.usuario.usuario).then(u => {
+            .obtenerUsuarioPorId(parseInt(localStorage.getItem('idUsuario'))).then(u => {
             this.usuario = u;
         }).catch(r => this.utilService.manejarError(r));
     }

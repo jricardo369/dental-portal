@@ -76,9 +76,8 @@ export class BarComponent {
         this.filteredModuloItems = [];
 
         this.usuariosService
-            .obtenerUsuario(localStorage.getItem('usuario'))
+            .obtenerUsuarioPorUsuario(localStorage.getItem('usuario'))
             .then(u => {
-
                 this.usuario = u;
                 /*this.usuario.rol.forEach(rol => {
                     rol.descripcion = rol.descripcion.toUpperCase();

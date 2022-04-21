@@ -58,11 +58,13 @@ export class DialogoPacienteComponent implements OnInit {
     }
 
 	crear() {
+		this.paciente.sociedad = { sociedad: 1, nombre: "", fechaCreacion: "", estatus: true };
+		
 		this.cargando = true;
         this.pacientesService
             .insertarPaciente(this.paciente)
             .then(paciente => {
-				this.cerrar();
+				this.cerrar('creado');
             })
             .catch(reason => this.utilService.manejarError(reason))
             .then(() => this.cargando = false);
@@ -73,7 +75,7 @@ export class DialogoPacienteComponent implements OnInit {
         this.pacientesService
             .editarPaciente(this.paciente)
             .then(paciente => {
-				this.cerrar();
+				this.cerrar('editando');
             })
             .catch(reason => this.utilService.manejarError(reason))
             .then(() => this.cargando = false);
@@ -96,7 +98,7 @@ export class DialogoPacienteComponent implements OnInit {
 				this.pacientesService
 					.eliminarPaciente(this.paciente.idPaciente)
 					.then(paciente => {
-						this.cerrar();
+						this.cerrar('editando');
 					})
 					.catch(reason => this.utilService.manejarError(reason))
 					.then(() => this.cargando = false);
@@ -104,7 +106,7 @@ export class DialogoPacienteComponent implements OnInit {
         }).catch(reason => this.utilService.manejarError(reason));
 	}
 
-	cerrar() { this.dialogRef.close(); }
+	cerrar(accion: string = "") { this.dialogRef.close(accion); }
 
 	onFileSelected(files: FileList) { 
         this.file = files.length && files.item(0).type.startsWith('image/') ? files.item(0) : null;

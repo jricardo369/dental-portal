@@ -1,3 +1,4 @@
+import { Permiso } from "./permiso";
 import { Sociedad } from "./sociedad";
 
 export class Usuario {
@@ -11,6 +12,8 @@ export class Usuario {
     idUsuario: number;
     intentos: number;
     nombre: string;
+    paciente: number;
+    permisos: Permiso[];
     rol: string;
     sexo: string;
     sociedad: Sociedad;

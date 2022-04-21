@@ -33,7 +33,7 @@ export class UsuariosComponent implements OnInit {
         private dialog: MatDialog
     ) {
 		this.refrescar();
-	 }
+	}
 
     ngOnInit(): void {
     }
@@ -183,10 +183,10 @@ export class UsuariosComponent implements OnInit {
         }).catch(reason => this.utilService.manejarError(reason));
 	}
 
-	editarUsuario(usuario: number) {
+	editarUsuario(idUsuario: number) {
 		this.dialog.open(DialogoUsuarioComponent, {
             data: {
-				usuario: usuario
+				idUsuario: idUsuario
 			},
             disableClose: true,
         }).afterClosed().toPromise().then(valor => {

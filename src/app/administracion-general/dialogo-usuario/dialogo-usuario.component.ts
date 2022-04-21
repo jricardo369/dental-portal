@@ -29,9 +29,9 @@ export class DialogoUsuarioComponent implements OnInit {
 		private dialog: MatDialog,
 		public dialogRef: MatDialogRef<DialogoUsuarioComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any) {
-			if (data.usuario) {
+			if (data.idUsuario) {
 				this.titulo = "Editar usuario"
-				this.usuario.usuario = data.usuario;
+				this.usuario.idUsuario = data.idUsuario;
 				this.refrescar();
 				this.creando = false;
 			} else {
@@ -46,13 +46,13 @@ export class DialogoUsuarioComponent implements OnInit {
 	refrescar() {
         this.cargando = true;
         this.usuariosService
-            .obtenerUsuario(this.usuario.usuario)
+            .obtenerUsuarioPorId(this.usuario.idUsuario)
             .then(usuario => {
                 this.usuario = usuario;
-
+// console.log(usuario)
 				if(this.usuario.rol == "3") {
 					this.obtenerPacientes();
-				}
+				} else this.usuario.paciente = 0;
             })
             .catch(reason => this.utilService.manejarError(reason))
             .then(() => this.cargando = false);
@@ -64,6 +64,11 @@ export class DialogoUsuarioComponent implements OnInit {
             .obtenerPacientes()
             .then(pacientes => {
 				this.pacientes = pacientes;
+
+				if(this.usuario.paciente > 0) {
+					this.paciente = this.pacientes.find(e => e.idPaciente == this.usuario.paciente);
+					this.pacienteSelected();
+				}
             })
             .catch(reason => this.utilService.manejarError(reason))
             .then(() => this.cargando = false);
@@ -72,7 +77,7 @@ export class DialogoUsuarioComponent implements OnInit {
 	rolSelected() {
 		if(this.usuario.rol == "3") {
 			this.obtenerPacientes();
-		}
+		} else this.usuario.paciente = 0;
 	}
 
 	pacienteSelected() {
@@ -82,21 +87,23 @@ export class DialogoUsuarioComponent implements OnInit {
 		this.usuario.edad = this.paciente.edad;
 		this.usuario.sexo = this.paciente.sexo;
 		this.usuario.telefono = this.paciente.telefono;
+		this.usuario.correoElectronico = this.paciente.correoElectronico;
+		this.usuario.paciente = this.paciente.idPaciente;
 	}
 
 	crear() {
 		this.usuario.sociedad = { sociedad: 1, nombre: "", fechaCreacion: "", estatus: true };
 		// let date = new Date();
 		// this.usuario.fechaCreacion = new Date().toLocaleDateString();
-		this.usuario.fechaCreacion = "2020-12-20";
-		this.usuario.estatus = "0";
+		// this.usuario.fechaCreacion = "2020-12-20";
+		this.usuario.estatus = "1";
 		
 
 		this.cargando = true;
         this.usuariosService
             .insertarUsuario(this.usuario)
             .then(usuario => {
-				this.cerrar();
+				this.cerrar('creado');
             })
             .catch(reason => this.utilService.manejarError(reason))
             .then(() => this.cargando = false);
@@ -107,14 +114,23 @@ export class DialogoUsuarioComponent implements OnInit {
         this.usuariosService
             .editarUsuario(this.usuario)
             .then(usuario => {
-				this.cerrar();
+				this.cerrar('editando');
             })
             .catch(reason => this.utilService.manejarError(reason))
             .then(() => this.cargando = false);
 	}
 
-	eliminar() {}
+	eliminar() {
+		this.cargando = true;
+        this.usuariosService
+            .eliminarUsuario(this.usuario.idUsuario)
+            .then(usuario => {
+				this.cerrar('editando');
+            })
+            .catch(reason => this.utilService.manejarError(reason))
+            .then(() => this.cargando = false);
+	}
 
-	cerrar() { this.dialogRef.close(); }
+	cerrar(accion: string = "") { this.dialogRef.close(accion); }
 
 }

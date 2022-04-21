@@ -27,19 +27,16 @@ export class PacientesService {
     }
 
     obtenerPaciente(idPaciente: number): Promise<Paciente> {
-        let params = new HttpParams();
-        params = params.set('paciente', idPaciente.toString());
         return new Promise<Paciente>((resolve, reject) => this.http
-            .get(API_URL + 'pacientes/por-paciente',
+            .get(API_URL + 'pacientes/' + idPaciente,
             {
-                params: params,
                 withCredentials: true,
                 observe: 'response',
                 headers: new HttpHeaders().append('Content-Type', 'application/json').append('Authorization', localStorage.getItem('auth_token'))
             })
             .toPromise()
             .then(response => {
-                resolve(response.body[0] as Paciente);
+                resolve(response.body as Paciente);
             })
             .catch(reason => reject(reason))
         );
@@ -55,7 +52,7 @@ export class PacientesService {
             })
             .toPromise()
             .then(response => {
-                resolve(response.body[0] as Paciente);
+                resolve(response.body as Paciente);
             })
             .catch(reason => reject(reason))
         );
@@ -71,7 +68,7 @@ export class PacientesService {
             })
             .toPromise()
             .then(response => {
-                resolve(response.body[0] as Paciente);
+                resolve(response.body as Paciente);
             })
             .catch(reason => reject(reason))
         );
@@ -79,7 +76,7 @@ export class PacientesService {
 
     eliminarPaciente(idPaciente: number): Promise<Paciente> {
         return new Promise<Paciente>((resolve, reject) => this.http
-            .delete(API_URL + 'pacientes',
+            .delete(API_URL + 'pacientes/' + idPaciente,
             {
                 withCredentials: true,
                 observe: 'response',
@@ -87,7 +84,7 @@ export class PacientesService {
             })
             .toPromise()
             .then(response => {
-                resolve(response.body[0] as Paciente);
+                resolve(response.body as Paciente);
             })
             .catch(reason => reject(reason))
         );
