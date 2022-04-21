@@ -1,7 +1,7 @@
 import { environment } from '../environments/environment';
 
 export const VERSION_PORTAL = 'Versión 2020.10.25-13:24';
-export const EMPRESA_PORTAL = '© AT / 2020';
+export const EMPRESA_PORTAL = '© / 2020';
 
 // =====================================================
 /*

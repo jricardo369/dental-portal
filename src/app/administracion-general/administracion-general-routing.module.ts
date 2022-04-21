@@ -17,14 +17,14 @@ const MODULE: AppBarNavItem = {
     title: 'Administración general',
     subtitle: null,
     uri: 'administracion-general',
-    svgName: 'general-manage',
+    svgName: 'administracion',
     isVisibleFor: u => u.rol == "1"
 };
 
 export const ADMIN_GENERAL_ITEMS: AppBarNavItem[] = [
     {
         module: MODULE,
-        svgName: 'users',
+        svgName: 'users2',
         title: 'Usuarios',
         subtitle: 'Administra los usuarios y sus permisos en el portal',
         uri: 'usuarios',
