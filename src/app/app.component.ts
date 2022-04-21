@@ -77,6 +77,7 @@ export class AppComponent implements OnInit, SessionServiceListener {
             'test2', 'travel', 'trolley', 'update', 'settings',
             'assignment', 'assignment-ind', 'assignment-turned-in','users','general-manage',
             'information', 'questions', 'alert', 'pending-black','to-do-list','pending-actions',
+            'agenda', 'cita', 'historia', 'historial', 'pacientes', 'pago', 'pagos'
         ].forEach(e => iconRegistry.addSvgIcon(e, sanitizer.bypassSecurityTrustResourceUrl(document.baseURI + '/assets/svg/' + e + '.svg')));
 
         //localStorage.clear();

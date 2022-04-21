@@ -18,14 +18,14 @@ const MODULE: AppBarNavItem = {
 	title: 'Pagos',
 	subtitle: null,
 	uri: 'pagos',
-	svgName: 'general-manage',
+	svgName: 'pago',
 	isVisibleFor: u => u.rol == "2" || u.rol == "3"
 };
 
 export const PAGOS_ITEMS: AppBarNavItem[] = [
 	{
 		module: MODULE,
-		svgName: 'users',
+		svgName: 'pagos',
 		title: 'Pagos',
 		subtitle: 'Administra los usuarios y sus permisos en el portal',
 		uri: 'pagos',
@@ -33,7 +33,7 @@ export const PAGOS_ITEMS: AppBarNavItem[] = [
 	},
 	{
 		module: MODULE,
-		svgName: 'users',
+		svgName: 'pagos',
 		title: 'Mis pagos',
 		subtitle: 'Administra los usuarios y sus permisos en el portal',
 		uri: 'pagos',

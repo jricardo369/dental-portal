@@ -15,14 +15,14 @@ const MODULE: AppBarNavItem = {
   title: 'Agenda',
   subtitle: null,
   uri: 'agenda',
-  svgName: 'general-manage',
+  svgName: 'agenda',
   isVisibleFor: u => u.rol == "2"
 };
 
 export const AGENDA_ITEMS: AppBarNavItem[] = [
   {
       module: MODULE,
-      svgName: 'users',
+      svgName: 'cita',
       title: 'Citas',
       subtitle: 'Administra los usuarios y sus permisos en el portal',
       uri: 'citas',

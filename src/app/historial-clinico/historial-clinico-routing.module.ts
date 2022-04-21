@@ -18,14 +18,14 @@ const MODULE: AppBarNavItem = {
 	title: 'Historial Clínico',
 	subtitle: null,
 	uri: 'historial-clinico',
-	svgName: 'general-manage',
+	svgName: 'historial',
 	isVisibleFor: u => u.rol == "2" || u.rol == "3"
 };
 
 export const HISTORIAL_CLINICO_ITEMS: AppBarNavItem[] = [
 	{
 		module: MODULE,
-		svgName: 'users',
+		svgName: 'historia',
 		title: 'Historial de pacientes',
 		subtitle: 'Administra los usuarios y sus permisos en el portal',
 		uri: 'historial-pacientes',
@@ -33,7 +33,7 @@ export const HISTORIAL_CLINICO_ITEMS: AppBarNavItem[] = [
 	},
 	{
 		module: MODULE,
-		svgName: 'users',
+		svgName: 'historia',
 		title: 'Mi historial',
 		subtitle: 'Administra los usuarios y sus permisos en el portal',
 		uri: 'mi-historial',

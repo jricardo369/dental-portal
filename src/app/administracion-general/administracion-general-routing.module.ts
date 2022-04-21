@@ -32,7 +32,7 @@ export const ADMIN_GENERAL_ITEMS: AppBarNavItem[] = [
     },
     {
         module: MODULE,
-        svgName: 'users',
+        svgName: 'pacientes',
         title: 'Pacientes',
         subtitle: 'Administra los pacientes y sus permisos en el portal',
         uri: 'pacientes',
