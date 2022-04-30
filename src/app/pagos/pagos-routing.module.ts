@@ -19,7 +19,7 @@ const MODULE: AppBarNavItem = {
 	subtitle: null,
 	uri: 'pagos',
 	svgName: 'pago',
-	isVisibleFor: u => u.rol == "2" || u.rol == "3"
+	isVisibleFor: u => (u.rol == "2" && u.permisos.some(p => p.id === 3)) || u.rol == "3"
 };
 
 export const PAGOS_ITEMS: AppBarNavItem[] = [
@@ -29,7 +29,7 @@ export const PAGOS_ITEMS: AppBarNavItem[] = [
 		title: 'Pagos',
 		subtitle: 'Administra los usuarios y sus permisos en el portal',
 		uri: 'pagos',
-		isVisibleFor: u => u.rol == "2"
+		isVisibleFor: u => u.rol == "2" && u.permisos.some(p => p.id === 3)
 	},
 	{
 		module: MODULE,

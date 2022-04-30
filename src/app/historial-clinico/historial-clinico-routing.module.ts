@@ -19,7 +19,7 @@ const MODULE: AppBarNavItem = {
 	subtitle: null,
 	uri: 'historial-clinico',
 	svgName: 'historial',
-	isVisibleFor: u => u.rol == "2" || u.rol == "3"
+	isVisibleFor: u => (u.rol == "2" && u.permisos.some(p => p.id === 2)) || u.rol == "3"
 };
 
 export const HISTORIAL_CLINICO_ITEMS: AppBarNavItem[] = [
@@ -29,7 +29,7 @@ export const HISTORIAL_CLINICO_ITEMS: AppBarNavItem[] = [
 		title: 'Historial de pacientes',
 		subtitle: 'Administra los usuarios y sus permisos en el portal',
 		uri: 'historial-pacientes',
-		isVisibleFor: u => u.rol == "2"
+		isVisibleFor: u => u.rol == "2" && u.permisos.some(p => p.id === 2)
 	},
 	{
 		module: MODULE,

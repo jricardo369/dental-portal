@@ -50,7 +50,7 @@
             <input type="email" [(ngModel)]="paciente.correoElectronico">
         </div>
 
-        <div class="iigwo-input">
+        <div class="iigwo-input" *ngIf="creando">
             <input type="checkbox" [(ngModel)]="odontograma"
                 style="width: 15px;display: inline-block;line-height: 18px;margin: 0 6px 0 0;">
             <label style="display: inline-block;line-height: 24px;margin: 0;font-size: 12px;"
@@ -62,13 +62,13 @@
 
             <div class="iigwo-input descripcion" style="margin-right: 0;">
                 <label>Descripción</label>
-                <textarea [(ngModel)]="paciente.correoElectronico" type="string"></textarea>
+                <textarea [(ngModel)]="historial.descripcion" type="string"></textarea>
             </div>
 
             <div class="iigwo-input">
                 <label>Cargar imagen de odontograma</label>
 
-                <label for='fileId'
+                <!-- <label for='fileId'
                     [class]='file==null?"fake-button accent":"fake-button"'
                     tabindex="0">
                     <span *ngIf="file==null">Seleccionar Archivo</span>
@@ -80,7 +80,29 @@
                 <label style="display: inline-block; line-height: 32px; font-size: 13px;"
                     *ngIf="file!=null">{{file.name}}</label>
                 <input id='fileId' type="file" #fileInput (change)="onFileSelected(fileInput.files)"
-                    accept="image/*" style='display:none;'>
+                    accept="image/*" style='display:none;'> -->
+                
+                <label for='fileId'
+                    [class]='file.length == 0 ?"fake-button accent":"fake-button"'
+                    tabindex="0">
+                    <span *ngIf="file.length == 0">Seleccionar Archivos</span>
+                    <span *ngIf="file.length > 0">Archivos Seleccionados</span>                    
+                </label>
+        
+                <label style="display: inline-block; line-height: 32px; font-size: 13px; color:rgba(0,0,0,0.5);"
+                    *ngIf="file==null">No hay archivos seleccionados</label>
+                <div *ngFor="let f of file" style="display: inline-block;">
+                    <span class="badge-file-icon"><mat-icon svgIcon="attach_file"></mat-icon></span>
+                    <span class="badge-file" style="padding-right: 21px;">{{f.name}}</span>
+                    <span style="margin-left: -18px;">
+                            <button class="iigwo adjuntos-options" (click)="quitarAdjunto(f)">
+                                <mat-icon style="margin-top: 1px;" svgIcon="close"></mat-icon>
+                            </button>
+                    </span>
+                </div>
+        
+                <input id='fileId' type="file" #fileInput (change)="onFileSelected(fileInput.files)"
+                    accept="image/*" style='display:none;' multiple>
             </div>
         </div>
     </div>

@@ -78,40 +78,49 @@ export class BarComponent {
         this.usuariosService
             .obtenerUsuarioPorUsuario(localStorage.getItem('usuario'))
             .then(u => {
-                this.usuario = u;
-                /*this.usuario.rol.forEach(rol => {
-                    rol.descripcion = rol.descripcion.toUpperCase();
-                });*/
+                this.usuariosService
+                    .obtenerUsuarioPorId(u.idUsuario)
+                    .then(u => {
+                        this.usuario = u;
+                        /*this.usuario.rol.forEach(rol => {
+                            rol.descripcion = rol.descripcion.toUpperCase();
+                        });*/
+                        console.log(this.usuario)
 
-                let items = [
-                    ADMIN_GENERAL_ITEMS,
-                    AGENDA_ITEMS,
-                    HISTORIAL_CLINICO_ITEMS,
-                    PAGOS_ITEMS
-                ];
+                        let items = [
+                            ADMIN_GENERAL_ITEMS,
+                            AGENDA_ITEMS,
+                            HISTORIAL_CLINICO_ITEMS,
+                            PAGOS_ITEMS
+                        ];
 
-                // this.getImagen(this.usuario.foto);
+                        // this.getImagen(this.usuario.foto);
 
-                this.pantallaItems = items.reduce((a, b) => a.concat(b), []);
-                this.moduloItems = this.pantallaItems
-                    .map(e => e.module)
-                    .reduce((a, e) => a.includes(e) ? a : a.concat([e]), [] as AppBarNavItem[])
-                    .filter(e => e.isVisibleFor(this.usuario));
+                        this.pantallaItems = items.reduce((a, b) => a.concat(b), []);
+                        this.moduloItems = this.pantallaItems
+                            .map(e => e.module)
+                            .reduce((a, e) => a.includes(e) ? a : a.concat([e]), [] as AppBarNavItem[])
+                            .filter(e => e.isVisibleFor(this.usuario));
 
-                /*
-                this.pantallaItems
-                    .map(e => e.module)
-                    .filter(e => e && e.isVisibleFor(this.usuario))
-                    .forEach(e => {
-                        if (this.moduloItems.includes(e)) return;
-                        this.moduloItems.push(e);
+                        /*
+                        this.pantallaItems
+                            .map(e => e.module)
+                            .filter(e => e && e.isVisibleFor(this.usuario))
+                            .forEach(e => {
+                                if (this.moduloItems.includes(e)) return;
+                                this.moduloItems.push(e);
+                            })
+                            */
+
+                        i18n.translate(null, this.moduloItems);
+                        i18n.translate(null, this.pantallaItems);
+
+                        this.filteredModuloItems = this.moduloItems.filter(e => true);
                     })
-                    */
-
-                i18n.translate(null, this.moduloItems);
-                i18n.translate(null, this.pantallaItems);
-
-                this.filteredModuloItems = this.moduloItems.filter(e => true);
+                    .catch(reason => {
+                        this.utilService.manejarError(reason);
+                        this.logout()
+                    });
             })
             .catch(reason => {
                 this.utilService.manejarError(reason);

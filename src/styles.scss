@@ -1756,3 +1756,8 @@ td.accent {
 p.accent {
     color: mat-color($app-accent, darker);
 }
+
+.btn-search mat-icon svg {
+    margin-top: 3px !important;
+}
+

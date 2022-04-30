@@ -156,7 +156,7 @@ export class UtilService {
             texto = texto.message;
         }
 
-
+        titulo = 'Error';
 
         this.dialog.open(DialogoSimpleComponent, {
             data: {

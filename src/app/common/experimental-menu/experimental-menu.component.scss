@@ -43,7 +43,8 @@
 
 ::ng-deep label[title] {
     font-size: 18px;
-    color: darken($accent-color, 20%);
+    // color: darken($accent-color, 20%);
+    color: mat-color($app-accent, darker);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -66,7 +67,8 @@ $desk-height: 32px;
         outline: none;
         font-size: 13px;
         font-family: regular;
-        color: #424242;
+        // color: #424242;
+        color: mat-color($app-accent);
         line-height: $desk-height;
         margin-right: 12px;
         border-radius: 2px;

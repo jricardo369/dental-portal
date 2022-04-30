@@ -3,30 +3,29 @@
 <mat-dialog-content>
     <div class="iigwo-input" style="margin-right: 0;">
         <label>Paciente</label>
-        <select [disabled]="!creando">
-            <option value="M">Diana Lopez</option>
-            <option value="F">Jose Lopez</option>
+        <select [(ngModel)]="cita.paciente">
+            <option *ngFor="let p of pacientes" [ngValue]="p">{{p.nombre}}</option>
         </select>
     </div>
 
     <div class="iigwo-input" style="margin-right: 0;">
         <label>Fecha</label>
-        <input type="date" [readOnly]="!creando">
+        <input type="date" [(ngModel)]="cita.fecha">
     </div>
 
     <div class="iigwo-input" style="margin-right: 0;">
         <label>Hora inicio</label>
-        <input type="time" [readOnly]="!creando">
+        <input type="time" [(ngModel)]="cita.horaInicio">
     </div>
 
     <div class="iigwo-input" style="margin-right: 0;">
         <label>Hora fin</label>
-        <input type="time" [readOnly]="!creando">
+        <input type="time" [(ngModel)]="cita.horaFin">
     </div>
 
     <div class="iigwo-input descripcion" style="margin-right: 0;">
         <label>Comentario</label>
-        <textarea type="string" style="min-height: 48px;" [readOnly]="!creando"></textarea>
+        <textarea type="string" [(ngModel)]="cita.comentario" style="min-height: 48px;"></textarea>
     </div>
 </mat-dialog-content>
 
@@ -35,6 +34,7 @@
     <button *ngIf="!creando" class="iigwo" (click)='eliminar()'>Eliminar</button>
     <button class="iigwo" style="margin-left:auto;" (click)='cerrar()'>{{creando ? "Cancelar" : "Cerrar"}}</button>
     <button *ngIf="creando" class="iigwo accent" style="margin-right:0;" (click)='crear()'>Crear</button>
+    <button *ngIf="!creando" class="iigwo accent" style="margin-right:0;" (click)='editar()'>Guardar cambios</button>
 
 </mat-dialog-actions>
 

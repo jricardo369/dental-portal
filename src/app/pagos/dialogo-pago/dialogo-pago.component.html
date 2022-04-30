@@ -1,17 +1,16 @@
-<h2 mat-dialog-title>Nuevo Pago</h2>
+<h2 mat-dialog-title>{{titulo}}</h2>
 
 <mat-dialog-content>
     <div class="iigwo-input" style="margin-right: 0; min-width: 240px;">
         <label>Paciente</label>
-        <select>
-            <option value="M">Diana Lopez</option>
-            <option value="F">Jose Lopez</option>
+        <select [(ngModel)]="pago.paciente" [disabled]="esPaciente">
+            <option *ngFor="let p of pacientes" [ngValue]="p">{{p.nombre}}</option>
         </select>
     </div>
 
     <div class="iigwo-input" style="margin-right: 0;">
         <label>Fecha</label>
-        <input type="date">
+        <input type="date" [(ngModel)]="pago.fecha" [readOnly]="esPaciente">
     </div>
 
     <div class="iigwo-input" style="margin-right: 0;">
@@ -20,17 +19,17 @@
         </div>
         
         <div class="currency">
-            <input type="text"
-                (keypress)="utilService.validateInput($event)">
-            <span>$</span>
+            <input type="text" [ngModel]="!esPaciente ? pago.monto : (pago.monto | currency : 'MXN' : 'symbol' : undefined : 'es-Mx')"
+                (ngModelChange)="pago.monto = $event"
+                (keypress)="utilService.validateInput($event)" [readOnly]="esPaciente">
+            <span [hidden]='esPaciente'>$</span>
         </div>
     </div>
 
     <div class="iigwo-input" style="margin-right: 0;">
         <label>Tipo</label>
-        <select>
-            <option value="M">Cargo</option>
-            <option value="F">Abono</option>
+        <select [(ngModel)]="pago.tipoMovimiento" [disabled]="esPaciente">
+            <option *ngFor="let t of tiposPago" [ngValue]="t">{{t.descripcion}}</option>
         </select>
     </div>
 
@@ -39,8 +38,10 @@
 
 <mat-dialog-actions>
 
-    <button class="iigwo" style="margin-left:auto;" (click)='cerrar()'>Cancelar</button>
-    <button class="iigwo accent" style="margin-right:0;" (click)='crear()'>Crear</button>
+    <button *ngIf="!creando && !esPaciente" class="iigwo" (click)='eliminar()'>Eliminar</button>
+    <button class="iigwo" style="margin-left:auto;" [ngStyle]="{'margin-right': esPaciente ? '0' : ''}" (click)='cerrar()'>{{creando ? "Cancelar" : "Cerrar"}}</button>
+    <button *ngIf="creando && !esPaciente" class="iigwo accent" style="margin-right:0;" (click)='crear()'>Crear</button>
+    <button *ngIf="!creando && !esPaciente" class="iigwo accent" style="margin-right:0;" (click)='editar()'>Guardar cambios</button>
 
 </mat-dialog-actions>
 

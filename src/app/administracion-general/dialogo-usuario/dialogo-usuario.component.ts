@@ -6,6 +6,7 @@ import { Usuario } from './../../../model/usuario';
 import { Paciente } from './../../../model/paciente';
 import { PacientesService } from 'src/app/services/pacientes.service';
 import { Sociedad } from 'src/model/sociedad';
+import { Permiso } from './../../../model/permiso';
 
 @Component({
   selector: 'app-dialogo-usuario',
@@ -20,6 +21,7 @@ export class DialogoUsuarioComponent implements OnInit {
 	usuario: Usuario = new Usuario();
 	pacientes: Paciente[] = [];
 	paciente: Paciente = new Paciente();
+	permisos: Permiso[] = [];
 	
 
 	constructor(
@@ -29,6 +31,9 @@ export class DialogoUsuarioComponent implements OnInit {
 		private dialog: MatDialog,
 		public dialogRef: MatDialogRef<DialogoUsuarioComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any) {
+			this.permisos.push({ id: 1, nombre: "Administrar Citas"});
+			this.permisos.push({ id: 2, nombre: "Administrar Historiales"});
+			this.permisos.push({ id: 3, nombre: "Administrar Pagos"});
 			if (data.idUsuario) {
 				this.titulo = "Editar usuario"
 				this.usuario.idUsuario = data.idUsuario;
@@ -37,11 +42,26 @@ export class DialogoUsuarioComponent implements OnInit {
 			} else {
 				this.titulo = "Crear usuario";
 				this.creando = true;
+				this.usuario.permisos = [];
 			}
 		}
 
 	ngOnInit(): void {
 	}
+
+	estaSeleccionado(permiso: Permiso) {
+        return this.usuario.permisos.find(p => p.id == permiso.id) != null;
+    }
+
+	check(event: Event, permiso: Permiso) {
+        if ((event.srcElement as HTMLInputElement).checked) {
+            //add
+            if (!this.estaSeleccionado(permiso)) this.usuario.permisos.push(permiso);
+        } else {
+            //remove
+            if (this.estaSeleccionado(permiso)) this.usuario.permisos.splice(this.usuario.permisos.indexOf(permiso), 1);
+        }
+    }
 
 	refrescar() {
         this.cargando = true;

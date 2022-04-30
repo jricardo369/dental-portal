@@ -44,7 +44,7 @@ export class UsuariosService {
             .toPromise()
             .then(response => {
                 u = response.body as Usuario;
-                console.log(u)
+                // console.log(u)
                 localStorage.setItem('idUsuario', u.idUsuario.toString());
                 resolve(u);
             })

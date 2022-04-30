@@ -11,14 +11,18 @@
                 <label i18n="@@Crear usuario">Crear Pago</label>
             </button>
 
-            <button (click)='refrescar()'>
+            <!-- <button (click)='refrescar()'>
                 <mat-icon svgIcon="refresh"></mat-icon>
                 <label i18n="@@Refrescar">Refrescar</label>
-            </button>
+            </button> -->
 
-            <button (click)='descargarPdf()' *ngIf="!esPaciente">
+            <button (click)='descargarPdfGeneral()' *ngIf="!esPaciente">
                 <mat-icon svgIcon="file-download"></mat-icon>
-                <label>Descargar PDF</label>
+                <label>Descargar PDF General</label>
+            </button>
+            <button (click)='descargarPdfPaciente()' *ngIf="!esPaciente" [disabled]='!(this.paciente && this.paciente.idPaciente)'>
+                <mat-icon svgIcon="file-download"></mat-icon>
+                <label>Descargar PDF de Paciente</label>
             </button>
         
         </app-experimental-menu>
@@ -27,34 +31,38 @@
             <div style="display:flex;">
                 <div class="iigwo-input" style="min-width: 240px;" *ngIf="!esPaciente">
                     <label>Paciente</label>
-                    <select>
-                        <option value="M">Diana Lopez</option>
-                        <option value="F">Jose Lopez</option>
+                    <select [(ngModel)]="paciente">
+                        <option *ngFor="let p of pacientes" [ngValue]="p">{{p.nombre}}</option>
                     </select>
                 </div>
                 <div class="iigwo-input">
                     <label>Fecha inicio</label>
-                    <input [ngModel]="fecha | date:'dd-MM-yyyy':'':'es'" type="date">
+                    <input [(ngModel)]="fechaInicio" type="date">
                 </div>
                 <div class="iigwo-input">
                     <label>Fecha fin</label>
-                    <input [ngModel]="fecha | date:'dd-MM-yyyy':'':'es'" type="date">
+                    <input [(ngModel)]="fechaFin" type="date">
                 </div>
+
+                <button class='iigwo accent btn-search' (click)='refrescar()' [disabled]='!(this.paciente && this.paciente.idPaciente)'>
+                    <mat-icon svgIcon="search"></mat-icon>
+                    <label>Buscar</label>
+                </button>
             </div>
 
             <div style="display:flex; flex-flow: column; overflow: auto;">
                 <table>
                     <tr>
                         <td style="border: 0;font-size: 15px; color: black;" colspan="2">
-                            Total cargos: <label style="color: green;">{{2500 | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</label>
+                            Total cargos: <label style="color: green;">{{reporteMovimiento.totalAdeudos | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</label>
                         </td>
                     </tr>
                     <tr>
                         <td style="border: 0;font-size: 15px; color: black;">
-                            Total abonos: <label style="color: red;">{{2500 | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</label>
+                            Total abonos: <label style="color: red;">{{reporteMovimiento.totalIngreso | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</label>
                         </td>
                         <td style="border: 0;font-size: 15px; color: black; text-align: right;">
-                            Saldo: <label style="color: blue;">{{2500 | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</label>
+                            Saldo: <label style="color: blue;">{{reporteMovimiento.saldo | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</label>
                         </td>
                     </tr>
                 </table>
@@ -67,11 +75,11 @@
                         <th class='' i18n="@@usuarios.Usuario">Tipo</th>
                         <th class='' i18n="@@usuarios.Rol">Monto</th>
                     </tr>
-                    <tr>
-                        <td class=''>Diana Maria Garcia</td>
-                        <td class=''>{{"2022-04-18" | date:'dd/MM/yyyy'}}</td>
-                        <td class=''>Cargo</td>
-                        <td class='number'>{{2500 | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+                    <tr *ngFor='let p of pagos | slice:paginacion.begin:paginacion.end'>
+                        <td class=''><a (click)="abrirPago(p.idMovimiento)">{{p.paciente.nombre}}</a></td>
+                        <td class=''>{{p.fecha.split(' ')[0] | date:'dd/MM/yyyy'}}</td>
+                        <td class=''>{{p.tipoMovimiento.descripcion}}</td>
+                        <td class='number'>{{p.monto | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
                     </tr>
 
                     <tr>

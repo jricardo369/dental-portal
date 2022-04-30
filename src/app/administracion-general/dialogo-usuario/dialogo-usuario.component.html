@@ -92,37 +92,17 @@
 
                 <div style="min-width: 332px; margin-right: 12px;">
 
-                    <div class="iigwo-input" style="margin: 0;">
+                    <div class="iigwo-input" style="margin: 0;" *ngFor="let p of permisos">
                         <input type="checkbox"
-                            style="width: 15px;display: inline-block;line-height: 18px;margin: 0 6px 0 0;">
+                            style="width: 15px;display: inline-block;line-height: 18px;margin: 0 6px 0 0;"
+                            [checked]="estaSeleccionado(p)" (change)="check($event, p)">
                         <label style="display: inline-block;line-height: 24px;margin: 0;font-size: 12px;"
-                            >Visualizar cita</label>
-                    </div>
-
-                    <div class="iigwo-input" style="margin: 0;">
-                        <input type="checkbox"
-                            style="width: 15px;display: inline-block;line-height: 18px;margin: 0 6px 0 0;">
-                        <label style="display: inline-block;line-height: 24px;margin: 0;font-size: 12px;"
-                            >Crear cita</label>
-                    </div>
-
-                    <div class="iigwo-input" style="margin: 0;">
-                        <input type="checkbox"
-                            style="width: 15px;display: inline-block;line-height: 18px;margin: 0 6px 0 0;">
-                        <label style="display: inline-block;line-height: 24px;margin: 0;font-size: 12px;"
-                            >Visualizar historial</label>
-                    </div>
-
-                    <div class="iigwo-input" style="margin: 0;">
-                        <input type="checkbox"
-                            style="width: 15px;display: inline-block;line-height: 18px;margin: 0 6px 0 0;">
-                        <label style="display: inline-block;line-height: 24px;margin: 0;font-size: 12px;"
-                            >Alta de historial</label>
+                            >{{p.nombre}}</label>
                     </div>
 
                 </div>
 
-                <div style="min-width: 332px;">
+                <!-- <div style="min-width: 332px;">
 
                     <div class="iigwo-input" style="margin: 0;">
                         <input type="checkbox"
@@ -152,7 +132,7 @@
                             >Pacientes</label>
                     </div>
 
-                </div>
+                </div> -->
             </div>
         </div>
     

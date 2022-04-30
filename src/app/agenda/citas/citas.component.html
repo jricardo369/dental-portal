@@ -11,84 +11,77 @@
                 <label i18n="@@Crear usuario">Crear Cita</label>
             </button>
 
-            <button (click)='refrescar()'>
+            <!-- <button (click)='refrescar()'>
                 <mat-icon svgIcon="refresh"></mat-icon>
                 <label i18n="@@Refrescar">Refrescar</label>
-            </button>
+            </button> -->
         
         </app-experimental-menu>
 
         <div class='content' >
             
-            <div style="margin-bottom: 20px;">
+            <div style="margin-bottom: 20px; display:flex;">
                 <div class="iigwo-input" style="width: 118px;">
                     <label>Fecha</label>
-                    <input [ngModel]="fecha | date:'dd-MM-yyyy':'':'es'" type="date">
+                    <input type="date" [(ngModel)]="fecha" >
                 </div>
+
+                <button class='iigwo accent' (click)='refrescar()' style="align-self: flex-end;">
+                    <mat-icon svgIcon="search"></mat-icon>
+                    <label>Buscar</label>
+                </button>
             </div>
 
             <!-- TABLA CON REGISTROS -->
             <div style="display:flex; overflow: auto;">
                 <div style="width: 144px;">
                     <div><p class="accent header-dia">LUNES</p></div>
-                    <div class="cita" (click)="abrirCita()">
-                        <p class="nombre">Diana Lopez</p>
-                        <p>8:00am a 9:00am</p>
+                    <div class="cita" *ngFor="let c of citas.lunes" (click)="abrirCita(c.idCita)">
+                        <p class="nombre">{{c.paciente.nombre}}</p>
+                        <p>{{mostrarHoraDeCita(c.horaInicio, c.horaFin)}}</p>
                     </div>
                 </div>
                 <div style="width: 144px;">
                     <div><p class="accent header-dia">MARTES</p></div>
-                    <div class="cita" (click)="abrirCita()">
-                        <p class="nombre">Diana Lopez</p>
-                        <p>8:00am a 9:00am</p>
+                    <div class="cita" *ngFor="let c of citas.martes" (click)="abrirCita(c.idCita)">
+                        <p class="nombre">{{c.paciente.nombre}}</p>
+                        <p>{{mostrarHoraDeCita(c.horaInicio, c.horaFin)}}</p>
                     </div>
                 </div>
                 <div style="width: 144px;">
                     <div><p class="accent header-dia">MIERCOLES</p></div>
-                    <div class="cita" (click)="abrirCita()">
-                        <p class="nombre">Diana Lopez</p>
-                        <p>8:00am a 9:00am</p>
-                    </div>
-                    <div class="cita" (click)="abrirCita()">
-                        <p class="nombre">Diana Lopez</p>
-                        <p>8:00am a 9:00am</p>
-                    </div>
-                    <div class="cita" (click)="abrirCita()">
-                        <p class="nombre">Diana Lopez</p>
-                        <p>8:00am a 9:00am</p>
+                    <div class="cita" *ngFor="let c of citas.miercoles" (click)="abrirCita(c.idCita)">
+                        <p class="nombre">{{c.paciente.nombre}}</p>
+                        <p>{{mostrarHoraDeCita(c.horaInicio, c.horaFin)}}</p>
                     </div>
                 </div>
                 <div style="width: 144px;">
                     <div><p class="accent header-dia">JUEVES</p></div>
-                    <div class="cita" (click)="abrirCita()">
-                        <p class="nombre">Diana Lopez</p>
-                        <p>8:00am a 9:00am</p>
+                    <div class="cita" *ngFor="let c of citas.jueves" (click)="abrirCita(c.idCita)">
+                        <p class="nombre">{{c.paciente.nombre}}</p>
+                        <p>{{mostrarHoraDeCita(c.horaInicio, c.horaFin)}}</p>
                     </div>
                 </div>
                 <div style="width: 144px;">
                     <div><p class="accent header-dia">VIERNES</p></div>
-                    <div class="cita" (click)="abrirCita()">
-                        <p class="nombre">Diana Lopez</p>
-                        <p>8:00am a 9:00am</p>
+                    <div class="cita" *ngFor="let c of citas.viernes" (click)="abrirCita(c.idCita)">
+                        <p class="nombre">{{c.paciente.nombre}}</p>
+                        <p>{{mostrarHoraDeCita(c.horaInicio, c.horaFin)}}</p>
                     </div>
                 </div>
                 <div style="width: 144px;">
                     <div><p class="accent header-dia">SABADO</p></div>
-                    <div class="cita" (click)="abrirCita()">
-                        <p class="nombre">Diana Lopez</p>
-                        <p>8:00am a 9:00am</p>
-                    </div>
-                    <div class="cita" (click)="abrirCita()">
-                        <p class="nombre">Diana Lopez</p>
-                        <p>8:00am a 9:00am</p>
+                    <div class="cita" *ngFor="let c of citas.sabado" (click)="abrirCita(c.idCita)">
+                        <p class="nombre">{{c.paciente.nombre}}</p>
+                        <p>{{mostrarHoraDeCita(c.horaInicio, c.horaFin)}}</p>
                     </div>
                 </div>
                 <div style="width: 144px;">
                     <div><p class="accent header-dia">DOMINGO</p></div>
-                    <!-- <div class="cita" (click)="abrirCita()">
-                        <p class="nombre">Diana Lopez</p>
-                        <p>8:00am a 9:00am</p>
-                    </div> -->
+                    <div class="cita" *ngFor="let c of citas.domingo" (click)="abrirCita(c.idCita)">
+                        <p class="nombre">{{c.paciente.nombre}}</p>
+                        <p>{{mostrarHoraDeCita(c.horaInicio, c.horaFin)}}</p>
+                    </div>
                 </div>
             </div>
 
