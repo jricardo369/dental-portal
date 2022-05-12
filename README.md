@@ -31,10 +31,7 @@ Ejecutar `ng xi18n --output-path translate` para generar un archivo de traduccio
 
 Ejecutar `ng build` para construir el proyecto. Los artefactos de construcción se almacenarán en el `dist/` directorio. Usa la `-prod` bandera para una construcción de producción.
 
-Para construir se necesita construir tanto en inglés como en español:
-
-+ Versión en inglés `ng build --prod --optimization --build-optimizer --aot --base-href /ContelecAnglobal/en/ --deploy-url /ContelecAnglobal/en/ --i18n-locale=en --i18n-file src/translate/messages/messages.en.xlf --output-path=dist/ContelecAnglobal/en`
-+ Versión en español `ng build --prod --optimization --build-optimizer --aot --base-href /ContelecAnglobal/es/ --deploy-url /ContelecAnglobal/es/ --i18n-locale=es --output-path=dist/ContelecAnglobal/es`
++ Versión en español `ng build --prod --optimization --build-optimizer --aot --base-href /portal-dental/es/ --deploy-url /portal-dental/es/ --i18n-locale=es --output-path=dist/portal-dental/es`
 
 
 ---
