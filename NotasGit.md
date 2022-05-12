@@ -6,7 +6,7 @@ Antes de bajar los cambios asegurar que hallas hecho commit de tus ajustes local
 
 ### Se asigna un nombre al repositorio base en este caso es portala
 ~~~
-git remote add portala https://github.com/fabrica-fswlp/portal-viaticos-angular.git
+git remote add portala https://github.com/jricardo369/dental-portal.git
 ~~~
 
 ### Se bajan cambios del repositorio base a tu local

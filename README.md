@@ -1,12 +1,12 @@
-# portal-viaticos-angular
+# dental-portal
 
-Front end para el proyecto de Portal de viaticos Nu3 (SLAPI-003)
+Front end para el proyecto de Portal Dental
 
 ## Configuración del proyecto
 
 ### Clonar Proyecto
 
-Clone el proyecto **portal-viaticos-angular** del repositorio en git.
+Clone el proyecto **dental-portal** del repositorio en git.
 
 Ejecute el comando `npm install` para descargar e instalar las dependencias necesarias para el proyecto. 
 
