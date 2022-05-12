@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
-import { Usuario } from '../model/usuario';
 import { LoginComponent } from './common/login/login.component';
 import { InicioComponent } from './common/inicio/inicio.component';
 import { TusCredencialesComponent } from './common/tus-credenciales/tus-credenciales.component';
+
 
 const routes: Routes = [
 
@@ -14,33 +14,20 @@ const routes: Routes = [
     { path: '', redirectTo: 'inicio', pathMatch: 'full' },
 
     { // ADMINISTRADOR (GENERAL)
-        path: 'administracion/general',
+        path: 'administracion-general',
         loadChildren: () => import('./administracion-general/administracion-general.module').then(m => m.AdministracionGeneralModule)
     },
-
-    { // ADMINISTRADOR (GASTOS DE VIAJE)
-        path: 'administracion/viajes',
-        loadChildren: () => import('./administracion-viajes/administracion-viajes.module').then(m => m.AdministracionViajesModule)
+    { // AGENDA
+        path: 'agenda',
+        loadChildren: () => import('./agenda/agenda.module').then(m => m.AgendaModule)
     },
-
-    { // ADMINISTRADOR (CAJA CHICA)
-        path: 'administracion/caja-chica',
-        loadChildren: () => import('./administracion-caja-chica/administracion-caja-chica.module').then(m => m.AdministracionCajaChicaModule)
+    { // HISTORIAL CLINICO
+        path: 'historial-clinico',
+        loadChildren: () => import('./historial-clinico/historial-clinico.module').then(m => m.HistorialClinicoModule)
     },
-
-    { // PROVEEDORES
-        path: 'proveedores',
-        loadChildren: () => import('./proveedores/proveedores.module').then(m => m.ProveedoresModule)
-    },
-
-    { // VIAJES
-        path: 'viajes',
-        loadChildren: () => import('./viajes/viajes.module').then(m => m.ViajesModule)
-    },
-
-    { // CAJA CHICA
-        path: 'caja-chica',
-        loadChildren: () => import('./caja-chica/caja-chica.module').then(m => m.CajaChicaModule)
+    { // PAGOS
+        path: 'pagos',
+        loadChildren: () => import('./pagos/pagos.module').then(m => m.PagosModule)
     },
 
 ];

@@ -2,6 +2,7 @@ import { Usuario } from "../model/usuario";
 import { Router } from "@angular/router";
 import { SessionService } from "./services/session.service";
 import { UtilService } from './services/util.service';
+import { UsuariosService } from 'src/app/services/usuarios.service';
 
 export const NAV_MENU_IZQUIERDA_TEMPLATE =
     `
@@ -39,34 +40,30 @@ export class UtilServiceTest {
 
     workspaces = [];
     ITEMS: AppBarNavItem[];
+    manual_name: string;
+
 
     constructor(
         private router: Router,
         public utilService: UtilService,
-        private sessionService: SessionService, ITEMS: AppBarNavItem[]
+        private usuariosService: UsuariosService, ITEMS: AppBarNavItem[]
     ) {
         this.ITEMS = ITEMS;
 
-        if (sessionService.sessionUsuarioPromise) {
-            sessionService.sessionUsuarioPromise
+        if (usuariosService.usuarioPromise) {
+            usuariosService.usuarioPromise
                 .then(u => {
                     this.updateItems(u);
-                    this.updateUsuario();
                 }).catch(e => {
-                    this.updateUsuario();
+                    this.utilService.manejarError(e);
                 })
-        } else this.updateUsuario();
-    }
-
-    updateUsuario() {
-        this.sessionService
-            .getUsuario()
-            .then(u => {
-                this.updateItems(u);
-            })
+        }
     }
 
     updateItems(u: Usuario) {
+        
+        this.manual_name = localStorage.getItem('manual_name');
+
         this.workspaces = [this.ITEMS[0].module];
         this.ITEMS
             .filter(e => e.isVisibleFor(u))
@@ -74,12 +71,12 @@ export class UtilServiceTest {
     }
 
     isWorkspaceCurrentPath(workspace: AppBarNavItem) { return window.location.pathname.endsWith(AppBarNavItem.path(workspace)); }
-    
-    navigateToWorkspacePath(event, workspace: AppBarNavItem): void { 
+
+    navigateToWorkspacePath(event, workspace: AppBarNavItem): void {
         this.utilService.workspaceNavMenuOpened = false;
-        setTimeout(()=>{
-            this.router.navigate([AppBarNavItem.path(workspace)]); 
-        }, 0)
+        setTimeout(() => {
+            this.router.navigate([AppBarNavItem.path(workspace)]);
+        }, 0);
     }
 }
 
@@ -93,9 +90,9 @@ export class AppBarNavItem {
     uri: string;
     svgName: string;
 
-    isVisibleFor(u: Usuario): boolean { return true }
-
     static path(e: AppBarNavItem): string {
         return e.module ? e.module.uri + '/' + e.uri : e.uri;
     }
+
+    isVisibleFor(u: Usuario): boolean { return true; }
 }

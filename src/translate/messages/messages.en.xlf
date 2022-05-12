@@ -2549,13 +2549,6 @@
             <trans-unit id="SeleccioneUnaOpcionDelMenu">
                 <target>Choose an option from the menu &#x2630;</target>
             </trans-unit>
-
-            <trans-unit id="Tipo de Cuenta">
-                <target>Account Type</target>
-            </trans-unit>
-            <trans-unit id="Impuestos">
-                <target>Taxes</target>
-            </trans-unit>
         </body>
     </file>
 </xliff>

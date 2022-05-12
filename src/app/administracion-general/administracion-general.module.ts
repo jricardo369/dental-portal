@@ -3,17 +3,16 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AdministracionGeneralRoutingModule } from './administracion-general-routing.module';
-import { UsuariosComponent } from './usuarios/usuarios.component';
-import { TareasProgramadasComponent } from './tareas-programadas/tareas-programadas.component';
-import { ConfiguracionComponent } from './configuracion/configuracion.component';
 import { GeneralNavComponent } from './general-nav/general-nav.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
-import { UsuarioComponent } from './usuario/usuario.component';
-import { CargaMasivaDeUsuariosComponent } from './carga-masiva-de-usuarios/carga-masiva-de-usuarios.component';
-import { ConfiguracionService } from '../services/configuracion.service';
-import { ContelecUiModule } from '../contelec-ui/contelec-ui.module';
+import { DentalUiModule } from '../dental-ui/dental-ui.module';
+import { MatDialogModule } from '@angular/material/dialog';
+import { UsuariosComponent } from './usuarios/usuarios.component';
+import { PacientesComponent } from './pacientes/pacientes.component';
+import { DialogoUsuarioComponent } from './dialogo-usuario/dialogo-usuario.component';
+import { DialogoPacienteComponent } from './dialogo-paciente/dialogo-paciente.component';
 
 @NgModule({
     imports: [
@@ -23,18 +22,22 @@ import { ContelecUiModule } from '../contelec-ui/contelec-ui.module';
         MatIconModule,
         MatProgressSpinnerModule,
         FormsModule,
-        ContelecUiModule
+        DentalUiModule,
+        MatDialogModule,
+    ],
+    entryComponents: [
+        DialogoUsuarioComponent,
+        DialogoPacienteComponent,
+        
     ],
     declarations: [
-        UsuariosComponent,
-        TareasProgramadasComponent,
-        ConfiguracionComponent,
         GeneralNavComponent,
-        UsuarioComponent,
-        CargaMasivaDeUsuariosComponent
+        UsuariosComponent,
+        PacientesComponent,
+        DialogoUsuarioComponent,
+        DialogoPacienteComponent,
     ],
     providers: [
-        ConfiguracionService
     ]
 })
 export class AdministracionGeneralModule { }

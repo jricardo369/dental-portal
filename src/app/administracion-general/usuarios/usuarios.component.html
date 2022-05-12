@@ -4,14 +4,14 @@
 <div class='workspace'>
     <div class='main'>
 
-        <app-experimental-menu titulo="Usuarios" i18n-titulo="@@Usuarios">
+        <app-experimental-menu titulo="Usuarios" i18n-titulo="@@Configuración general">
 
-            <button (click)='crear()'>
+            <button (click)='crearUsuario()'>
                 <mat-icon svgIcon="add-box"></mat-icon>
                 <label i18n="@@Crear usuario">Crear Usuario</label>
             </button>
 
-            <button *ngIf="!mostrandoResultadosFiltrados" (click)='refrescar()'>
+            <button (click)='refrescar()'>
                 <mat-icon svgIcon="refresh"></mat-icon>
                 <label i18n="@@Refrescar">Refrescar</label>
             </button>
@@ -20,15 +20,10 @@
                 <mat-icon svgIcon="delete"></mat-icon>
                 <label i18n="@@Eliminar">Eliminar</label>
             </button>
-
-            <!--<button (click)='cargaMasiva()'>
-                <mat-icon svgIcon="file-upload"></mat-icon>
-                <label i18n="@@Carga masiva">Carga masiva</label>
-            </button>-->
-
+        
         </app-experimental-menu>
 
-        <div class='content'>
+        <div class='content' >
 
             <!-- FILTRO -->
             <div style="margin-bottom: 20px;">
@@ -41,18 +36,10 @@
                     <div class="iigwo-input inline">
                         <select [(ngModel)]="f.campo">
                             <option i18n="@@usuarios.Id" value="id">Id</option>
-                            <option i18n="@@usuarios.Correo electrónico" value="email">Correo electrónico</option>
                             <option i18n="@@usuarios.Nombre" value="nombre">Nombre</option>
                             <option i18n="@@usuarios.Usuario" value="usuario">Usuario</option>
-                            <option i18n="@@usuarios.Contraseña" value="password">Contraseña</option>
-                            <option i18n="@@usuarios.RFC" value="rfc">RFC</option>
-                            <option i18n="@@usuarios.Sociedad" value="sociedad">Sociedad</option>
-                            <option i18n="@@usuarios.Centro de costo" value="centro_costo">Centro de costo</option>
-                            <option i18n="@@usuarios.Rol" value="rol.nombre">Rol</option>
-                            <!--
-							<option value="area">Area</option>
-							<option value="permisos">Permisos</option>
-							-->
+                            <option i18n="@@usuarios.Correo electrónico" value="email">Correo electrónico</option>
+                            <option i18n="@@usuarios.Rol" value="rol">Rol</option>
                         </select>
                     </div>
 
@@ -73,11 +60,11 @@
                         <input placeholder="Texto / Número" i18n-placeholder="Texto / Número" [(ngModel)]="f.valor">
                     </div>
 
-                    <button class="iigwo small" style="padding:0" (click)="agregarFiltro()">
+                    <button class="iigwo small" style="padding:0;min-height: 26px;" (click)="agregarFiltro()">
                         <mat-icon svgIcon="add"></mat-icon>
                     </button>
 
-                    <button class="iigwo small" style="padding:0" (click)="eliminarFiltro(f)">
+                    <button class="iigwo small" style="padding:0;min-height: 26px;" (click)="eliminarFiltro(f)">
                         <mat-icon svgIcon="remove"></mat-icon>
                     </button>
 
@@ -85,56 +72,43 @@
 
                 </div>
 
-                <button *ngIf='filters.length > 0' class="accent iigwo small" (click)="refrescarConFiltros()"
-                    i18n="@Aplicar filtros">Aplicar filtros</button>
-                <button *ngIf='filters.length > 0' class="iigwo small" (click)="limpiarFiltros()"
-                    i18n="@@Limpiar filtros">Limpiar filtros</button>
-                <p *ngIf='filters.length == 0' style="font-size:11px;" i18n="@@Agregafiltrosdesc">
-                    Agrega uno o más filtros para facilitar la búsqueda de usuarios
+                    
+                <button *ngIf='filters.length > 0' class="accent iigwo small" (click)="aplicarFiltros()">Aplicar filtros</button>
+                <button *ngIf='filters.length > 0' class="iigwo small" (click)="limpiarFiltros()">Limpiar filtros</button>
+                <p *ngIf='filters.length == 0' style="font-size:11px;">
+                    Agrega uno o más filtros para facilitar la búsqueda de requerimientos
                 </p>
-                <button *ngIf='filters.length == 0' class="iigwo small" (click)="agregarFiltro()"
-                    i18n="@@Agregarfiltros">Agregar filtro</button>
+                <button *ngIf='filters.length == 0' class="iigwo small" (click)="agregarFiltro()">Agregar filtro</button>
+
 
             </div>
 
-            <hr style="margin-bottom:0;">
-
             <!-- TABLA CON REGISTROS -->
             <div style="display:flex; flex-flow: column; overflow: auto;">
-                <table class='big' *ngIf="!(usuarios.length == 0 && mostrandoResultadosFiltrados)">
+                <table class='big' *ngIf="!(usuarios.length == 0)">
                     <tr>
                         <th class=''><input type="checkbox" [checked]="estanTodosSeleccionados()"
                                 (change)="checkAll($event)"></th>
-                        <th class='accent' i18n="@@usuarios.Id">Id</th>
-                        <th class='accent' i18n="@@usuarios.Nombre">Nombre</th>
-                        <th class='' i18n="@@usuarios.RFC">RFC</th>
-                        <!--<th class='' i18n="@@usuarios.Sociedad">Sociedad</th>-->
+                        <th class='' i18n="@@usuarios.Id">Id</th>
+                        <th class='' i18n="@@usuarios.Nombre">Nombre</th>
                         <th class='' i18n="@@usuarios.Usuario">Usuario</th>
-                        <!--<th class='' i18n="@@usuarios.Contraseña">Contraseña</th>-->
                         <th class='' i18n="@@usuarios.Correo electrónico">Correo electrónico</th>
-                        <!--<th class='' i18n="@@usuarios.Centro de costo">Centro de costo</th>
-                        <th class='' i18n="@@usuarios.Area">Area</th>-->
                         <th class='' i18n="@@usuarios.Rol">Rol</th>
                     </tr>
                     <tr *ngFor='let e of usuarios | slice:paginacion.begin:paginacion.end'>
-                        <td class=''><input type="checkbox" [checked]="estaSeleccionado(e.id)"
-                                (change)="check($event, e.id)"></td>
-                        <td class=''><a routerLink="./{{e.id}}">{{e.id}}</a></td>
-                        <td class=''><a routerLink="./{{e.id}}">{{e.nombre}}</a></td>
-                        <td class='accent'>{{e.rfc}}</td>
-                        <!--<td class='accent'>{{e.sociedad}}</td>-->
+                        <td class=''><input type="checkbox" [checked]="estaSeleccionado(e.idUsuario)"
+                                (change)="check($event, e.idUsuario)"></td>
+                        <td class=''><a (click)="editarUsuario(e.idUsuario)">{{e.idUsuario}}</a></td>
+                        <td class=''><a (click)="editarUsuario(e.idUsuario)">{{e.nombre}}</a></td>
                         <td class='accent'>{{e.usuario}}</td>
-                        <!--<td class='accent'>{{e.password}}</td>-->
-                        <td class='accent'>{{e.email}}</td>
-                        <!--<td class='accent'>{{e.centro_costo}}</td>
-                        <td class='accent'>{{e.area ? e.area.descripcion : ''}}</td>-->
-                        <td class='accent'>{{e.rol.nombre}}</td>
+                        <td class='accent'>{{e.correoElectronico}}</td>
+                        <td class='accent'>{{e.rol}}</td>
                     </tr>
 
                     <tr>
-                        <td colspan="99" style="text-align: right;line-height: 24px;" class="mini"
-                            i18n="@@registrosporpagina">
-                            Registros por página
+                        <td colspan="99" style="text-align: right;line-height: 24px;" class="mini">
+                            <label i18n="@@Registros por página">
+                            Registros por página</label>
                             <select [(ngModel)]="paginacion.size" (ngModelChange)="paginacion.fix()"
                                 style="margin: 0 8px; font-family: regular; height: 24px;">
                                 <option value="10">10</option>
@@ -143,11 +117,11 @@
                                 <option value="100">100</option>
                             </select>
                             {{paginacion.begin + 1}}-{{paginacion.end}} de {{paginacion.array.length}}
-                            <button class="iigwo small" style="margin: 0 0 0 8px; padding:0;"
+                            <button class="iigwo small" style="margin: 0 0 0 8px; padding:0; height: 24px; min-height: 24px;"
                                 (click)="paginacion.back();">
                                 <mat-icon svgIcon="arrow-back"></mat-icon>
                             </button>
-                            <button class="iigwo small" style="margin: 0 0 0 8px; padding:0;"
+                            <button class="iigwo small" style="margin: 0 0 0 8px; padding:0; height: 24px; min-height: 24px;"
                                 (click)="paginacion.forward();">
                                 <mat-icon svgIcon="arrow-forward"></mat-icon>
                             </button>
@@ -158,7 +132,7 @@
             </div>
 
             <!-- MENSAJE DE NO HAY REGISTROS -->
-            <div *ngIf="usuarios.length == 0 && mostrandoResultadosFiltrados">
+            <div *ngIf="usuarios.length == 0">
                 <h3 style="margin:12px 0 6px 0" i18n="@@Sin resultados">Sin resultados</h3>
                 <p style="max-width:396px;" i18n="No hay usuarios dentro del criterio de búsqueda">No hay usuarios
                     dentro del criterio de búsqueda. Asegurate de que los nombres son los correctos y que están buscando
@@ -168,44 +142,14 @@
             <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;">
                 <span i18n="@@siNecesitaAyudaPuedeLeerEl">Si necesita ayuda puede leer el
                 </span>
-                <a target="_blank" [href]='utilService.rutaDeManual("ManualAdministracionGeneral")' i18n="@@manualAdministracionGeneral">manual de Administración General</a>
+                <a target="_blank" [href]='utilService.rutaManual("ManualAdministracionGeneral")' i18n="@@manualAdministracionGeneral">manual de Administración General</a>
             </p>
-
+            
         </div>
 
-        <!-- CARGANDO -->
+        <!--Cargando-->
         <div class='iigwo-loading' *ngIf="cargando">
             <mat-spinner></mat-spinner>
         </div>
-
-        <!-- MENSAJE DE CONFIRMACIÓN -->
-        <div *ngIf="mostrarMensajeDeEliminar" class='iigwo-dialog-background'>
-            <div class='iigwo-dialog'>
-                <h3><span i18n="@@Eliminar usuarios">Eliminar usuarios</span> <span>({{seleccion.length}})</span></h3>
-                <p i18n="@@Estarporborrarmuchosusuarios">Estás a punto de borrar usuarios, esta operación es
-                    irreversible ¿estás seguro de que deseas
-                    eliminarlos
-                    a todos?</p>
-                <button class='iigwo accent' (click)='confirmarEliminar()'><label><span
-                            i18n="@@Eliminar usuarios">Eliminar usuarios</span>
-                        <span>({{seleccion.length}})</span></label></button>
-                <!--
-				--><button class='iigwo' (click)='mostrarMensajeDeEliminar = false'><label
-                        i18n="@@Cancelar">Cancelar</label></button>
-            </div>
-        </div>
-
-        <!-- MENSAJE DE NOTIFICACIÓN -->
-        <div *ngIf="mostrarMensaje" class='iigwo-dialog-background'>
-            <div class='iigwo-dialog'>
-                <h3 i18n="@@Usuarios no eliminados">Usuarios no eliminados</h3>
-                <p i18n="@@Usuarios no eliminados razón">Por lo menos uno de los usuarios no pudo ser eliminado mediante
-                    la eliminación masiva, eliminelo
-                    desde su pantalla individual</p>
-                <button class='iigwo accent' (click)='mostrarMensaje=false;'><label
-                        i18n="@@Aceptar">Aceptar</label></button>
-            </div>
-        </div>
-
     </div>
 </div>

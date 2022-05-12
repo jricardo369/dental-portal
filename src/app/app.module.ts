@@ -5,6 +5,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatSelectModule } from '@angular/material/select';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,8 +19,13 @@ import { DialogoSimpleComponent } from './common/dialogo-simple/dialogo-simple.c
 import { FormsModule } from '@angular/forms';
 import { LoginFormComponent } from './common/login-form/login-form.component';
 import { DialogoLoginComponent } from './common/dialogo-login/dialogo-login.component';
-import { TusCredencialesComponent } from './common/tus-credenciales/tus-credenciales.component';
 import { DialogoFrameComponent } from './common/dialogo-frame/dialogo-frame.component';
+
+import { registerLocaleData } from '@angular/common';
+import localeMx from '@angular/common/locales/es-MX';
+import { TusCredencialesComponent } from './common/tus-credenciales/tus-credenciales.component';
+
+registerLocaleData(localeMx, 'es-Mx');
 
 @NgModule({
     declarations: [
@@ -43,7 +50,9 @@ import { DialogoFrameComponent } from './common/dialogo-frame/dialogo-frame.comp
         MatIconModule,
         MatDialogModule,
         MatButtonModule,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        MatSliderModule,
+        MatSelectModule
     ],
     entryComponents: [
         DialogoSimpleComponent,
@@ -52,7 +61,7 @@ import { DialogoFrameComponent } from './common/dialogo-frame/dialogo-frame.comp
     ],
     providers: [
         SessionService,
-        { provide: LOCALE_ID, useValue: "en-US" }, //replace "en-US" with your locale
+        { provide: LOCALE_ID, useValue: "es-MX" }, //replace "en-US" with your locale
     ],
     bootstrap: [
         AppComponent

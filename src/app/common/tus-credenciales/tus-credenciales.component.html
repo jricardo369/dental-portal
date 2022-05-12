@@ -15,13 +15,17 @@
         <div *ngIf="cambiandoContrasena==true">
             <div class="iigwo-input">
                 <label i18n="@@Nueva contraseña">Nueva contraseña</label>
-                <input [(ngModel)]="password1" type="password" autocomplete="new-password" name="banana1">
+                <input [(ngModel)]="password" type="password" autocomplete="new-password" name="banana1"
+                    title="Debe contener por lo menos un número, una letra en mayúscula, una letra en minúscula, un carácter especial(!@$^*_=-), la longitud mínima es de 8 y la longitud máxima es de 12."
+                    i18n-title="@@Debe contener por lo menos un número, una letra en mayúscula, una letra en minúscula, un carácter especial(!@$^*_=-), la longitud mínima es de 8 y la longitud máxima es de 12.">
             </div>
             <div class="iigwo-input">
-                <label i18n="@@Nueva contraseña (repetir)">Nueva contraseña (repetir)</label>
-                <input [(ngModel)]="password2" type="password" autocomplete="new-password" name="banana2">
+                <label i18n="@@Confirmar nueva contraseña">Confirmar nueva contraseña</label>
+                <input [(ngModel)]="confirmPassword" type="password" autocomplete="new-password" name="banana2"
+                    title="Debe contener por lo menos un número, una letra en mayúscula, una letra en minúscula, un carácter especial(!@$^*_=-), la longitud mínima es de 8 y la longitud máxima es de 12."
+                    i18n-title="@@Debe contener por lo menos un número, una letra en mayúscula, una letra en minúscula, un carácter especial(!@$^*_=-), la longitud mínima es de 8 y la longitud máxima es de 12.">
             </div>
-            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;">Deben coincidir ambas contraseñas</p>
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;" i18n="@@Deben coincidir ambas contraseñas">Deben coincidir ambas contraseñas</p>
             <button class="iigwo accent" (click)="cambiarPassword()">
                 <label i18n="@@Cambiar contraseña">Cambiar contraseña</label>
             </button>
@@ -36,21 +40,20 @@
         <p style="margin: 0 0 12px 0" i18n="@@Correo electrónico - info mycredentials">Si prefieres recibir tus
             notificaciones a una dirección distinta, cambia tu dirección de correo electrónico</p>
         <button class="iigwo" (click)="cambiandoCorreo=true" *ngIf="cambiandoCorreo==false">
-            <label>Cambiar correo electrónico</label>
+            <label i18n="@@Cambiar correo electrónico">Cambiar correo electrónico</label>
         </button>
         <div *ngIf="cambiandoCorreo==true">
             <div class="iigwo-input">
-                <label i18n="@@mycredentials1">Nueva dirección de correo electrónico</label>
+                <label i18n="@@Nueva dirección de correo electrónico">Nueva dirección de correo electrónico</label>
                 <input [(ngModel)]="email1" type="email" autocomplete="new-password">
             </div>
             <div class="iigwo-input">
-                <label i18n="@@mycredentials2">Nueva dirección de correo electrónico (repetir)</label>
+                <label i18n="@@Confirmar nueva dirección de correo electrónico">Confirmar nueva dirección de correo electrónico</label>
                 <input [(ngModel)]="email2" type="email" autocomplete="new-password">
             </div>
-            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;" i18n="@@mycredentials2">Deben coincidir
-                ambas direcciones</p>
+            <p style="margin-top: -6px; margin-bottom: 18px; font-size: 11px;" i18n="@@Deben coincidir ambas direcciones">Deben coincidir ambas direcciones</p>
             <button class="iigwo accent" (click)="cambiarCorreo()">
-                <label i18n="@@mycredentials3">Cambiar correo electrónico</label>
+                <label i18n="@@Cambiar correo electrónico">Cambiar correo electrónico</label>
             </button>
             <button class="iigwo" (click)="cambiandoCorreo=false">
                 <label i18n="@@Cancelar">Cancelar</label>

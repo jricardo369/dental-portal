@@ -20,6 +20,7 @@ export class CFDI {
     Total: number = null;
     SubTotal: number = null;
     TotalImpuestosTrasladados: number = null;
+    TotaldeTraslados: number = null;
 
     // MADEUP
     TotalIvaTrasladado: number = null;
@@ -63,6 +64,7 @@ export class CFDI {
         let comprobante = document.querySelector('Comprobante');
         let comprobanteChildren = array(comprobante.children);
         let impuestos = comprobanteChildren.find(e => e.tagName == 'cfdi:Impuestos');
+        let complemento = comprobanteChildren.find(e => e.tagName == 'cfdi:Complemento');
 
         let cfdi = new CFDI();
 
@@ -70,14 +72,24 @@ export class CFDI {
         cfdi.SubTotal = NUMATT(comprobante, 'SubTotal');
         cfdi.TotalImpuestosTrasladados = NUMATT(impuestos, 'TotalImpuestosTrasladados');
 
-        { // TOTAL IVA
+        if (impuestos !== undefined){ // TOTAL IVA
             let traslados = array(impuestos.querySelectorAll('Traslados Traslado'));
             cfdi.TotalIvaTrasladado = traslados
                 .filter(e => ATT(e, "Impuesto") == IVA)
                 .map(e => NUMATT(e, "Importe"))
                 .filter(n => n)
                 .reduce((a, b) => a + b, 0);
-        }
+        } else cfdi.TotalIvaTrasladado = 0;
+
+        if (complemento !== undefined){ // TOTAL IVA
+            let implocal = array(complemento.querySelectorAll('ImpuestosLocales'));
+            cfdi.TotaldeTraslados = implocal
+                .map(e => NUMATT(e, "TotaldeTraslados"))
+                .filter(n => n)
+                .reduce((a, b) => a + b, 0);
+        } else cfdi.TotaldeTraslados = 0;
+
+        cfdi.TotalImpuestosTrasladados = parseFloatOrNull((cfdi.TotalImpuestosTrasladados + cfdi.TotaldeTraslados).toFixed(2));
 
         console.log(cfdi);
 

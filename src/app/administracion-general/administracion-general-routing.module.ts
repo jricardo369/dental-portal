@@ -1,19 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { UsuariosComponent } from './usuarios/usuarios.component';
-import { UsuarioComponent } from './usuario/usuario.component';
-import { CargaMasivaDeUsuariosComponent } from './carga-masiva-de-usuarios/carga-masiva-de-usuarios.component';
-import { TareasProgramadasComponent } from './tareas-programadas/tareas-programadas.component';
-import { ConfiguracionComponent } from './configuracion/configuracion.component';
 import { AppBarNavItem } from '../app-nav-item';
 import { CustomI18nService } from '../custom-i18n.service';
+import { UsuariosComponent } from './usuarios/usuarios.component';
+import { PacientesComponent } from './pacientes/pacientes.component';
 
 const routes: Routes = [
     { path: 'usuarios', component: UsuariosComponent, },
-    { path: 'usuarios/carga-masiva', component: CargaMasivaDeUsuariosComponent, },
-    { path: 'usuarios/:id', component: UsuarioComponent, },
-    { path: 'tareas-programadas', component: TareasProgramadasComponent, },
-    { path: 'configuracion', component: ConfiguracionComponent, },
+    { path: 'pacientes', component: PacientesComponent, },
+
     { path: '', pathMatch: 'full', redirectTo: 'usuarios' },
 ];
 
@@ -21,35 +16,27 @@ const MODULE: AppBarNavItem = {
     module: null,
     title: 'Administración general',
     subtitle: null,
-    uri: 'administracion/general',
-    svgName: 'general-manage',
-    isVisibleFor: u => u.rol.id == 1,
+    uri: 'administracion-general',
+    svgName: 'administracion',
+    isVisibleFor: u => u.rol == "1"
 };
 
 export const ADMIN_GENERAL_ITEMS: AppBarNavItem[] = [
     {
         module: MODULE,
-        svgName: 'users',
+        svgName: 'users2',
         title: 'Usuarios',
         subtitle: 'Administra los usuarios y sus permisos en el portal',
         uri: 'usuarios',
-        isVisibleFor: u => u.rol.id == 1,
+        isVisibleFor: u => u.rol == "1"
     },
-    /*{
-        module: MODULE,
-        svgName: 'update',
-        title: 'Usuario',
-        subtitle: 'Administracion de pacientes',
-        uri: 'usuarios',
-        isVisibleFor: u => u.rol.id == 1,
-    },*/
     {
         module: MODULE,
-        svgName: 'settings',
-        title: 'Configuración general',
-        subtitle: 'Configuración particular del módulo general',
-        uri: 'configuracion',
-        isVisibleFor: u => u.rol.id == 1,
+        svgName: 'pacientes',
+        title: 'Pacientes',
+        subtitle: 'Administra los pacientes y sus permisos en el portal',
+        uri: 'pacientes',
+        isVisibleFor: u => u.rol == "1"
     },
 ]
 
@@ -57,5 +44,5 @@ export const ADMIN_GENERAL_ITEMS: AppBarNavItem[] = [
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule]
 })
-export class AdministracionGeneralRoutingModule { 
+export class AdministracionGeneralRoutingModule {
 }

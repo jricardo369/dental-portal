@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { SessionService } from '../../services/session.service';
 import { Usuario } from '../../../model/usuario';
-// import { appSearch } from '../../app-routing.module';
+import { UsuariosService } from 'src/app/services/usuarios.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { SessionService } from 'src/app/services/session.service';
+import { UtilService } from 'src/app/services/util.service';
 
 interface CustomSearchItem {
     title: string,
@@ -26,14 +28,44 @@ export class InicioComponent implements OnInit {
     // WORKAROUND :( PARA EL AOT-COMPILATION
     baseHref = document.baseURI;
 
-    constructor(private se: SessionService, private router: Router) {
+    loading = false;
+    sInterval: any;
+    constructor(private usuarios: UsuariosService, 
+        private utilService: UtilService,
+        public router: Router, 
+        private domSanitizer: DomSanitizer, 
+        private sessionService: SessionService,) {
+        this.utilService.deshabilitaRetroceso();
+
+        this.sInterval = setInterval(() => {
+            if (localStorage.getItem('auth_token') == null) {
+                this.utilService.limpiarContadorDeSesion();
+                this.sessionService.cerrarSesion();
+                this.router.navigate(['/ingresar']);
+                clearInterval(this.sInterval);
+            }
+        }, 1000);
 
         let appSearch: CustomSearchItem[] = [];
+        if (localStorage.getItem('auth_token') !== null) {
+            this.obtenerUsuario(usuarios, appSearch);
+        }
+    }
 
-        se.getUsuario().then(usuario => {
+    obtenerUsuario(usuarios: UsuariosService, appSearch: CustomSearchItem[]) {
+        this.loading = true;
+        usuarios.obtenerUsuarioPorUsuario(localStorage.getItem('usuario')).then(usuario => {
+            
+            /*usuario.rol.forEach(rol => {
+                rol.descripcion = rol.descripcion.toUpperCase();
+            });
 
-            console.log("BACALAO");
-
+            usuario.organizaciones.forEach(o => {
+                o.id = o.id.replace(/\s+/g, '');
+            });*/
+            
+            localStorage.setItem('objUsuario', JSON.stringify(usuario));
+            
             let groups = {};
             appSearch.filter(e => e.isVisibleFor(usuario)).forEach(e => {
                 let group: any[] = groups[e.subtitle];
@@ -44,21 +76,13 @@ export class InicioComponent implements OnInit {
                 group.push(e);
             });
             this.pantallas = groups;
-
+            
             this.grupos.length = 0;
             for (let key in groups) {
-                console.log(key);
                 if (key == 'Inicio') continue;
                 this.grupos.push(key);
             }
-
-            // SI EL USUARIO ES EMPLEADO Y TIENE PERMISO DE CAJA CHICA REDIRIGIR A EL MODULO DE CAJA CHICA
-            if ((usuario) &&
-                (usuario.rol && usuario.rol.id == 2) &&
-                (usuario.permisos && usuario.permisos.find(e => e.id == 7))
-            ) this.router.navigateByUrl('caja-chica');
-
-        });
+        }).then(() => this.loading = false);
     }
 
     ngOnInit(): void {

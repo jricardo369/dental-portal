@@ -3,16 +3,16 @@ import { Router } from '@angular/router';
 import { Usuario } from '../../../model/usuario';
 import { AppBarNavItem } from '../../app-nav-item';
 import { SessionService } from '../../services/session.service';
-import { ViajesRoutingModule, VIAJES_ITEMS } from '../../viajes/viajes-routing.module';
-import { PROVEEDORES_ITEMS } from '../../proveedores/proveedores-routing.module';
-import { ADMIN_CAJA_CHICA_ITEMS } from '../../administracion-caja-chica/administracion-caja-chica-routing.module';
 import { ADMIN_GENERAL_ITEMS } from '../../administracion-general/administracion-general-routing.module';
-import { ADMIN_VIAJES_ITEMS } from '../../administracion-viajes/administracion-viajes-routing.module';
-import { CAJA_CHICA_ITEMS } from '../../caja-chica/caja-chica-routing.module';
 
 import { CustomI18nService } from 'src/app/custom-i18n.service';
 import { UtilService } from 'src/app/services/util.service';
-// import { appSearch } from '../../app-routing.module';
+import { UsuariosService } from 'src/app/services/usuarios.service';
+
+import { DomSanitizer } from '@angular/platform-browser';
+import { AGENDA_ITEMS } from 'src/app/agenda/agenda-routing.module';
+import { HISTORIAL_CLINICO_ITEMS } from 'src/app/historial-clinico/historial-clinico-routing.module';
+import { PAGOS_ITEMS } from 'src/app/pagos/pagos-routing.module';
 
 @Component({
     selector: 'app-bar',
@@ -63,34 +63,38 @@ export class BarComponent {
 
     usuario: Usuario = new Usuario();
 
+    foto: any;
+
     constructor(
         public utilService: UtilService,
         private sessionService: SessionService,
+        private usuariosService: UsuariosService,
         private i18n: CustomI18nService,
         private router: Router,
+        private domSanitizer: DomSanitizer
     ) {
-        console.log("constructor");
-
         this.filteredModuloItems = [];
 
-        this.sessionService
-            .isSessionValid()
-            .then(valid => {
-                if (!valid) this.router.navigate(['/ingresar']);
-                else this.sessionService
-                    .getUsuario()
+        this.usuariosService
+            .obtenerUsuarioPorUsuario(localStorage.getItem('usuario'))
+            .then(u => {
+                this.usuariosService
+                    .obtenerUsuarioPorId(u.idUsuario)
                     .then(u => {
-
                         this.usuario = u;
+                        /*this.usuario.rol.forEach(rol => {
+                            rol.descripcion = rol.descripcion.toUpperCase();
+                        });*/
+                        console.log(this.usuario)
 
                         let items = [
-                            ADMIN_CAJA_CHICA_ITEMS, 
-                            ADMIN_GENERAL_ITEMS, 
-                            ADMIN_VIAJES_ITEMS, 
-                            PROVEEDORES_ITEMS, 
-                            CAJA_CHICA_ITEMS, 
-                            VIAJES_ITEMS
+                            ADMIN_GENERAL_ITEMS,
+                            AGENDA_ITEMS,
+                            HISTORIAL_CLINICO_ITEMS,
+                            PAGOS_ITEMS
                         ];
+
+                        // this.getImagen(this.usuario.foto);
 
                         this.pantallaItems = items.reduce((a, b) => a.concat(b), []);
                         this.moduloItems = this.pantallaItems
@@ -112,17 +116,19 @@ export class BarComponent {
                         i18n.translate(null, this.pantallaItems);
 
                         this.filteredModuloItems = this.moduloItems.filter(e => true);
+                    })
+                    .catch(reason => {
+                        this.utilService.manejarError(reason);
+                        this.logout()
                     });
             })
-            .catch(r => {
-                console.log(r); console.log(r); this.router.navigate(['/ingresar']);
+            .catch(reason => {
+                this.utilService.manejarError(reason);
+                this.logout()
             });
     }
 
     private searchScore(sentence: string): number {
-
-        console.log("searchScore");
-
         let score = 0;
         let words = sentence.split(' ');
         for (let i = 0; i < words.length; i++)
@@ -132,8 +138,6 @@ export class BarComponent {
     }
 
     onSearchBarChange() {
-        console.log("onSearchBarChange");
-
         if (this.searchBarQuery.length == 0) {
             this.searchSections = [];
             this.searchScreens = [];
@@ -154,27 +158,23 @@ export class BarComponent {
     }
 
     onSearchSectionClick(e: AppBarNavItem) {
-        console.log("onSearchScreenClick");
         this.router.navigate([e.uri]);
     }
 
     onSearchScreenClick(e) {
-        console.log("onSearchSectionClick");
         let uri = e.uri;
-        if (e.module != null)
+        if (e.module != null) {
             uri = e.module.uri + '/' + uri;
-        console.log(uri);
+        }
         this.router.navigate([uri]);
     }
 
     onSearchBarFocus() {
-        console.log("onSearchBarFocus");
         this.searchBarClass = 'appNavSearchBar';
         this.searchBarPlaceholder = this.i18n.get('Encuentra pantallas u operaciones');
     }
 
     onSearchBarBlur() {
-        console.log("onSearchBarBlur");
         this.searchBarClass = 'appNavSearchBar blured';
         this.searchBarPlaceholder = '';
         this.searchBarQuery = '';
@@ -183,17 +183,16 @@ export class BarComponent {
     }
 
     focusUserDiv() {
-        console.log("focusUserDiv");
         this.userDiv.first.nativeElement.focus();
     }
 
     logout() {
-        console.log("logout");
-        this.sessionService.cerrarSesion().then(r => this.router.navigate(['/ingresar'])).catch(r => console.error(r));
+        this.utilService.limpiarContadorDeSesion();
+        this.sessionService.cerrarSesion();
+        this.router.navigate(['/ingresar']);
     }
 
     openNavMenu() {
-
         if (
             window.matchMedia('(max-width:480px)').matches && // es mobile
             document.querySelectorAll('app-workspace-nav').length && // app-workspace-nav existe
@@ -203,38 +202,30 @@ export class BarComponent {
             return;
         }
 
-        console.log("openNavMenu");
-        //this.appNavMenuClass = 'app-nav-menu';
+        // this.appNavMenuClass = 'app-nav-menu';
         this.utilService.appNavMenuHidden = false;
         this.appNavMenuFilterInput.nativeElement.focus();
     }
 
     closeAppNavMenu() {
-        console.log("closeAppNavMenu");
-        //this.appNavMenuClass = 'app-nav-menu hidden';
+        // this.appNavMenuClass = 'app-nav-menu hidden';
         this.utilService.appNavMenuHidden = true;
         this.appNavMenuFilterInput.nativeElement.blur();
     }
 
     onNavItemClick(e: AppBarNavItem) {
-        console.log("onNavItemClick");
-        console.log(e.uri);
         this.router.navigate([e.uri]);
         this.closeAppNavMenu();
     }
 
     onNavHomeItemClick() {
-        console.log('onNavHomeItemClick')
         this.router.navigate(['']);
         this.closeAppNavMenu();
     }
 
     filterChange() {
-        console.log('filterChange')
         let ee = this.moduloItems;
         let ff = this.appNavMenuFilter;
-        console.log(ee);
-        console.log(ff);
         if (this.appNavMenuFilter == '') {
             this.filteredModuloItems = this.moduloItems;
         } else {
@@ -243,4 +234,14 @@ export class BarComponent {
         }
     }
 
+    getImagen(hexString: string) {
+        if (hexString !== null) {
+            var Buffer = require('buffer').Buffer;
+            var base64String = Buffer.from(hexString, 'hex').toString('base64');
+            this.foto = this.domSanitizer.bypassSecurityTrustResourceUrl('data:image/jpeg;base64,' + base64String);
+        }
+        else {
+            this.foto = this.baseHref + "assets/img/portrait-demo.png";
+        }
+    }
 }

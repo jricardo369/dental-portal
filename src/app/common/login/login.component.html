@@ -1,18 +1,3 @@
-<!--
-    <div class='magnus'>
-        <img src="{{baseHref}}assets/img/company-logo-label.png" class='logo'>
-        <h3>Ingrese sus credenciales</h3>
-        <app-login-form [navigateToHomeAfterLogin]='true'></app-login-form>
-        <h4 style="text-align: center;margin-top: 32px;">{{empresa}} <a>Aviso de Privacidad</a></h4>
-        <h5>{{version}}</h5>
-    </div>
--->
-
-<!--
-    <img _ngcontent-c2="" src="/assets/mockup/mockup.png"
-    style="width: 100%;opacity: 0.5;position: absolute;z-index: 1000;">
--->
-
 <div class="background">
 
 
@@ -38,7 +23,7 @@
             <p i18n="@@login.slogan2">Ingresa tus credenciales para ingresar</p>
             <input placeholder="Usuario" i18n-placeholder="@@Usuario" [(ngModel)]="user.usuario" [ngModelOptions]="{standalone: true}"
                 autocapitalize="none">
-            <input placeholder="Contraseña" i18n-placeholder="@@Contraseña" type="password" [(ngModel)]="user.password"
+            <input placeholder="Contraseña" i18n-placeholder="@@Contraseña" type="password" [(ngModel)]="user.contrasenia"
                 [ngModelOptions]="{standalone: true}">
             <button i18n="@@login.login" (click)="ingresar()">Ingresar</button>
             <a i18n="@@login.forgotPassword" (click)="recuperar()">¿Olvidaste tu contraseña?</a>
@@ -52,10 +37,3 @@
         <mat-spinner></mat-spinner>
     </div>
 </div>
-
-<!--
-        
-        
-        
-        
-    -->
