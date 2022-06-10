@@ -156,7 +156,7 @@ export class PagosComponent implements OnInit {
 
 	descargarPdfGeneral() {
 		this.reportesService
-			.obtenerPdfPagosGeneral()
+			.obtenerPdfPagosGeneral(this.fechaInicio, this.fechaFin)
 			.subscribe(
 				data => {
 				const file = new Blob([data], { type: 'application/pdf' });
@@ -168,7 +168,7 @@ export class PagosComponent implements OnInit {
 
 	descargarPdfPaciente() {
 		this.reportesService
-			.obtenerPdfPagosPaciente(this.paciente.idPaciente)
+			.obtenerPdfPagosPaciente(this.paciente.idPaciente, this.fechaInicio, this.fechaFin)
 			.subscribe(
 				data => {
 				const file = new Blob([data], { type: 'application/pdf' });

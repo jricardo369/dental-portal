@@ -124,7 +124,7 @@ export class HistorialPacientesComponent implements OnInit {
 
 	descargarPdf() {
 		this.reportesService
-			.obtenerPdfHistoriales(this.paciente.idPaciente)
+			.obtenerPdfHistoriales(this.paciente.idPaciente, this.fechaInicio, this.fechaFin)
 			.subscribe(
 				data => {
 				const file = new Blob([data], { type: 'application/pdf' });

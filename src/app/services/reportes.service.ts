@@ -27,7 +27,7 @@ export class ReportesService {
         );
     }
 
-    obtenerPdfHistoriales(idPaciente: number): Observable<Blob> {
+    obtenerPdfHistoriales(idPaciente: number, fechaInicio: string, fechaFin: string): Observable<Blob> {
         const httpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
             'Authorization': localStorage.getItem('auth_token')
@@ -37,11 +37,11 @@ export class ReportesService {
             responseType: 'blob' as 'json'
         };
         return this.http.get<any>(
-            API_URL + 'reportes/pdf-historiales/' + idPaciente,
+            API_URL + 'reportes/pdf-historiales/' + idPaciente + '?fechai=' + fechaInicio + '&fechaf=' + fechaFin,
             options
         );
     }
-    obtenerPdfPagosGeneral(): Observable<Blob> {
+    obtenerPdfPagosGeneral(fechaInicio: string, fechaFin: string): Observable<Blob> {
         const httpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
             'Authorization': localStorage.getItem('auth_token')
@@ -51,12 +51,12 @@ export class ReportesService {
             responseType: 'blob' as 'json'
         };
         return this.http.get<any>(
-            API_URL + 'reportes/pdf-pagos-general',
+            API_URL + 'reportes/pdf-pagos-general/1?fechai=' + fechaInicio + '&fechaf=' + fechaFin,
             options
         );
     }
 
-    obtenerPdfPagosPaciente(idPaciente: number): Observable<Blob> {
+    obtenerPdfPagosPaciente(idPaciente: number,fechaInicio: string, fechaFin: string): Observable<Blob> {
         const httpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
             'Authorization': localStorage.getItem('auth_token')
@@ -66,7 +66,7 @@ export class ReportesService {
             responseType: 'blob' as 'json'
         };
         return this.http.get<any>(
-            API_URL + 'reportes/pdf-pagos-paciente/' + idPaciente,
+            API_URL + 'reportes/pdf-pagos-paciente/' + idPaciente + '?fechai=' + fechaInicio + '&fechaf=' + fechaFin,
             options
         );
     }
