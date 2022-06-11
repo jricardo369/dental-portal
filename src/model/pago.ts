@@ -7,4 +7,5 @@ export class Pago {
     monto: number;
     paciente: Paciente;
     tipoMovimiento: TipoPago;
+    descripcion: string
 }

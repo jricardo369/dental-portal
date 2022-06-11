@@ -85,6 +85,7 @@ export class PagosService {
 			monto: pago.monto,
 			idPaciente: pago.paciente.idPaciente,
 			idTipoMovimiento: pago.tipoMovimiento.idTipo,
+            descripcion: pago.descripcion
 		};
         return new Promise<Pago>((resolve, reject) => this.http
             .post(API_URL + 'movimientos', body,
@@ -108,6 +109,7 @@ export class PagosService {
 			monto: pago.monto,
 			idPaciente: pago.paciente.idPaciente,
 			idTipoMovimiento: pago.tipoMovimiento.idTipo,
+            descripcion: pago.descripcion
 		};
         return new Promise<Pago>((resolve, reject) => this.http
             .put(API_URL + 'movimientos', body,
