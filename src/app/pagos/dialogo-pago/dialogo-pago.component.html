@@ -33,15 +33,9 @@
         </select>
     </div>
 
-    <div class="iigwo-input" style="margin-right: 0;">
-        <div class="wrapper">
-            <label>Descripción</label>
-        </div>
-        
-        <div class="currency">
-            <input type="text" maxlength="50"
-            [(ngModel)]="pago.descripcion" [readOnly]="esPaciente" >
-        </div>
+    <div class="iigwo-input descripcion" style="margin-right: 0;">
+        <label>Descripción</label>
+        <textarea type="string" [(ngModel)]="pago.descripcion" style="min-height: 130px; max-width: 900px;" [readOnly]="esPaciente"></textarea>
     </div>
 
     
