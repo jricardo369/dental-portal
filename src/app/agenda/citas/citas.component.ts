@@ -23,6 +23,7 @@ export class Semana {
 })
 export class CitasComponent implements OnInit {
 
+	sociedad;
 	cargando: boolean = false;
 
 	// fecha0: string = "";
@@ -42,7 +43,12 @@ export class CitasComponent implements OnInit {
 		public utilService: UtilService,
         private dialog: MatDialog) {
 			this.fecha = this.dateAsYYYYMMDD(new Date(Date.now()));
-			// this.fecha0 = this.dateAsYYYYMMDD(this.obtenerPrimerDiaDeSemana(new Date(this.fecha)));
+			// this.fecha0 = this.dateAsYYYYMMDD(this.obtenerPrimerDiaDeSemana(new Date(this.fecha)));			
+
+			let user = JSON.parse(localStorage.getItem('objUsuario'));
+			this.sociedad = user.sociedad.sociedad
+			console.log("Sociedad citas", this.sociedad);
+
 			this.refrescar();
 	}
 
@@ -52,7 +58,7 @@ export class CitasComponent implements OnInit {
 	refrescar() {
 		this.cargando = true;
         this.citasService
-            .obtenerCitasPorSemana(this.fecha)
+            .obtenerCitasPorSemana(this.fecha, this.sociedad)
             .then(citas => {
 				// this.citas = citas;
 				this.organizarCitasDeSemana(

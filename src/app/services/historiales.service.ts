@@ -59,12 +59,12 @@ export class HistorialesService {
         );
     }
 
-	obtenerHistorialesDePacientePorFechas(idPaciente: number, fechaInicio: string, fechaFin: string): Promise<Historial[]> {
+	obtenerHistorialesDePacientePorFechas(idPaciente: number, fechaInicio: string, fechaFin: string, sociedad: string): Promise<Historial[]> {
 		let params = new HttpParams();
         params = params.set('fechai', fechaInicio);
         params = params.set('fechaf', fechaFin);
         return new Promise<Historial[]>((resolve, reject) => this.http
-            .get(API_URL + 'historiales/historiales-por-semana/' + idPaciente,
+            .get(API_URL + 'historiales/historiales-por-semana/'+ idPaciente + "/" + sociedad,
             {
 				params: params,
                 withCredentials: true,

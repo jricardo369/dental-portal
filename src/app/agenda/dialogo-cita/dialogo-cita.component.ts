@@ -13,6 +13,7 @@ import { Cita } from './../../../model/cita';
 })
 export class DialogoCitaComponent implements OnInit {
 
+	sociedad;
 	cargando: boolean = false;
 	creando: boolean = false;
 	titulo: string = '';
@@ -34,6 +35,10 @@ export class DialogoCitaComponent implements OnInit {
 				this.titulo = "Crear Cita";
 				this.creando = true;
 			}
+
+			let user = JSON.parse(localStorage.getItem('objUsuario'));
+			this.sociedad = user.sociedad.sociedad
+			console.log("Sociedad usuario", this.sociedad);
 
 			this.obtenerPacientes();
 		}

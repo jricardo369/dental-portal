@@ -17,6 +17,7 @@ import { Usuario } from './../../../model/usuario';
 })
 export class HistorialPacientesComponent implements OnInit {
 
+	sociedad;
 	cargando: boolean = false;
 	esPaciente: boolean = false;
 	titulo: string = "";
@@ -50,6 +51,10 @@ export class HistorialPacientesComponent implements OnInit {
 				this.titulo = "Mi historial";
 				this.obtenerPaciente();
 			}
+
+			let user = JSON.parse(localStorage.getItem('objUsuario'));
+			this.sociedad = user.sociedad.sociedad
+			console.log("Sociedad citas", this.sociedad);
 		}
 
 	ngOnInit(): void {
@@ -83,7 +88,7 @@ export class HistorialPacientesComponent implements OnInit {
 	refrescar() {
 		this.cargando = true;
         this.historialesService
-            .obtenerHistorialesDePacientePorFechas(this.paciente.idPaciente, this.fechaInicio, this.fechaFin)
+            .obtenerHistorialesDePacientePorFechas(this.paciente.idPaciente, this.fechaInicio, this.fechaFin, this.sociedad)
             .then(historiales => {
 				this.historiales = historiales;
 				// console.log(historiales)

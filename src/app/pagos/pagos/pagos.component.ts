@@ -19,7 +19,7 @@ import { Usuario } from './../../../model/usuario';
 })
 export class PagosComponent implements OnInit {
 
-	sociedad
+	sociedad;
 
 	cargando: boolean = false;
 	esPaciente: boolean = false;
@@ -45,7 +45,6 @@ export class PagosComponent implements OnInit {
         private dialog: MatDialog) {
 
 			let user: Usuario = JSON.parse(localStorage.getItem('objUsuario'));
-			console.log("info usuario",user);
 			this.sociedad = user.sociedad.sociedad
 			console.log("Sociedad usuario", this.sociedad);
 

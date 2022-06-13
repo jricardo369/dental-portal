@@ -12,7 +12,7 @@ export class CitasService {
 
 	obtenerCitas(): Promise<Cita[]> {
         return new Promise<Cita[]>((resolve, reject) => this.http
-            .get(API_URL + 'citas',
+            .get(API_URL + 'citas/por-sociedad/2',
             {
                 withCredentials: true,
                 observe: 'response',
@@ -26,9 +26,9 @@ export class CitasService {
         );
     }
 
-	obtenerCitasPorSemana(semana: string): Promise<Cita[]> {
+	obtenerCitasPorSemana(semana: string, sociedad : string): Promise<Cita[]> {
         return new Promise<Cita[]>((resolve, reject) => this.http
-            .get(API_URL + 'citas/citas-por-semana/' + semana,
+            .get(API_URL + 'citas/citas-por-semana/por-sociedad/' + semana + "/" + sociedad,
             {
                 withCredentials: true,
                 observe: 'response',
