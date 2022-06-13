@@ -7,14 +7,21 @@ import { Paciente } from "./../../model/paciente";
   providedIn: "root",
 })
 export class PacientesService {
-  constructor(private http: HttpClient) {}
+
+  sociedad;
+
+  constructor(private http: HttpClient) {
+
+    let user = JSON.parse(localStorage.getItem('objUsuario'));
+			this.sociedad = user.sociedad.sociedad;
+      
+  }
 
   obtenerPacientes(): Promise<Paciente[]> {
     return new Promise<Paciente[]>((resolve, reject) =>
       this.http
         .get(
-          API_URL + "pacientes",
-          // .get(API_URL + 'pacientes/' + sociedad,
+          API_URL + "pacientes/por-sociedad/" + this.sociedad,
           {
             withCredentials: true,
             observe: "response",
