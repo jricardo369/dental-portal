@@ -19,6 +19,8 @@ import { Usuario } from './../../../model/usuario';
 })
 export class PagosComponent implements OnInit {
 
+	sociedad
+
 	cargando: boolean = false;
 	esPaciente: boolean = false;
 	titulo: string = "";
@@ -41,6 +43,17 @@ export class PagosComponent implements OnInit {
 		private router: Router,
 		public utilService: UtilService,
         private dialog: MatDialog) {
+
+			let user: Usuario = JSON.parse(localStorage.getItem('objUsuario'));
+			console.log("info usuario",user);
+			this.sociedad = user.sociedad.sociedad
+			console.log("Sociedad usuario", this.sociedad);
+
+			if (this.sociedad === 1 ) {
+				console.log("Sociedad 1");
+				
+			}			
+
 			this.fechaInicio = this.dateAsYYYYMMDD(this.obtenerPrimerDiaDeSemana(new Date(Date.now()), 0));
 			this.fechaFin = this.dateAsYYYYMMDD(this.obtenerUltimoDiaDeSemana(new Date(Date.now()), 6));
 
@@ -95,7 +108,7 @@ export class PagosComponent implements OnInit {
     }
 
 	obtenerPaciente() {
-		let usuario: Usuario = JSON.parse(localStorage.getItem('objUsuario'));
+		let usuario: Usuario = JSON.parse(localStorage.getItem('objUsuario'));		
         this.cargando = true;
         this.pacientesService
             .obtenerPaciente((usuario.paciente))

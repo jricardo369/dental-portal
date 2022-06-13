@@ -20,6 +20,8 @@ import { PAGOS_ITEMS } from 'src/app/pagos/pagos-routing.module';
     styleUrls: ['./bar.component.scss']
 })
 export class BarComponent {
+    
+    sociedad
 
     appNavMenuHidden = true;
 
@@ -85,7 +87,11 @@ export class BarComponent {
                         /*this.usuario.rol.forEach(rol => {
                             rol.descripcion = rol.descripcion.toUpperCase();
                         });*/
-                        console.log(this.usuario)
+
+                        this.sociedad = this.usuario.sociedad.sociedad;
+
+                        console.log("Sociedad del usuario",this.sociedad);
+                        
 
                         let items = [
                             ADMIN_GENERAL_ITEMS,

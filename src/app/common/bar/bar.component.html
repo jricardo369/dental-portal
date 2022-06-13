@@ -2,13 +2,21 @@
     <mat-icon svgIcon="menu"></mat-icon>
 </button>
 
-<img src="{{baseHref}}assets/img/company-logo-label-white.png" style="
+<img *ngIf="sociedad === 1" src="{{baseHref}}assets/img/company-logo-label-white.png" style="
     height: 25px;
     margin: 10px 0 0 1px;
     padding-right: 1px;
     margin-left: 50px;
     padding-left: 7px;
     ">
+
+<img *ngIf="sociedad !== 1" src="{{baseHref}}assets/img/logo2.png" style="
+height: 25px;
+margin: 10px 0 0 1px;
+padding-right: 1px;
+margin-left: 50px;
+padding-left: 7px;
+">
 
 <!-- ============================================================================================ -->
 <!-- BUSQUEDA DE PANTALLAS -->
@@ -118,8 +126,8 @@
         </button>
         <div class='app-nav-menu-panel-content'>
             <div class='iigwo-pseudo'>
-                <input #appNavMenuFilterInput placeholder="Filtrar modulos" i18n-placeholder="@@FiltrarModulos" [(ngModel)]="appNavMenuFilter"
-                    (ngModelChange)="filterChange()" type="text">
+                <input #appNavMenuFilterInput placeholder="Filtrar modulos" i18n-placeholder="@@FiltrarModulos"
+                    [(ngModel)]="appNavMenuFilter" (ngModelChange)="filterChange()" type="text">
                 <mat-icon svgIcon="filter-list"></mat-icon>
             </div>
             <button class='iigwo' *ngFor="let e of filteredModuloItems" (click)="onNavItemClick(e)">

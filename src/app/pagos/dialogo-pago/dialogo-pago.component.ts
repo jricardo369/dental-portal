@@ -14,6 +14,8 @@ import { PagosService } from './../../services/pagos.service';
 })
 export class DialogoPagoComponent implements OnInit {
 
+	user
+
 	cargando: boolean = false;
 	creando: boolean = false;
 	esPaciente: boolean = false;
@@ -32,6 +34,7 @@ export class DialogoPagoComponent implements OnInit {
 		@Inject(MAT_DIALOG_DATA) public data: any) {
 			// this.tiposPago.push({ idTipo: 1, descripcion: "Cargo"});
 			// this.tiposPago.push({ idTipo: 2, descripcion: "Abono"});
+			
 			if (data.idMovimiento) {
 				this.titulo = "Pago"
 				this.creando = false;
