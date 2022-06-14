@@ -15,6 +15,7 @@ import { Permiso } from './../../../model/permiso';
 })
 export class DialogoUsuarioComponent implements OnInit {
 
+	sociedad;
 	cargando: boolean = false;
 	creando: boolean = false;
 	titulo: string = 'Usuario';
@@ -44,6 +45,9 @@ export class DialogoUsuarioComponent implements OnInit {
 				this.creando = true;
 				this.usuario.permisos = [];
 			}
+
+			let user = JSON.parse(localStorage.getItem('objUsuario'));
+			this.sociedad = user.sociedad.sociedad;
 		}
 
 	ngOnInit(): void {
@@ -112,7 +116,7 @@ export class DialogoUsuarioComponent implements OnInit {
 	}
 
 	crear() {
-		this.usuario.sociedad = { sociedad: 1, nombre: "", fechaCreacion: "", estatus: true };
+		this.usuario.sociedad = { sociedad:this.sociedad, nombre: "", fechaCreacion: "", estatus: true };
 		// let date = new Date();
 		// this.usuario.fechaCreacion = new Date().toLocaleDateString();
 		// this.usuario.fechaCreacion = "2020-12-20";

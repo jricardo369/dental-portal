@@ -18,7 +18,7 @@ export class UsuariosComponent implements OnInit {
     cargando: boolean = false;
 
     mostrandoResultadosFiltrados = false;
-    
+    sociedad;
     filters: Filter[] = [];
     usuarios: Usuario[] = [];
     usuariosSinFiltrar: Usuario[] = [];
@@ -32,6 +32,9 @@ export class UsuariosComponent implements OnInit {
 		public utilService: UtilService,
         private dialog: MatDialog
     ) {
+        let user = JSON.parse(localStorage.getItem('objUsuario'));
+		this.sociedad = user.sociedad.sociedad;
+        console.log("Sociedad del ingesado en Administracion", this.sociedad);
 		this.refrescar();
 	}
 
@@ -41,7 +44,7 @@ export class UsuariosComponent implements OnInit {
     refrescar() {
         this.cargando = true;
         this.usuariosService
-            .obtenerUsuarios()
+            .obtenerUsuarios(this.sociedad)
             .then(usuarios => {
                 this.usuariosSinFiltrar = usuarios;
                 this.usuarios = this.usuariosSinFiltrar.filter(e => true);

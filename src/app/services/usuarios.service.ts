@@ -12,14 +12,15 @@ export class UsuariosService {
   usuarioPromise: Promise<Usuario> = null;
 
   constructor(private http: HttpClient) {
-    let user = JSON.parse(localStorage.getItem("objUsuario"));
-    this.sociedad = user.sociedad.sociedad;
+    // let user = JSON.parse(localStorage.getItem("objUsuario"));
+    // this.sociedad = user.sociedad.sociedad;   
+    
   }
 
-  obtenerUsuarios(): Promise<Usuario[]> {
+  obtenerUsuarios(sociedad): Promise<Usuario[]> {
     return new Promise<Usuario[]>((resolve, reject) =>
       this.http
-        .get(API_URL + "usuarios/sociedad/" + this.sociedad, {
+        .get(API_URL + "usuarios/sociedad/" + sociedad, {
           withCredentials: true,
           observe: "response",
           headers: new HttpHeaders()
