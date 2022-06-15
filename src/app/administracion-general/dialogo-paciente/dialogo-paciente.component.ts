@@ -15,6 +15,7 @@ import { AdjuntosService } from './../../services/adjuntos.service';
 })
 export class DialogoPacienteComponent implements OnInit {
 
+	sociedad;
 	cargando: boolean = false;
 	creando: boolean = false;
 	odontograma: boolean = false;
@@ -43,6 +44,8 @@ export class DialogoPacienteComponent implements OnInit {
 				this.titulo = "Crear Paciente";
 				this.creando = true;
 			}
+			let user = JSON.parse(localStorage.getItem('objUsuario'));
+			this.sociedad = user.sociedad.sociedad;
 		}
 
 	ngOnInit(): void {
@@ -60,7 +63,7 @@ export class DialogoPacienteComponent implements OnInit {
     }
 
 	crear() {
-		this.paciente.sociedad = { sociedad: 1, nombre: "", fechaCreacion: "", estatus: true };
+		this.paciente.sociedad = { sociedad: this.sociedad, nombre: "", fechaCreacion: "", estatus: true };
 		
 		this.cargando = true;
         this.pacientesService
