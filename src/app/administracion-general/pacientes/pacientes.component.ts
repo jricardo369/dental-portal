@@ -16,7 +16,7 @@ import { DialogoPacienteComponent } from '../dialogo-paciente/dialogo-paciente.c
 export class PacientesComponent implements OnInit {
 	
     cargando: boolean = false;
-
+    sociedad;
     mostrandoResultadosFiltrados = false;
     
     filters: Filter[] = [];
@@ -32,6 +32,9 @@ export class PacientesComponent implements OnInit {
 		public utilService: UtilService,
         private dialog: MatDialog
     ) {
+        let user = JSON.parse(localStorage.getItem('objUsuario'));
+		this.sociedad = user.sociedad.sociedad;
+
 		this.refrescar();
 	}
 
@@ -41,7 +44,7 @@ export class PacientesComponent implements OnInit {
     refrescar() {
         this.cargando = true;
         this.pacientesService
-            .obtenerPacientes()
+            .obtenerPacientes(this.sociedad)
             .then(pacientes => {
 				this.pacientesSinFiltrar = pacientes;
                 this.pacientes = this.pacientesSinFiltrar.filter(e => true);

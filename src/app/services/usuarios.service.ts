@@ -11,9 +11,7 @@ export class UsuariosService {
 
   usuarioPromise: Promise<Usuario> = null;
 
-  constructor(private http: HttpClient) {
-    // let user = JSON.parse(localStorage.getItem("objUsuario"));
-    // this.sociedad = user.sociedad.sociedad;   
+  constructor(private http: HttpClient) { 
     
   }
 

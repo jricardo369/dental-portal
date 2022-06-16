@@ -40,6 +40,8 @@ export class DialogoCitaComponent implements OnInit {
 			this.sociedad = user.sociedad.sociedad
 			console.log("Sociedad usuario", this.sociedad);
 
+			
+
 			this.obtenerPacientes();
 		}
 
@@ -66,7 +68,7 @@ export class DialogoCitaComponent implements OnInit {
 	obtenerPacientes() {
         this.cargando = true;
         this.pacientesService
-            .obtenerPacientes()
+            .obtenerPacientes(this.sociedad)
             .then(pacientes => {
 				this.pacientes = pacientes;
 				if (!this.creando) this.refrescar();

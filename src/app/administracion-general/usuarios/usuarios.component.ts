@@ -34,7 +34,6 @@ export class UsuariosComponent implements OnInit {
     ) {
         let user = JSON.parse(localStorage.getItem('objUsuario'));
 		this.sociedad = user.sociedad.sociedad;
-        console.log("Sociedad del ingesado en Administracion", this.sociedad);
 		this.refrescar();
 	}
 

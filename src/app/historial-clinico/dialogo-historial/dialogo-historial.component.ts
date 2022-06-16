@@ -17,7 +17,7 @@ import { Adjunto } from '../../../model/adjunto';
 export class DialogoHistorialComponent implements OnInit {
 
 	baseHref = document.baseURI;
-	
+	sociedad;
 	cargando: boolean = false;
 	creando: boolean = false;
 	esPaciente: boolean = false;
@@ -46,6 +46,8 @@ export class DialogoHistorialComponent implements OnInit {
 				this.titulo = "Alta Historial";
 				this.creando = true;
 			}
+			let user = JSON.parse(localStorage.getItem('objUsuario'));
+			this.sociedad = user.sociedad.sociedad;
 
 			this.ejecutarServicios();
 		}
@@ -67,7 +69,7 @@ export class DialogoHistorialComponent implements OnInit {
 
 	ejecutarServicios() {
 		let promises = [];
-		promises.push(this.pacientesService.obtenerPacientes());
+		promises.push(this.pacientesService.obtenerPacientes(this.sociedad));
 		promises.push(this.historialesService.obtenerTiposHistoriales());
 
 		this.cargando = true;

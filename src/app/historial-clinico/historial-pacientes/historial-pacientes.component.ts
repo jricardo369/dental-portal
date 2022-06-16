@@ -63,7 +63,7 @@ export class HistorialPacientesComponent implements OnInit {
 	obtenerPacientes() {
         this.cargando = true;
         this.pacientesService
-            .obtenerPacientes()
+            .obtenerPacientes(this.sociedad)
             .then(pacientes => {
 				this.pacientes = pacientes;
             })

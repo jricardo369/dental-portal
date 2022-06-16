@@ -20,7 +20,7 @@ export class DialogoPagoComponent implements OnInit {
 	creando: boolean = false;
 	esPaciente: boolean = false;
 	titulo: string = '';
-
+	sociedad;
 	pago: Pago = new Pago();
 	pacientes: Paciente[] = [];
 	tiposPago: TipoPago[] = [];
@@ -45,6 +45,9 @@ export class DialogoPagoComponent implements OnInit {
 				this.creando = true;
 			}
 
+			let user = JSON.parse(localStorage.getItem('objUsuario'));
+			this.sociedad = user.sociedad.sociedad;
+
 			this.ejecutarServicios();
 		}
 
@@ -53,7 +56,7 @@ export class DialogoPagoComponent implements OnInit {
 
 	ejecutarServicios() {
 		let promises = [];
-		promises.push(this.pacientesService.obtenerPacientes());
+		promises.push(this.pacientesService.obtenerPacientes(this.sociedad));
 		promises.push(this.pagosService.obtenerTiposMovimientos());
 
 		this.cargando = true;
