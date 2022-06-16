@@ -11,9 +11,9 @@ export class ReportesService {
 	
 	constructor(private http: HttpClient) { }
 
-    obtenerReporteTotalDeMovimientosDePaciente(idPaciente: number): Promise<ReporteMovimiento> {
+    obtenerReporteTotalDeMovimientosDePaciente(idPaciente: number, fechaInicio: string, fechaFin: string): Promise<ReporteMovimiento> {
         return new Promise<ReporteMovimiento>((resolve, reject) => this.http
-            .get(API_URL + 'reportes/totales-movimientos-usuario/' + idPaciente,
+            .get(API_URL + 'reportes/totales-movimientos-usuario/por-fecha/' + idPaciente + '?fechai=' + fechaInicio + '&fechaf=' + fechaFin,
             {
                 withCredentials: true,
                 observe: 'response',

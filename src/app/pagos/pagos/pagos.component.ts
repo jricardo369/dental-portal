@@ -45,13 +45,7 @@ export class PagosComponent implements OnInit {
         private dialog: MatDialog) {
 
 			let user: Usuario = JSON.parse(localStorage.getItem('objUsuario'));
-			this.sociedad = user.sociedad.sociedad
-			console.log("Sociedad usuario", this.sociedad);
-
-			if (this.sociedad === 1 ) {
-				console.log("Sociedad 1");
-				
-			}			
+			this.sociedad = user.sociedad.sociedad		
 
 			this.fechaInicio = this.dateAsYYYYMMDD(this.obtenerPrimerDiaDeSemana(new Date(Date.now()), 0));
 			this.fechaFin = this.dateAsYYYYMMDD(this.obtenerUltimoDiaDeSemana(new Date(Date.now()), 6));
@@ -123,7 +117,7 @@ export class PagosComponent implements OnInit {
 	obtenerReporte() {
         this.cargando = true;
         this.reportesService
-            .obtenerReporteTotalDeMovimientosDePaciente(this.paciente.idPaciente)
+            .obtenerReporteTotalDeMovimientosDePaciente(this.paciente.idPaciente ,this.fechaInicio, this.fechaFin)
             .then(reporteMovimiento => {
 				this.reporteMovimiento = reporteMovimiento;
             })

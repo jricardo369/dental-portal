@@ -41,6 +41,10 @@ export class HistorialPacientesComponent implements OnInit {
 			this.fechaInicio = this.dateAsYYYYMMDD(this.obtenerPrimerDiaDeSemana(new Date(Date.now()), 0));
 			this.fechaFin = this.dateAsYYYYMMDD(this.obtenerUltimoDiaDeSemana(new Date(Date.now()), 6));
 
+			let user = JSON.parse(localStorage.getItem('objUsuario'));
+			this.sociedad = user.sociedad.sociedad
+			console.log("Sociedad citas", this.sociedad);
+
 			if (activatedRoute.routeConfig.path == 'historial-pacientes') {
 				this.esPaciente = false;
 				this.titulo = "Historial de pacientes"
@@ -52,9 +56,7 @@ export class HistorialPacientesComponent implements OnInit {
 				this.obtenerPaciente();
 			}
 
-			let user = JSON.parse(localStorage.getItem('objUsuario'));
-			this.sociedad = user.sociedad.sociedad
-			console.log("Sociedad citas", this.sociedad);
+			
 		}
 
 	ngOnInit(): void {
