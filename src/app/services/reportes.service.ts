@@ -11,9 +11,9 @@ export class ReportesService {
 	
 	constructor(private http: HttpClient) { }
 
-    obtenerReporteTotalDeMovimientosDePaciente(idPaciente: number): Promise<ReporteMovimiento> {
+    obtenerReporteTotalDeMovimientosDePaciente(idPaciente: number , fechai:string, fechaf:string): Promise<ReporteMovimiento> {
         return new Promise<ReporteMovimiento>((resolve, reject) => this.http
-            .get(API_URL + 'reportes/totales-movimientos-usuario/' + idPaciente,
+            .get(API_URL + 'reportes/totales-movimientos-usuario/por-fecha/' + idPaciente + "?fechai=" + fechai + "&fechaf=" + fechaf,
             {
                 withCredentials: true,
                 observe: 'response',
@@ -27,7 +27,7 @@ export class ReportesService {
         );
     }
 
-    obtenerPdfHistoriales(idPaciente: number): Observable<Blob> {
+    obtenerPdfHistoriales(idPaciente: number, fechai:string, fechaf:string): Observable<Blob> {
         const httpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
             'Authorization': localStorage.getItem('auth_token')
@@ -37,11 +37,11 @@ export class ReportesService {
             responseType: 'blob' as 'json'
         };
         return this.http.get<any>(
-            API_URL + 'reportes/pdf-historiales/' + idPaciente,
+            API_URL + 'reportes/pdf-historiales/' + idPaciente + "?fechai=" + fechai + "&fechaf=" + fechaf,
             options
         );
     }
-    obtenerPdfPagosGeneral(): Observable<Blob> {
+    obtenerPdfPagosGeneral(fechai:string, fechaf:string): Observable<Blob> {
         const httpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
             'Authorization': localStorage.getItem('auth_token')
@@ -51,12 +51,12 @@ export class ReportesService {
             responseType: 'blob' as 'json'
         };
         return this.http.get<any>(
-            API_URL + 'reportes/pdf-pagos-general',
+            API_URL + 'reportes/pdf-pagos-general' + "?fechai=" + fechai + "&fechaf=" + fechaf,
             options
         );
     }
 
-    obtenerPdfPagosPaciente(idPaciente: number): Observable<Blob> {
+    obtenerPdfPagosPaciente(idPaciente: number, fechai:string, fechaf:string): Observable<Blob> {
         const httpHeaders = new HttpHeaders({
             'Content-Type': 'application/json',
             'Authorization': localStorage.getItem('auth_token')
@@ -66,7 +66,7 @@ export class ReportesService {
             responseType: 'blob' as 'json'
         };
         return this.http.get<any>(
-            API_URL + 'reportes/pdf-pagos-paciente/' + idPaciente,
+            API_URL + 'reportes/pdf-pagos-paciente/' + idPaciente + "?fechai=" + fechai + "&fechaf=" + fechaf,
             options
         );
     }
