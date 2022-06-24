@@ -33,6 +33,11 @@
         </select>
     </div>
 
+    <div class="iigwo-input descripcion" style="margin-right: 0;">
+        <label>Descripción</label>
+        <textarea type="string" [(ngModel)]="pago.descripcion" style="min-height: 130px; max-width: 900px;" [readOnly]="esPaciente"></textarea>
+    </div>
+
     
 </mat-dialog-content>
 

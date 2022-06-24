@@ -78,12 +78,14 @@
                         <th class='' i18n="@@usuarios.Nombre">Fecha</th>
                         <th class='' i18n="@@usuarios.Usuario">Tipo</th>
                         <th class='' i18n="@@usuarios.Rol">Monto</th>
+                        <th class='' i18n="@@usuarios.Rol">Descripción</th>
                     </tr>
                     <tr *ngFor='let p of pagos | slice:paginacion.begin:paginacion.end'>
                         <td class=''><a (click)="abrirPago(p.idMovimiento)">{{p.paciente.nombre}}</a></td>
                         <td class=''>{{p.fecha.split(' ')[0] | date:'dd/MM/yyyy'}}</td>
                         <td class=''>{{p.tipoMovimiento.descripcion}}</td>
                         <td class='number'>{{p.monto | currency : 'MXN' : 'symbol' : undefined : 'es-Mx'}}</td>
+                        <td class='' > {{p.descripcion}} </td>
                     </tr>
 
                     <tr>
