@@ -5,6 +5,7 @@ import { UsuariosService } from 'src/app/services/usuarios.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SessionService } from 'src/app/services/session.service';
 import { UtilService } from 'src/app/services/util.service';
+import { PacientesService } from '../../services/pacientes.service';
 
 interface CustomSearchItem {
     title: string,
@@ -21,6 +22,9 @@ interface CustomSearchItem {
 })
 export class InicioComponent implements OnInit {
 
+    numeroPaciente;
+    proxCita;
+    usuario
 
     grupos: string[] = [];
     pantallas: any = {};
@@ -34,6 +38,7 @@ export class InicioComponent implements OnInit {
         private utilService: UtilService,
         public router: Router, 
         private domSanitizer: DomSanitizer, 
+        private paciente: PacientesService,
         private sessionService: SessionService,) {
         this.utilService.deshabilitaRetroceso();
 
@@ -50,21 +55,22 @@ export class InicioComponent implements OnInit {
         if (localStorage.getItem('auth_token') !== null) {
             this.obtenerUsuario(usuarios, appSearch);
         }
+
+        let usuario: Usuario = JSON.parse(localStorage.getItem('objUsuario'));       
+        
+        this.numeroPaciente = usuario.paciente;
+
+            console.log("Numero Paciente", this.numeroPaciente);
+
+            this.citaPaciente()    
     }
 
     obtenerUsuario(usuarios: UsuariosService, appSearch: CustomSearchItem[]) {
         this.loading = true;
         usuarios.obtenerUsuarioPorUsuario(localStorage.getItem('usuario')).then(usuario => {
             
-            /*usuario.rol.forEach(rol => {
-                rol.descripcion = rol.descripcion.toUpperCase();
-            });
-
-            usuario.organizaciones.forEach(o => {
-                o.id = o.id.replace(/\s+/g, '');
-            });*/
+            localStorage.setItem('objUsuario', JSON.stringify(usuario));    
             
-            localStorage.setItem('objUsuario', JSON.stringify(usuario));
             
             let groups = {};
             appSearch.filter(e => e.isVisibleFor(usuario)).forEach(e => {
@@ -83,6 +89,16 @@ export class InicioComponent implements OnInit {
                 this.grupos.push(key);
             }
         }).then(() => this.loading = false);
+    }
+
+    citaPaciente(){
+        this.paciente.citasPacientes(this.numeroPaciente).subscribe((response: any) => {
+
+            this.proxCita = response.body;
+
+            console.log(this.proxCita, "respuesta ");
+      
+          });     
     }
 
     ngOnInit(): void {

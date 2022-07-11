@@ -42,6 +42,21 @@ export class PacientesService {
         );
     }
 
+    citasPacientes(paciente){
+
+        console.log(paciente, "numero paciente");
+        return this.http.get(API_URL + "reportes/cita-paciente/" + paciente,
+        
+            {
+                responseType: 'text',
+                withCredentials: true,
+                observe: 'response',
+                headers: new HttpHeaders().append('Content-Type', 'application/json').append('Authorization', localStorage.getItem('auth_token'))
+            });
+        
+        
+    }
+
     insertarPaciente(paciente: Paciente): Promise<Paciente> {
         return new Promise<Paciente>((resolve, reject) => this.http
             .post(API_URL + 'pacientes', paciente,
