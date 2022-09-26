@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Usuario } from '../../../model/usuario';
 import { UsuariosService } from 'src/app/services/usuarios.service';
@@ -6,6 +6,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { SessionService } from 'src/app/services/session.service';
 import { UtilService } from 'src/app/services/util.service';
 import { PacientesService } from '../../services/pacientes.service';
+import { BarComponent } from '../bar/bar.component';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 interface CustomSearchItem {
     title: string,
@@ -22,9 +24,12 @@ interface CustomSearchItem {
 })
 export class InicioComponent implements OnInit {
 
-    numeroPaciente;
+    numeroUser: any;
+    rolUser: any;
     proxCita;
-    usuario
+    usuario;
+    rolUsuario;
+    
 
     grupos: string[] = [];
     pantallas: any = {};
@@ -39,7 +44,22 @@ export class InicioComponent implements OnInit {
         public router: Router, 
         private domSanitizer: DomSanitizer, 
         private paciente: PacientesService,
-        private sessionService: SessionService,) {
+        private sessionService: SessionService
+        ) {
+        
+
+        // let usuario: Usuario = JSON.parse(localStorage.getItem('objUsuario'));     
+        
+        // this.numeroPaciente = usuario.paciente;
+        // console.log("Numero Paciente", this.numeroPaciente);
+        // this.rolUsuario = usuario.rol;
+        // console.log(this.rolUsuario, "Rol de usuario");
+        
+        // if (this.rolUsuario === '3') {
+        //     console.log("usuario cliente");       
+        // }        
+
+
         this.utilService.deshabilitaRetroceso();
 
         this.sInterval = setInterval(() => {
@@ -54,24 +74,21 @@ export class InicioComponent implements OnInit {
         let appSearch: CustomSearchItem[] = [];
         if (localStorage.getItem('auth_token') !== null) {
             this.obtenerUsuario(usuarios, appSearch);
-        }
-
-        let usuario: Usuario = JSON.parse(localStorage.getItem('objUsuario'));       
-        
-        this.numeroPaciente = usuario.paciente;
-
-            console.log("Numero Paciente", this.numeroPaciente);
-
-            this.citaPaciente()    
+        }             
     }
 
     obtenerUsuario(usuarios: UsuariosService, appSearch: CustomSearchItem[]) {
         this.loading = true;
         usuarios.obtenerUsuarioPorUsuario(localStorage.getItem('usuario')).then(usuario => {
             
-            localStorage.setItem('objUsuario', JSON.stringify(usuario));    
-            
-            
+            localStorage.setItem('objUsuario', JSON.stringify(usuario)); 
+            this.rolUser= usuario.rol;  
+            this.numeroUser = usuario.paciente;
+
+            if (this.rolUser === '3') {
+            this.citaPaciente();      
+            } 
+
             let groups = {};
             appSearch.filter(e => e.isVisibleFor(usuario)).forEach(e => {
                 let group: any[] = groups[e.subtitle];
@@ -92,15 +109,12 @@ export class InicioComponent implements OnInit {
     }
 
     citaPaciente(){
-        this.paciente.citasPacientes(this.numeroPaciente).subscribe((response: any) => {
 
-            this.proxCita = response.body;
-
-            console.log(this.proxCita, "respuesta ");
-      
+        this.paciente.citasPacientes(this.numeroUser).subscribe((response: any) => {
+            this.proxCita = response.body;    
           });     
     }
 
-    ngOnInit(): void {
+    ngOnInit() {
     }
 }

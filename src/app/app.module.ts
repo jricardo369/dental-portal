@@ -53,6 +53,7 @@ registerLocaleData(localeMx, 'es-Mx');
         MatProgressSpinnerModule,
         MatSliderModule,
         MatSelectModule
+    
     ],
     entryComponents: [
         DialogoSimpleComponent,

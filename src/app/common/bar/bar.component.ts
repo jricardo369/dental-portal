@@ -13,6 +13,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { AGENDA_ITEMS } from 'src/app/agenda/agenda-routing.module';
 import { HISTORIAL_CLINICO_ITEMS } from 'src/app/historial-clinico/historial-clinico-routing.module';
 import { PAGOS_ITEMS } from 'src/app/pagos/pagos-routing.module';
+import { PacientesService } from '../../services/pacientes.service';
+
 
 @Component({
     selector: 'app-bar',
@@ -64,6 +66,8 @@ export class BarComponent {
     usuario: Usuario = new Usuario();
 
     foto: any;
+    numeroPaciente;
+    proxCita;
 
     constructor(
         public utilService: UtilService,
@@ -71,7 +75,8 @@ export class BarComponent {
         private usuariosService: UsuariosService,
         private i18n: CustomI18nService,
         private router: Router,
-        private domSanitizer: DomSanitizer
+        private domSanitizer: DomSanitizer,
+        private paciente: PacientesService,
     ) {
         this.filteredModuloItems = [];
 
@@ -85,7 +90,13 @@ export class BarComponent {
                         /*this.usuario.rol.forEach(rol => {
                             rol.descripcion = rol.descripcion.toUpperCase();
                         });*/
-                        console.log(this.usuario)
+                        console.log(this.usuario, "Informaion de usuario")
+
+                        // this.numeroPaciente = this.usuario.paciente;
+                        // console.log("Numero Paciente", this.numeroPaciente);
+
+                        // this.citaPaciente();
+                        
 
                         let items = [
                             ADMIN_GENERAL_ITEMS,
@@ -244,4 +255,13 @@ export class BarComponent {
             this.foto = this.baseHref + "assets/img/portrait-demo.png";
         }
     }
+
+    // citaPaciente(){
+
+    //     this.paciente.citasPacientes(this.usuario.paciente).subscribe((response: any) => {
+    //         this.proxCita = response.body;
+    //         console.log(this.proxCita, "respuesta ");
+      
+    //       });     
+    // }
 }

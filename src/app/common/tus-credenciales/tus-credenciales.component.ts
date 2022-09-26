@@ -13,15 +13,22 @@ import { UsuariosService } from 'src/app/services/usuarios.service';
 })
 export class TusCredencialesComponent {
 
-    expPsw = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@$^*_=-]).{8,12}$/;
+    cp = {
+        "cont": "",
+        "cont2": "",
+        "idUsuario": ""
+      }
+
+    // expPsw = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@$^*_=-]).{8,12}$/;
 
     usuario: Usuario = new Usuario();
+    idU;
 
     cambiandoContrasena: boolean = false;
     cambiandoCorreo: boolean = false;
 
-    password: string = null;
-    confirmPassword: string = null;
+    cont: string = null;
+    cont2: string = null;
     passwordValida: boolean = false;
     confirmarPasswordValida: boolean = false;
 
@@ -39,53 +46,66 @@ export class TusCredencialesComponent {
 			this.usuariosService
             .obtenerUsuarioPorId(parseInt(localStorage.getItem('idUsuario'))).then(u => {
             this.usuario = u;
+            this.idU= u.idUsuario;
+            console.log("ID Usuario",this.idU);
+            
         }).catch(r => this.utilService.manejarError(r));
     }
 
     cambiarPassword() {
-        if (this.validarPatronContrasenia(this.password) && this.validarPatronContrasenia(this.confirmPassword)) {
-            if (this.password === this.confirmPassword) {
+        let obj = {
+            "cont": this.cp.cont,
+            "cont2": this.cp.cont2,
+            "idUsuario": this.idU
+        }
+
+        console.log("Body cambio de pass",obj);
+
+
+        // if (this.validarPatronContrasenia(this.cp.cont) && this.validarPatronContrasenia(this.cp.cont2)) {
+            if (this.cp.cont === this.cp.cont2) {                
+                
                 this.utilService
                     .mostrarDialogoSimple(
                         this.i18n.get("Cambiar contraseña"),
                         this.i18n.get("Estás a punto de cambiar de contraseña, una vez cambiada se cerrará la sesión y tendrás que ingresar con tus nuevas credenciales"),
                         this.i18n.get("Cambiar contraseña"),
                         this.i18n.get("No cambiar"))
-                    .then(result => {
-                        if (result == 'ok') {
-                            this.cargando = true;
-                            this.sessionService
-                                .cambiarCredenciales(this.password, null)
-                                .then(exito => {
-                                    if (exito) {
-                                        this.sessionService.cerrarSesion();
-										this.router.navigate(['/ingresar']);
-                                    } else {
-                                        this.utilService.mostrarDialogoSimple("Error", this.i18n.get("No se cambió la contraseña, verifica que tu sesión sea valida"));
-                                    }
-                                })
-                                .catch(r => this.utilService.mostrarDialogoSimple("Error", r))
-                                .then(() => this.cargando = false);
-                        }
-                    });
+                    // .then(result => {
+                    //     if (result == 'ok') {
+                    //         this.cargando = true;
+                    //         this.sessionService
+                    //             .cambiarCredenciales(this.cont, null)
+                    //             .then(exito => {
+                    //                 if (exito) {
+                    //                     this.sessionService.cerrarSesion();
+					// 					this.router.navigate(['/ingresar']);
+                    //                 } else {
+                    //                     this.utilService.mostrarDialogoSimple("Error", this.i18n.get("No se cambió la contraseña, verifica que tu sesión sea valida"));
+                    //                 }
+                    //             })
+                    //             .catch(r => this.utilService.mostrarDialogoSimple("Error", r))
+                    //             .then(() => this.cargando = false);
+                    //     }
+                    // });
             } else {
                 this.utilService.mostrarDialogoSimple(
                     this.i18n.get("Error al reiniciar la contraseña"),
                     this.i18n.get("Las contraseñas ingresadas en el campo 'contraseña nueva' y 'confirmar contraseña nueva' no coinciden, verifique por favor.")
                 );
             }
-        } else {
-            this.utilService.mostrarDialogoSimple(
-                this.i18n.get("La contraseña no cumple los aspectos requeridos"),
-                this.i18n.get("La contraseña debe contener por lo menos un número, una letra en mayúscula, una letra en minúscula, un carácter especial(!@$^*_=-), la longitud mínima es de 8 y la longitud máxima es de 12, verifique por favor.")
-            );
-        }
+        // } else {
+        //     this.utilService.mostrarDialogoSimple(
+        //         this.i18n.get("La contraseña no cumple los aspectos requeridos"),
+        //         this.i18n.get("La contraseña debe contener por lo menos un número, una letra en mayúscula, una letra en minúscula, un carácter especial(!@$^*_=-), la longitud mínima es de 8 y la longitud máxima es de 12, verifique por favor.")
+        //     );
+        // }
     }
-
-    validarPatronContrasenia(password: string): boolean {
-        if (password.match(this.expPsw)) return true;
-        else return false;
-    }
+    
+    // validarPatronContrasenia(obj: string): boolean {
+    //     if (obj.match(this.expPsw)) return true;
+    //     else return false;
+    // }
 
     cambiarCorreo() {
         if (this.email1.length < 3) {

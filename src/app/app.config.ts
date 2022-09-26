@@ -33,13 +33,16 @@ let documentBsaeUriWithoutLanguage = document.baseURI
     .replace("/portal-dental", "/dental");
 
 // let productionApiUrl = documentBsaeUriWithoutLanguage + "/"; // PRODUCCION
-let productionApiUrl = 'http://ec2-3-135-28-48.us-east-2.compute.amazonaws.com:8080/dental/'; // PRODUCCION
+// let productionApiUrl = 'http://ec2-3-135-28-48.us-east-2.compute.amazonaws.com:8080/dental/'; // PRODUCCION
+let productionApiUrl = '/dental/'; // PRODUCCION
  let localhostApiUrl = location.protocol + '//' + location.hostname + ':8080/dental/'; // LOCAL
 
 if (environment.production) {
     // PRO
 } else {
-    localhostApiUrl = 'http://ec2-3-135-28-48.us-east-2.compute.amazonaws.com:8080/dental/';
+    localhostApiUrl = '/dental/';
+    // localhostApiUrl = 'http://ec2-3-135-28-48.us-east-2.compute.amazonaws.com:8080/dental/';
+
 }
 
 // ====================================
