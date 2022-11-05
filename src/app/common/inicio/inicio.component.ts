@@ -60,7 +60,7 @@ export class InicioComponent implements OnInit {
         // }        
 
 
-        this.utilService.deshabilitaRetroceso();
+        // this.utilService.deshabilitaRetroceso();
 
         this.sInterval = setInterval(() => {
             if (localStorage.getItem('auth_token') == null) {
