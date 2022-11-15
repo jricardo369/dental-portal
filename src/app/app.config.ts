@@ -1,7 +1,7 @@
 import { environment } from '../environments/environment';
 
-export const VERSION_PORTAL = 'Versión 2020.10.25-13:24';
-export const EMPRESA_PORTAL = '© / 2020';
+export const VERSION_PORTAL = 'Versión 2022.11.07-15:00';
+export const EMPRESA_PORTAL = '© / 2021';
 
 // =====================================================
 /*
@@ -16,6 +16,7 @@ REM ESTE ES PARA LA VERSION EN RAIZ
 ng build --prod --optimization --build-optimizer --aot --base-href /en/ --deploy-url /en/ --i18n-locale=en --i18n-file src/translate/messages/messages.en.xlf --output-path=dist/ROOT/en
 ng build --prod --optimization --build-optimizer --aot --base-href /es/ --deploy-url /es/ --i18n-locale=es --output-path=dist/ROOT/es
 dir
+ng build --prod --optimization --build-optimizer --aot --base-href / --deploy-url / --i18n-locale=es --output-path=dist/ROOT/
 */
 //
 //
